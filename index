@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mis Quizzes</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      padding: 20px; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 { 
+      text-align: center; 
+      margin-bottom: 30px;
+    }
+
+    ul { 
+      list-style: none; 
+      padding: 0; 
+      width: 100%; 
+      max-width: 400px; /* ancho máximo para móviles y tablet */
+    }
+
+    li { 
+      margin: 15px 0; 
+    }
+
+    a { 
+      display: block;
+      text-decoration: none; 
+      color: white; 
+      background: #007bff; 
+      padding: 20px; 
+      border-radius: 10px; 
+      text-align: center;
+      font-size: 1.2em;
+      transition: background 0.2s;
+    }
+
+    a:hover { 
+      background: #0056b3; 
+    }
+
+    iframe { 
+      width: 100%; 
+      max-width: 800px; 
+      height: 500px; 
+      border: 1px solid #ccc; 
+      margin-top: 30px; 
+    }
+
+    @media (max-width: 500px) {
+      a { font-size: 1.5em; padding: 25px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Selecciona un Quiz</h1>
+  <ul id="quizList"></ul>
+
+  <iframe id="quizFrame"></iframe>
+
+  <script>
+    const quizzes = [
+      { file: 'quizzes/quiz6.html', title: 'Quiz 6' },
+      { file: 'quizzes/quiz_gestio.html', title: 'Quiz Gestión' }
+    ];
+
+    const quizList = document.getElementById('quizList');
+
+    quizzes.forEach(quiz => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = '#';
+      a.textContent = quiz.title;
+      a.onclick = () => { document.getElementById('quizFrame').src = quiz.file; };
+      li.appendChild(a);
+      quizList.appendChild(li);
+    });
+  </script>
+</body>
+</html>
