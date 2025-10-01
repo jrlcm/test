@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz de Gestion</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 40px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .options button {
+    display: block;
+    margin: 5px 0;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 16px;
+  }
+
+  .options button:hover { background: #ddd; }
+
+  .correct { background-color: #c8e6c9; border-color: #388e3c; color: #2e7d32; }
+  .wrong { background-color: #ffcdd2; border-color: #d32f2f; color: #c62828; }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 10px 0;
+  }
+
+  #nextBtn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  #nextBtn:hover { background: #1976D2; }
+</style>
+</head>
+<body>
+
+<h1>Quiz de Gestio</h1>
+
+<div class="quiz-container" id="quiz-container"></div>
+<div class="result" id="result">Puntaje: 0</div>
+<button id="nextBtn" style="display:none;">Siguiente</button>
+
+<script>
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Tus questions aquí
+const allQuestions = [
+{ question: "A la unitat de Lesionats medul·lars, què s’ha protocol·litzat per tal de minimitzar la gravetat d’aquestes lesions tant per a malalts adults com pediàtrics?", options: [ "El diagnòstic precoç i els tractaments de rehabilitació", "Altres serveis", "L’atenció d’urgències amb el SEM", "Totes les respostes són correctes."], answer: "L’atenció d’urgències amb el SEM"},
+{ question: "A quina unitat de l’Hospital Universitari Vall d’Hebron hi ha un equip d’ecografia Doppler i una sala d’intervencionisme vascular, entre d’altres recursos?", options: [ "A la unitat de Cardiologia", "A la unitat d’Ictus", "A la unitat de Traumatologia", "A la unitat d’Oncologia"], answer: "A la unitat d’Ictus"},
+{ question: "Quina unitat de l’Hospital Infantil i Hospital de la Dona està recoberta de coure, l’únic material capaç d’eliminar més del 99% de bacteris?", options: [ "La unitat de Fibrosi quística", "La unitat d’Oncologia", "La unitat de Llarga durada", "La unitat de Neonatologia"], answer: "La unitat de Fibrosi quística"},
+{ question: "Quines són les activitats assistencials que s’inclouen en el Centre d’Esclerosi Múltiple de Catalunya, associat al grup Hospital Vall d’Hebron?", options: [ "Totes aquestes activitats", "L’activitat mèdica en les consultes externes", "Les valoracions neuropsicològiques i emocionals dels pacients", "L’atenció d’infermeria a l’hospital de dia en relació amb l’administració dels tractaments" ], answer: "Totes aquestes activitats"},
+{ question: "Quants hospitals formen part del complex sanitari Hospital Vall d’Hebron?", options: [ "1", "3", "5", "4" ], answer: "4"},
+{ question: "Com s'anomenen els llits que constitueixen la dotació fixa d’un hospital?", options: [ "Llits de cures intensives", "Llits funcionats", "Llits instal·lats", "Llits d’hospitalització"], answer: "Llits instal·lats"},
+{ question: "Dels següents llits, quins no són considerats llits d’hospitalització?", options: [ "Els llits bressol de les àrees pediàtriques", "Els llits de cures intensives", "Les incubadores fixes", "Els llits d’hospital de dia i de nit" ], answer: "Els llits d’hospital de dia i de nit"},
+{ question: "De les següents afirmacions respecte a l’assignació de llits d’hospitalització, quina és incorrecta?", options: [ "Totes les respostes són correctes.", "A la unitat de Pediatria es poden assignar llits a persones de 20 anys o més, sempre que les condicions clíniques ho permetin.", "Es poden assignar llits d’hospitalització en unitats afins, ja sigui en serveis mèdics o en serveis quirúrgics.", "Es poden assignar llits d’hospitalització a un pacient ectòpic malgrat que sigui una unitat que tingui un nombre de llits inferior al nombre d’ingressos habitual." ], answer: "Es poden assignar llits d’hospitalització a un pacient ectòpic malgrat que sigui una unitat que tingui un nombre de llits inferior al nombre d’ingressos habitual."},
+{ question: "Quina característica ha de tenir la reserva de llits per a pacients que tenen un ingrés quirúrgic?", options: [ "Les reserves de llits han de ser nominals.", "Totes les respostes són correctes.", "Aquests tipus d'ingrés no té cap característica general.", "S'ha d'ingressar el pacient al més aviat possible quan hi hagi un llit disponible." ], answer: "Les reserves de llits han de ser nominals."},
+{ question: "Quin servei s'encarrega de fer la gestió de llits?", options: [ "El servei d’Urgències", "El servei d’Ingressos", "El servei d’Admissions", "El servei d’Hospitalització" ], answer: "El servei d’Admissions"},
+{ question: "Quin és el perfil professional que pot utilitzar el programari de gestió hospitalària per assignar llits d’hospitalització a un pacient d’urgències?", options: [ "Un/a tècnic/a en documentació i administració sanitària", "La metgessa o metge d’urgències", "L’infermer o infermera de planta", "Qualsevol de les respostes és correcta." ], answer: "Un/a tècnic/a en documentació i administració sanitària"},
+{ question: "Com s'introdueix un pacient que serà atès al servei d’urgències amb el programa de gestió Garesan-IOC?", options: [ "Des del Plànol d’ocupació: fent clic sobre el box d’urgències on s'allotjarà el pacient.", "Des de qualsevol d’aquestes àrees.", "Des de l’àrea de Derivacions: Nou ingrés a urgències.", "Des de l’àrea de Pacients: Nou ingrés." ], answer: "Des de l’àrea de Derivacions: Nou ingrés a urgències."},
+{ question: "Què permeten els programes informàtics de gestió hospitalària?", options: [ "Gestionar els recursos humans i tecnològics de l’hospital.", "Gestionar els llits de l’hospital.", "Gestionar els ingressos i les altes.", "Fer una gestió integral de l’hospital." ], answer: "Fer una gestió integral de l’hospital."},
+{ question: "En quin apartat del programari Garesan-IOC es pot saber si un pacient és ectòpic?", options: [ "A l’àrea de derivacions", "A la pàgina d'inici", "Totes les respostes són falses", "A la fitxa de pacients" ], answer: "A la fitxa de pacients" },
+{ question: "Al programa de gestió hospitalària Garesan-IOC, on es pot comprovar els llits disponibles que hi ha a l’hospital?", options: [ "A l’àrea de Derivacions", "A la fitxa de Pacients", "Al Plànol d’ocupació", "Des de l’àrea de Nou ingrés" ], answer: "Al Plànol d’ocupació"},
+{ question: "Quin servei gestiona les sol·licituds d’assistència urgent i programada entre centres sanitaris?", options: [ "Qualsevol dels serveis esmentats", "El Servei d’admissions i documentació clínica", "El Servei d’urgències", "El servei o la unitat on està ingressat el pacient" ], "respuesta_correcta": "El Servei d’admissions i documentació clínica",},
+{ question: "Com s'anomena el procés de traslladar un pacient a un altre servei assistencial per rebre una atenció diagnòstica i/o terapèutica més adient a les seves circumstàncies?", options: [ "Derivació", "Trasllat hospitalari", "Trasllat interhospitalari", "Interconsulta" ], "respuesta_correcta": "Derivació",},
+{ question: "Quines són les interconsultes més habitualas?", options: [ "Per procediments diagnòstics o terapèutics", "Per maneig compartit de pacients", "Per canvi de metgessa o professional sanitari", "Totes les respostes són correctes" ], "respuesta_correcta": "Totes les respostes són correctes"},
+{ question: "La derivació preferent d’un pacient des de l’atenció primària a l’atenció especialitzada...", options: [ "El pacient ha de ser atès en els propers 7 dies de la derivació", "El pacient ha de ser atès abans de les 48 hores de la derivació", "El pacient ha de ser atès abans dels 31 dies de la derivació", "El pacient ha de ser atès abans dels 15 dies de la derivació" ], "respuesta_correcta": "El pacient ha de ser atès en els propers 7 dies de la derivació"},
+{ question: "Com s'anomena la derivació a altres centres sanitaris per manca de llits disponible?", options: [ "Derivació interconsulta", "Trasllat intrahospitalari", "Derivació intrahospitalària", "Trasllat interhospitalari" ], "respuesta_correcta": "Trasllat interhospitalari"},
+{ question: "Qui s’encarrega de recollir les dades del conjunt mínim bàsic de dades (CMBD)?", options: [ "L’àrea de sol·licitud i programació dels ingressos", "L’àrea de gestió de llits", "L’àrea de coordinació operativa del procés assistencial", "L’àrea de registre de l’episodi d’hospitalització" ], "respuesta_correcta": "L’àrea de registre de l’episodi d’hospitalització"},
+{ question: "De què depèn l’establiment de l’oferta de llits hospitalaris?", options: [ "De la pressió d’urgències", "De les derivacions des de les llistes d’espera", "De les derivacions des de consultes externes", "Totes les respostes són correctes" ], "respuesta_correcta": "Totes les respostes són correctes"},
+{ question: "Quina entitat s’encarrega de dissenyar la normativa per a l’assignació de llits?", options: [ "La conselleria de Sanitat", "El CatSalut", "L'Insalud", "El centre sanitari" ], "respuesta_correcta": "El centre sanitari"},
+{ question: "On queda inclosa la descripció de les tasques específiques a realitzar per fer efectius els procediments d’actuació definits en la normativa de gestió de pacients?", options: [ "Al catàleg de gestió de pacients en l’àrea d’hospitalització", "En la normativa institucional del centre sanitari", "Al sistema d’informació específic per a la gestió de l‘àrea d’hospitalització", "Al manual de procediment intern del SADC" ], "respuesta_correcta": "Al manual de procediment intern del SADC"},
+{ question: "De qui depèn la informació a pacients i familiars sobre el funcionament dels serveis hospitalaris?", options: [ "De l'àrea de gestió de llits", "De l'’àrea de sol·licitud i programació dels ingressos", "De l'àrea de registre de l’episodi d’hospitalització", "De l'àrea de coordinació operativa del procés assistencial" ], "respuesta_correcta": "De l'àrea de coordinació operativa del procés assistencial"},
+{ question: "Consulteu el web de l’Hospital Vall d’Hebron, en hospitalització. Quina documentació ha de portar una persona al servei d’admissions per ingressar-hi?", options: [ "L’informe d’ingrés d’urgències o de consultes externes", "Totes les respostes són correctes", "EL DNI i la TSI", "La TSA i el DNN" ], "respuesta_correcta": "EL DNI i la TSI"},
+{ question: "Quan està lliure un llit per ser ocupat per un nou ingrés?", options: [ "Quan se li dona l’informe d’alta al pacient", "Des del moment de la prealta", "Una vegada surt el pacient de la unitat", "Quan la supervisió de planta comunica que el llit està disponible" ], "respuesta_correcta": "Quan la supervisió de planta comunica que el llit està disponible"},
+{ question: "De quins factors depèn l’adjudicació d’un nombre determinat de llits a un servei d’hospitalització?", options: [ "Totes les respostes són correctes.", "De la necessitat de llits que tingui l’hospital.", "De l’índex d’ocupació i l’adequació de l’estada mitjana.", "Dels llits totals instal·lats a l’hospital." ], "respuesta_correcta": "De l’índex d’ocupació i l’adequació de l’estada mitjana."},
+{ question: "Quan hi ha una demanda de llits superior als llits disponibles en una unitat o servei, qui té prioritat d’ingrés?", options: [ "Els ingressos urgents", "Els trasllats d’unitat de crítics a llit convencional", "Els ingressos programats", "Els pacients pendents de llits al servei d’urgències des del dia anterior" ], "respuesta_correcta": "Els trasllats d’unitat de crítics a llit convencional"},
+{ question: "Quan el servei d’admissions ha de ingressar un pacient en una unitat d’hospitalització diferent de la que li correspondria per falta de llit, com es diu aquest ingrés?", options: [ "Intrahospitalari", "Ectòpic", "Improcedent", "Interunitat" ], "respuesta_correcta": "Ectòpic"},
+{ question: "En l’apartat resum dels indicadors analitzats per sexe de l’Observatori del Sistema de Salut de Catalunya, què revelen les dades generals respecte al nombre total d’hospitalitzacions del SISCAT?", options: [ "Totes les respostes són correctes.", "El percentatge d’homes hospitalitzats del Siscat és més alt que el de les dones.", "El percentatge d’homes hospitalitzats del SISCAT és de 51,8%.", "El percentatge d’homes hospitalitzats del Siscat és de 48,2%." ], "respuesta_correcta": "El percentatge d’homes hospitalitzats del Siscat és de 48,2%."},
+{ question: "Com s’identifiquen les dades del Registre central de persones assegurades?", options: [ "Amb el DNI", "Amb el número d’història clínica", "Amb el CIP", "Amb la TSI" ], "respuesta_correcta": "Amb el CIP"},
+{ question: "Si analitzem les dades de les taules de 2018 de l’Observatori del Sistema de Salut de Catalunya en l’àmbit hospitalari, com ha evolucionat el nombre d’hospitalitzacions quirúrgiques del SISCAT?", options: [ "Han disminuït des del 2016 al 2018.", "Han augmentant des del 2016 al 2018.", "S’han mantingut estables des del 2016 al 2018.", "Totes les respostes són incorrectes." ], "respuesta_correcta": "Han augmentant des del 2016 al 2018."},
+{ question: "En quin web es poden trobar bases de dades sobre morbiditat hospitalària?", options: [ "Al Departament de Salut", "A l'Observatori del Sistema de Salut de Catalunya", "Al Registre central de població del CatSalut", "Al CatSalut" ], "respuesta_correcta": "A l'Observatori del Sistema de Salut de Catalunya"},
+{ question: "Com s'anomena l'estructura organitzativa que disposa de recursos humans, físics i econòmics per a la provisió de serveis sanitaris d'atenció primària?", options: [ "Àrea bàsica de salut", "Regió sanitària", "Unitat proveïdora", "Equip d’atenció primària" ], "respuesta_correcta": "Unitat proveïdora"},
+{ question: "Per què és important tenir una base de dades que reculli la morbiditat poblacional?", options: [ "Perquè podem conèixer els recursos sanitaris consumits en un període de temps.", "Perquè podem analitzar la casuística hospitalària i de l’atenció primària durant un període de temps.", "Perquè podem fer una organització del sistema sanitari més eficaç i eficient.", "Totes les respostes són correctes." ], "respuesta_correcta": "Totes les respostes són correctes."},
+{ question: "Amb quina freqüència el CatSalut actualitza les llistes d’espera?", options: [ "Setmanalment", "Diàriament", "Mensualment", "Trimestralment" ], "respuesta_correcta": "Mensualment"},
+{ question: "Quant a la llista d’espera de les operacions quirúrgiques del web del CatSalut, quin termini d'accés garantit tenen la cirurgia cardíaca valvular major i la cirurgia cardíaca coronària menor?", options: [ "A 45 dies", "A 180 dies", "A 90 dies", "A 60 dies" ], "respuesta_correcta": "A 90 dies"},
+{ question: "Descarregueu-vos l’arxiu amb les consultes externes de juny del 2020 i contesteu: Quin és l’hospital de la Regió Sanitària del Camp de Tarragona amb més pacients en llista d’espera de traumatologia?", options: [ "Pius Hospital de Valls", "L’Hospital Universitari Sant Joan de Reus", "L’Hospital Universitari Joan XXIII de Tarragona", "L’Hospital de Vendrell" ], answer: "L’Hospital Universitari Sant Joan de Reus"},
+{ question: "Seguint les indicacions del vídeo, descarregueu-vos l’arxiu de proves diagnòstiques corresponents al gener de 2020 i contesteu: A la Regió Sanitària de Barcelona (tots els àmbits), quin és l’hospital que té més temps de mitjana d’espera per fer una ressonància magnètica?", options: [ "L’Hospital de la Vall d’Hebron", "L’Hospital Clínic de Barcelona", "L’Hospital Universitari Germans Tries i Pujol de Badalona", "L’Hospital Universitari Mútua de Terrassa" ], answer: "L’Hospital de la Vall d’Hebron"},
+{ question: "Segons les indicacions de les llistes d’espera de proves diagnòstiques del web del CatSalut, quins és el termini màxim de referència per a l’accés a proves diagnòstiques per a les persones catalogades com de prioritat preferent?", options: [ "90 dies", "45 dies", "15 dies", "30 dies" ], answer: "30 dies"},
+{ question: "Quins han estat els condicionants de l’augment de la utilització dels serveis d’urgències?", options: [ "Una població més envellida", "La realitat sociodemogràfica", "Una major desigualtat econòmica", "Tots aquests factors" ], answer: "Tots aquests factors"},
+{ question: "Quin és el centre al voltant del qual han de girar les xarxes d’atenció urgent i continuada del nostre sistema de salut?", options: [ "Les persones", "L’atenció hospitalària", "Els professionals sanitaris", "L’atenció primària" ], answer: "Les persones"},
+{ question: "De les següents funcions, quina no es correspon amb el COUE?", options: [ "Elaborar un pla d’urgències territorial únic.", "Auditar la qualitat dels serveis prestats al territori en l’àmbit de l’atenció continuada i urgent.", "Implementar el pla d’urgències al territori.", "Organitzar l’atenció primària com a primer nivell d’atenció sanitària urgent." ], answer: "Organitzar l’atenció primària com a primer nivell d’atenció sanitària urgent."},
+{ question: "El PIUC va ser el predecessor del PLANUC. Quina era una de les seves característiques?", options: [ "Dotar de més recursos professionals l’atenció primària i el SEM a l’estiu.", "Va néixer per fer front a l’augment de la demanda d’atenció urgent a l’hivern, per fer front a la grip entre les persones més vulnerables.", "Es va iniciar l’any 2000.", "Totes les respostes són correctes." ], answer: "Dotar de més recursos professionals l’atenció primària i el SEM a l’estiu."},
+{ question: "Quin és el marc de referència del qual depenen totes les actuacions públiques en matèria de salut per tal de millorar la salut i la qualitat de vida de la població?", options: [ "El Departament de Salut", "El CatSalut", "El Pla de salut de Catalunya", "El PLANUC" ], answer: "El Pla de salut de Catalunya"},
+{ question: "De les següents afirmacions respecte a la recepta electrònica, quina no és correcta?", options: [ "Serveix per controlar la compra abusiva de medicaments per part dels usuaris.", "Dona més seguretat en l’ús de medicaments.", "Afavoreix una prestació farmacèutica de major qualitat.", "Millora la informació de cada pacient amb el pla de medicació." ], answer: "Serveix per controlar la compra abusiva de medicaments per part dels usuaris."},
+{ question: "On es poden dades farmacològiques, com la composició o el principi actiu d’un medicament?", options: [ "A l'aparador de dades de la prestació", "En el catàleg de productes farmacèutics", "A l'Insalud", "En el registre de l’activitat de farmàcia" ], answer: "En el catàleg de productes farmacèutics"},
+{ question: "Quina documentació ha de portar el pacient per gestionar una prestació ortoprotètica a l'àrea de coordinació operativa del procés assistencial?", options: [ "La TSI", "El PAO", "La TSI i la recepta electrònica", "El PAO i la TSI" ], answer: "El PAO i la TSI"},
+{ question: "Quins professionals poden prescriure tots articles ortoprotètics subvencionats pel CatSalut?", options: [ "Tots aquests professionals.", "Metges d’atenció especialitzada en la matèria i que treballin a la xarxa sanitària pública.", "Metges d’atenció especialitzada en la matèria i que treballin en un hospital privat.", "Metges especialistes en medicina familiar i comunitària que treballin en centres d’atenció primària." ], answer: "Metges d’atenció especialitzada en la matèria i que treballin a la xarxa sanitària pública."},
+{ question: "La recepta electrònica recull les prescripcions mèdiques de...?", options: ["L'atenció hospitalària.","De totes aquestes atencions.","L’atenció primària.","L’atenció especialitzada."],answer: "De totes aquestes atencions."} 
+
+];
+
+// 👇 Seleccionamos 20 aleatorias (o todas si hay menos)
+let quizData = shuffle(allQuestions).slice(0, 20);
+
+let currentQuestion = 0;
+let score = 0;
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+
+
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if(currentQuestion >= quizData.length) {
+    container.innerHTML = `<div class="question"><strong>¡Quiz terminado!</strong><br>Tu puntaje final es ${score} de ${quizData.length}</div>`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `<strong>${currentQuestion+1}. ${q.question}</strong>`;
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      if(btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        allBtns.forEach(b => {
+          if(b.dataset.correct === "true") b.classList.add("correct");
+        });
+      }
+
+      resultDiv.textContent = `Puntaje: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+showQuestion();
+</script>
+
+</body>
+</html>
