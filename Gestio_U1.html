@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz de Gestion U1</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 40px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .options button {
+    display: block;
+    margin: 5px 0;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 16px;
+  }
+
+  .options button:hover { background: #ddd; }
+
+  .correct { background-color: #c8e6c9; border-color: #388e3c; color: #2e7d32; }
+  .wrong { background-color: #ffcdd2; border-color: #d32f2f; color: #c62828; }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 10px 0;
+  }
+
+  #nextBtn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  #nextBtn:hover { background: #1976D2; }
+</style>
+</head>
+<body>
+
+<h1>Quiz de Gestio U1</h1>
+
+<div class="quiz-container" id="quiz-container"></div>
+<div class="result" id="result">Puntaje: 0</div>
+<button id="nextBtn" style="display:none;">Siguiente</button>
+
+<script>
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Tus questions aquí
+const allQuestions = [
+{ question: "A la unitat de lesionats medul·lars s’ha protocol·litzat l’atenció d’urgències amb el SEM.", options: ["V", "F"], answer: "V"},
+{ question: "A la unitat de lesionats medul·lars només s’ha protocol·litzat el diagnòstic precoç.", options: ["V", "F"], answer: "F"},
+{ question: "A l’Hospital Vall d’Hebron, la unitat d’ictus disposa d’un equip d’ecografia Doppler.", options: ["V", "F"], answer: "V"},
+{ question: "La unitat de cardiologia és la que té una sala d’intervencionisme vascular.", options: ["V", "F"], answer: "F"},
+{ question: "La unitat de fibrosi quística de l’Hospital Infantil i de la Dona està recoberta de coure.", options: ["V", "F"], answer: "V"},
+{ question: "La unitat de neonatologia és l’única recoberta de coure per eliminar bacteris.", options: ["V", "F"], answer: "F"},
+{ question: "El Centre d’Esclerosi Múltiple de Catalunya ofereix atenció mèdica, d’infermeria i valoracions neuropsicològiques.", options: ["V", "F"], answer: "V"},
+{ question: "El Centre d’Esclerosi Múltiple de Catalunya només ofereix consultes externes.", options: ["V", "F"], answer: "F"},
+{ question: "El complex Hospital Vall d’Hebron està format per quatre hospitals.", options: ["V", "F"], answer: "V"},
+{ question: "El complex Hospital Vall d’Hebron està format per tres hospitals.", options: ["V", "F"], answer: "F"},
+{ question: "L’atenció d’urgències amb el SEM minimitza la gravetat de les lesions medul·lars.", options: ["V", "F"], answer: "V"},
+{ question: "Les activitats del CEM-Cat no inclouen l’atenció d’infermeria.", options: ["V", "F"], answer: "F" },
+{ question: "L’ús del coure a la unitat de fibrosi quística permet eliminar més del 99% dels bacteris.", options: ["V", "F"], answer: "V" },
+{ question: "L’ús del coure a la unitat de fibrosi quística només elimina un 50% dels bacteris.", options: ["V", "F"], answer: "F" },
+{ question: "La unitat d’ictus de Vall d’Hebron disposa de recursos avançats com el Doppler i l’intervencionisme vascular.", options: ["V", "F"], answer: "V" },
+{ question: "La unitat d’oncologia és la que té un equip d’ecografia Doppler.", options: ["V", "F"], answer: "F" },
+{ question: "El CEM-Cat està vinculat a l’Hospital Vall d’Hebron.", options: ["V", "F"], answer: "V" },
+{ question: "El CEM-Cat no té cap relació amb l’Hospital Vall d’Hebron.", options: ["V", "F"], answer: "F" },
+{ question: "El complex Vall d’Hebron inclou l’Hospital General, l’Hospital Infantil, l’Hospital de la Dona i l’Hospital de Traumatologia, Rehabilitació i Cremats.", options: ["V", "F"], answer: "V" },
+{ question: "El complex Vall d’Hebron només inclou un hospital general.", options: ["V", "F"], answer: "F" },
+{ question: "Els llits instal·lats constitueixen la dotació fixa d’un hospital.", options: ["V", "F"], answer: "V" },
+{ question: "Els llits funcionants constitueixen la dotació fixa d’un hospital.", options: ["V", "F"], answer: "F" },
+{ question: "Els llits d’hospitalització constitueixen la dotació fixa d’un hospital.", options: ["V", "F"], answer: "F" },
+{ question: "Els llits d’hospital de dia i de nit no es consideren llits d’hospitalització.", options: ["V", "F"], answer: "V" },
+{ question: "Els llits bressol pediàtrics es consideren llits d’hospitalització.", options: ["V", "F"], answer: "V" },
+{ question: "Les incubadores fixes es consideren llits d’hospitalització.", options: ["V", "F"], answer: "V" },
+{ question: "Els llits de cures intensives es consideren llits d’hospitalització.", options: ["V", "F"], answer: "V" },
+{ question: "Els llits d’hospital de dia i de nit es consideren llits d’hospitalització.", options: ["V", "F"], answer: "F" },
+{ question: "Es poden assignar llits en unitats afins, ja siguin mèdiques o quirúrgiques.", options: ["V", "F"], answer: "V" },
+{ question: "A la unitat de pediatria es poden assignar llits a majors de 20 anys si la clínica ho permet.", options: ["V", "F"], answer: "V" },
+{ question: "És correcte assignar llits d’hospitalització a un pacient ectòpic encara que la unitat tingui menys llits dels ingressos habituals.", options: ["V", "F"], answer: "F" },
+{ question: "La reserva de llits per a pacients quirúrgics ha de ser nominal.", options: ["V", "F"], answer: "V" },
+{ question: "Les reserves de llits per a pacients quirúrgics no tenen cap característica especial.", options: ["V", "F"], answer: "F" },
+{ question: "Els pacients quirúrgics han d’ingressar tan aviat com hi hagi un llit disponible.", options: ["V", "F"], answer: "V" },
+{ question: "El servei d’admissions és l’encarregat de la gestió de llits.", options: ["V", "F"], answer: "V" },
+{ question: "El servei d’urgències és l’encarregat de la gestió de llits.", options: ["V", "F"], answer: "F" },
+{ question: "El servei d’hospitalització és l’encarregat de la gestió de llits.", options: ["V", "F"], answer: "F" },
+{ question: "El servei d’ingressos és l’encarregat de la gestió de llits.", options: ["V", "F"], answer: "F" },
+{ question: "Les reserves de llits per a pacients quirúrgics no poden ser nominals.", options: ["V", "F"], answer: "F" },
+{ question: "Els llits instal·lats són diferents dels llits funcionants.", options: ["V", "F"], answer: "V" },
+{ question: "Un ingrés hospitalari és l’estada continuada d’un pacient en un hospital amb pernoctació.", options: ["V", "F"], answer: "V" },
+{ question: "Els pacients en hospital de dia es consideren pacients ingressats.", options: ["V", "F"], answer: "F" },
+{ question: "Els pacients en observació d’urgències no es consideren ingressats.", options: ["V", "F"], answer: "V" },
+{ question: "Els pacients d’hemodiàlisi no es consideren ingressats.", options: ["V", "F"], answer: "V" },
+{ question: "Els ingressos des de consultes externes poden ser urgents o programats.", options: ["V", "F"], answer: "V" },
+{ question: "Un pacient inestable a consultes externes s’ha de derivar a urgències.", options: ["V", "F"], answer: "V" },
+{ question: "Els ingressos programats s’han de comunicar a admissions amb més de 24 hores d’antelació.", options: ["V", "F"], answer: "V" },
+{ question: "Els ingressos urgents s’han de comunicar a admissions només en horari laboral.", options: ["V", "F"], answer: "F" },
+{ question: "Els ingressos poden ser assignats a unitats afins quan no hi ha llits disponibles a la unitat de referència.", options: ["V", "F"], answer: "V" },
+{ question: "Un ingrés preferent (prioritat 3) no requereix llit immediat però té prioritat sobre els diferibles.", options: ["V", "F"], answer: "V" },
+{ question: "Un ingrés no diferible (prioritat 2) requereix llit immediat.", options: ["V", "F"], answer: "V" },
+{ question: "Un ingrés diferible (prioritat 4) pot ajornar-se sense risc pel pacient.", options: ["V", "F"], answer: "V" },
+{ question: "Els ingressos crítics tenen la màxima prioritat en l’assignació de llits.", options: ["V", "F"], answer: "V" },
+{ question: "L’ordre de prioritat dels ingressos és establert pel Servei d’Urgències.", options: ["V", "F"], answer: "F" },
+{ question: "Els ingressos urgents poden donar lloc a pacients ectòpics si no hi ha llits disponibles.", options: ["V", "F"], answer: "V" },
+{ question: "Els ingressos programats no poden generar pacients ectòpics.", options: ["V", "F"], answer: "F" },
+{ question: "Els ingressos hospitalaris requereixen sempre autorització de l’equip mèdic.", options: ["V", "F"], answer: "V" },
+{ question: "L’ingrés domiciliari es considera equivalent a l’ingrés hospitalari.", options: ["V", "F"], answer: "F" },
+{ question: "Les prioritats d’ingrés s’estableixen per garantir una gestió equitativa dels llits.", options: ["V", "F"], answer: "V" },
+{ question: "Un ingrés sempre s’ha de realitzar al servei sol·licitant encara que no hi hagi llit.", options: ["V", "F"], answer: "F" },
+{ question: "La prealta hospitalària permet a admissions conèixer amb antelació els llits disponibles.", options: ["V", "F"], answer: "V" },
+{ question: "La prealta s’anota habitualment amb 24 hores d’antelació.", options: ["V", "F"], answer: "V" },
+{ question: "El pacient rep la informació de la seva alta el mateix dia que marxa.", options: ["V", "F"], answer: "V" },
+{ question: "El servei d’infermeria ha de confirmar la identitat del pacient abans de l’alta.", options: ["V", "F"], answer: "V" },
+{ question: "Les altes hospitalàries poden ser ordinàries, voluntàries, defuncions o trasllats.", options: ["V", "F"], answer: "V" },
+{ question: "L’alta ordinària es fa quan el pacient ha complert els objectius del tractament.", options: ["V", "F"], answer: "V" },
+{ question: "L’alta voluntària no requereix cap document signat.", options: ["V", "F"], answer: "F" },
+{ question: "En una alta voluntària, el pacient ha de signar un document de descàrrec de responsabilitat.", options: ["V", "F"], answer: "V" },
+{ question: "La defunció hospitalària també es registra com una alta.", options: ["V", "F"], answer: "V" },
+{ question: "Els trasllats intrahospitalaris no consten al sistema d’admissions.", options: ["V", "F"], answer: "F" },
+{ question: "Els trasllats intrahospitalaris són aquells dins del mateix hospital.", options: ["V", "F"], answer: "V" },
+{ question: "Els trasllats interhospitalaris poden ser dins la mateixa comunitat autònoma o fora.", options: ["V", "F"], answer: "V" },
+{ question: "En un trasllat amb reserva de llit, el pacient apareix com “absent de l’hospital”.", options: ["V", "F"], answer: "V" },
+{ question: "El trasllat sense reserva de llit s’equipara a una alta hospitalària.", options: ["V", "F"], answer: "V" },
+{ question: "El trasllat extracomunitari pot ser cobert pel CatSalut segons cobertura.", options: ["V", "F"], answer: "V" },
+{ question: "Els trasllats extracomunitaris mai no poden estar coberts pel CatSalut.", options: ["V", "F"], answer: "F" },
+{ question: "El registre de trasllats és competència del Servei d’Admissions.", options: ["V", "F"], answer: "V" },
+{ question: "El pacient no té dret a conèixer la seva situació en cas de trasllat.", options: ["V", "F"], answer: "F" },
+{ question: "Els trasllats es poden produir per motius clínics o de disponibilitat de llits.", options: ["V", "F"], answer: "V" },
+{ question: "El trasllat sempre és una decisió voluntària del pacient.", options: ["V", "F"], answer: "F" },
+{ question: "El Servei d’Admissions gestiona ingressos programats i urgents.", options: ["V", "F"], answer: "V" },
+{ question: "També registra les altes i trasllats.", options: ["V", "F"], answer: "V" },
+{ question: "La gestió de llits és descentralitzada i depèn de cada servei.", options: ["V", "F"], answer: "F" },
+{ question: "La centralització a admissions garanteix imparcialitat.", options: ["V", "F"], answer: "V" },
+{ question: "Admissions té una visió global de l’ocupació hospitalària.", options: ["V", "F"], answer: "V" },
+{ question: "Cada servei té un nombre de llits que pot variar segons necessitats.", options: ["V", "F"], answer: "V" },
+{ question: "Els llits assignats a cada servei mai no varien.", options: ["V", "F"], answer: "F" },
+{ question: "Admissions prioritza els pacients crítics en l’assignació de llits.", options: ["V", "F"], answer: "V" },
+{ question: "L’ordre de prioritat inclou crítics, UPIU, curta estada, urgències i programats.", options: ["V", "F"], answer: "V" },
+{ question: "Els pacients d’urgències del dia són prioritaris sobre els programats.", options: ["V", "F"], answer: "V" },
+{ question: "Admissions no intervé en la gestió de les llistes d’espera quirúrgiques.", options: ["V", "F"], answer: "F" },
+{ question: "Admissions pot reservar llits per a pacients quirúrgics.", options: ["V", "F"], answer: "V" },
+{ question: "Les reserves quirúrgiques sempre han de ser nominals.", options: ["V", "F"], answer: "V" },
+{ question: "Les reserves quirúrgiques poden ser genèriques.", options: ["V", "F"], answer: "F" },
+{ question: "La informació de llits lliures és facilitada pels serveis d’infermeria.", options: ["V", "F"], answer: "V" },
+{ question: "El servei d’urgències és el responsable de la gestió global de llits.", options: ["V", "F"], answer: "F" },
+{ question: "Admissions coordina amb urgències per facilitar l’ingrés.", options: ["V", "F"], answer: "V" },
+{ question: "L’objectiu del Servei d’Admissions és optimitzar els recursos i reduir llistes d’espera.", options: ["V", "F"], answer: "V" },
+{ question: "Admissions no té en compte criteris clínics en l’assignació de llits.", options: ["V", "F"], answer: "F" },
+{ question: "L’assignació de llits té en compte la disponibilitat i la prioritat clínica.", options: ["V", "F"], answer: "V" }
+];
+
+// 👇 Seleccionamos 20 aleatorias (o todas si hay menos)
+let quizData = shuffle(allQuestions).slice(0, 20);
+
+let currentQuestion = 0;
+let score = 0;
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+
+
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if(currentQuestion >= quizData.length) {
+    container.innerHTML = `<div class="question"><strong>¡Quiz terminado!</strong><br>Tu puntaje final es ${score} de ${quizData.length}</div>`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `<strong>${currentQuestion+1}. ${q.question}</strong>`;
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      if(btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        allBtns.forEach(b => {
+          if(b.dataset.correct === "true") b.classList.add("correct");
+        });
+      }
+
+      resultDiv.textContent = `Puntaje: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+showQuestion();
+</script>
+
+</body>
+</html>
