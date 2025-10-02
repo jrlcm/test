@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz de Gestion U1</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 40px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .options button {
+    display: block;
+    margin: 5px 0;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 16px;
+  }
+
+  .options button:hover { background: #ddd; }
+
+  .correct { background-color: #c8e6c9; border-color: #388e3c; color: #2e7d32; }
+  .wrong { background-color: #ffcdd2; border-color: #d32f2f; color: #c62828; }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 10px 0;
+  }
+
+  #nextBtn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  #nextBtn:hover { background: #1976D2; }
+</style>
+</head>
+<body>
+
+<h1>Quiz de Gestio U1</h1>
+
+<div class="quiz-container" id="quiz-container"></div>
+<div class="result" id="result">Puntaje: 0</div>
+<button id="nextBtn" style="display:none;">Siguiente</button>
+
+<script>
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Tus questions aquí
+const allQuestions = [
+{ question: "Dins de les funcions d’un hospital, no només es troba assistencial, sinó que també ha de fer funcions de recerca i docència.", options: ["V", "F"], answer: "V" },
+{ question: "En l’assignació de llit als i a les pacients d’urgències l’ingrés es farà efectiu immediatament, una vegada la planta receptora confirmi que el pacient pot ser traslladat.", options: ["V", "F"], answer: "V" },
+{ question: "Les persones que han estat a la unitat d’urgències i s’han marxat cap a casa derivades a un seguiment del CAP no han generat un ingrés hospitalari.", options: ["V", "F"], answer: "F" },
+{ question: "La disponibilitat de llits per unitats d’hospitalització utilitzant el programa Garesan-IOC la trobem en derivacions. Pregunta 4Resposta a. F b.", options: ["V", "F"], answer: "V" },
+{ question: "Els nivells de priorització d’assignació de llits per part del servei d’admissions són 4, on el P1 és el que d’urgències han d’ingressar abans de les 6 hores.", options: ["V", "F"], answer: "F" },
+{ question: "Si un pacient ingressa per primera vegada en un centre sanitari no cal obrir-li una HC ni atorgar-li un número d’HC.", options: ["V", "F"], answer: "V" },
+{ question: "Una pacient que estava en el servei de CCEE i és ingressada perquè s’ha inestabilitat genera un ingrés no urgent.", options: ["V", "F"], answer: "V" },
+{ question: "Dades farmacològiques, com a composició o principi actiu d’un medicament, es troben en el catàleg de productes farmacèutics.", options: ["V", "F"], answer: "V" },
+{ question: "No es consideren llits UCI les àrees de reanimació postoperatòria, ja que tenen la consideració de llits d’observació.", options: ["V", "F"], answer: "V" },
+{ question: "Una persona ingressada per fer-li un procediment de radioteràpia es considera un ingrés no urgent.", options: ["V", "F"], answer: "V" },
+{ question: "Un pacient, que en el moment de l’ingrés, li assignen un llit que pertany a la seva unitat d’hospitalització passarà a ser un pacient ectòpic.", options: ["V", "F"], answer: "V" },
+{ question: "És desitjable que es coneguin els ingressos quirúrgics amb un mínim d’antelació de 24 hores.", options: ["V", "F"], answer: "V" },
+{ question: "Els trasllats interhospitalaris aguts o d’especialitats de referència entren dins del nivell de prioritat 2.", options: ["V", "F"], answer: "F" },
+{ question: "El tipus de gestió que es fa des del Servei d’admissions està basat en el sistema de priorització centralitzat a temps real.", options: ["V", "F"], answer: "V" },
+{ question: "En els ingressos quirúrgics les reserves de llit no seran nominals i podrà ser ingressat en qualsevol llit que hi hagi disponible.", options: ["V", "F"], answer: "F" },
+{ question: "El CatSalut actualitza les dades de les llistes d’espera setmanalment.", options: ["V", "F"], answer: "F" },
+{ question: "Una persona que passa a la unitat de reanimació, el seu llit a la seva unitat d’hospitalització li quedarà reservat sempre que no superi les 48 hores.", options: ["V", "F"], answer: "F" },
+{ question: "Les persones són un element central i actiu del nostre sistema de salut.", options: ["V", "F"], answer: "F" },
+{ question: "El servei encarregat de la gestió de llits és el servei d’admissions.", options: ["V", "F"], answer: "V" },
+{ question: "La CMA (cirurgia major ambulatòria) es realitza en hospitals lleugers.", options: ["V", "F"], answer: "F" }
+];
+
+// 👇 Seleccionamos 20 aleatorias (o todas si hay menos)
+let quizData = shuffle(allQuestions).slice(0, 20);
+
+let currentQuestion = 0;
+let score = 0;
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+
+
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if(currentQuestion >= quizData.length) {
+    container.innerHTML = `<div class="question"><strong>¡Quiz terminado!</strong><br>Tu puntaje final es ${score} de ${quizData.length}</div>`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `<strong>${currentQuestion+1}. ${q.question}</strong>`;
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      if(btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        allBtns.forEach(b => {
+          if(b.dataset.correct === "true") b.classList.add("correct");
+        });
+      }
+
+      resultDiv.textContent = `Puntaje: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+showQuestion();
+</script>
+
+</body>
+</html>
