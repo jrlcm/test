@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz moto chungas</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 40px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .options button {
+    display: block;
+    margin: 5px 0;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 16px;
+  }
+
+  .options button:hover { background: #ddd; }
+
+  .correct { background-color: #c8e6c9; border-color: #388e3c; color: #2e7d32; }
+  .wrong { background-color: #ffcdd2; border-color: #d32f2f; color: #c62828; }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 10px 0;
+  }
+
+  #nextBtn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  #nextBtn:hover { background: #1976D2; }
+</style>
+</head>
+<body>
+
+<h1>Quiz moto chungas</h1>
+
+<div class="quiz-container" id="quiz-container"></div>
+<div class="result" id="result">Puntaje: 0</div>
+<button id="nextBtn" style="display:none;">Siguiente</button>
+
+<script>
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Tus questions aquí
+const allQuestions = [
+{question: "¿De qué color es el testigo indicador de que la motocicleta se encuentra en punto muerto?", options: ["Amarillo.", "Verde.", "Azul"], answer: "Verde."},
+{question: "Conduciendo una motocicleta, le adelanta un agente con el brazo inclinado hacia abajo y fijo. ¿Qué indica?", options: ["Que debo disminuir la velocidad.", "Que debo detenerme en el lado derecho.", "Que, en el próximo cruce, debo girar a la derecha."], answer: "Que debo detenerme en el lado derecho."},
+{question: "En el caso de una frenada de emergencia...", options: ["no es conveniente desembragar.", "conviene desembragar inmediatamente.", "no se debe utilizar simultáneamente los dos frenos."], answer: "conviene desembragar inmediatamente."},
+{question: "La edad mínima para obtener un permiso que te autorice a conducir un triciclo de motor con potencia máxima de 15 Kw, es de...", options: ["16 años.", "18 años.", "20 años."], answer: "16 años."},
+{question: "El efecto túnel debido a velocidad excesiva es muy peligroso en …", options: ["Las intersecciones.", "Los adelantamientos.", "Las autopistas y autovías."], answer: "Las intersecciones."},
+{question: "Los efectos del alcohol en la conducción empiezan a manifestarse generalmente…", options: ["a la hora de haber tomado la última copa.", "inmediatamente, desapareciendo totalmente sus efectos a la hora de haber bebido la última copa.", "inmediatamente y sus efectos alcanzan el punto máximo una hora después de haber bebido la última copa."], answer: "inmediatamente y sus efectos alcanzan el punto máximo una hora después de haber bebido la última copa."},
+{question: "¿Cuántos catadióptricos llevan las motocicletas con sidecar en su parte trasera?", options: ["Sólo uno.", "Uno o dos.", "Siempre dos."], answer: "Uno o dos."},
+{question: "¿Qué indica esta señal?", options: ["La velocidad máxima permitida.", "La velocidad mínima aconsejada.", "La velocidad mínima obligatoria."], answer: "La velocidad mínima obligatoria."},
+{question: "En este tipo de vías, ¿puede circular con su motocicleta por el carril izquierdo?", options: ["Sí, pero sólo para realizar adelantamientos precisos.", "Sí, si las circunstancias del tráfico lo aconsejan y no entorpece la marcha de otros vehículos.", "No, sólo podrá circular por el derecho y el central."], answer: "Sí, si las circunstancias del tráfico lo aconsejan y no entorpece la marcha de otros vehículos."},
+{question: "¿Puede sobrepasar la masa máxima autorizada indicada en la tarjeta de inspección técnica si transporta carga en su motocicleta?", options: ["Sí.", "No.", "Sí, un 10%."], answer: "No."},
+{question: "¿Qué daños cubre el seguro obligatorio de la motocicleta?", options: ["Los corporales y los materiales.", "Sólo los corporales.", "Sólo los materiales."], answer: "Los corporales y los materiales."},
+{question: "Va a inmovilizar su motocicleta, ¿debe advertir esta circunstancia?", options: ["No.", "No, salvo que exista riesgo de colisión.", "Sí, siempre que sea posible, aunque la inmovilización esté motivada por circunstancias del tráfico."], answer: "Sí, siempre que sea posible, aunque la inmovilización esté motivada por circunstancias del tráfico."},
+{question: "¿Cuál es la velocidad mínima en los carriles de utilización en sentido contrario al habitual, para las motocicletas?", options: ["Ninguna.", "60 kilómetros por hora.", "80 kilómetros por hora."], answer: "60 kilómetros por hora."},
+{question: "El conductor de una motocicleta con más de dos años de antigüedad de su permiso de conducción, ¿qué tasa de alcohol no podrá superar?", options: ["0,15 gramos por litro de sangre o 0,3 miligramos por litro de aire espirado.", "0,5 miligramos por litro de aire espirado o 0,25 gramos por litro de sangre.", "0,5 gramos por litro de sangre o 0,25 miligramos por litro de aire espirado."], answer: "0,5 gramos por litro de sangre o 0,25 miligramos por litro de aire espirado."},
+{question: "En este tipo de vías, ¿puede circular con su motocicleta por el carril izquierdo?", options: ["Sí, pero sólo para realizar adelantamientos precisos.", "Sí, si las circunstancias del tráfico lo aconsejan y no entorpece la marcha de otros vehículos.", "No, sólo podrá circular por el derecho y el central."], answer: "Sí, si las circunstancias del tráfico lo aconsejan y no entorpece la marcha de otros vehículos."},
+{question: "Cuando va un pasajero en la motocicleta…", options: ["se bloquea más fácilmente la rueda trasera.", "disminuye la distancia de frenado.", "se eleva el haz luminoso."], answer: "se eleva el haz luminoso."},
+{question: "Ocurren más accidentes…", options: ["entre semana.", "los días laborables.", "los fines de semana y festivos."], answer: "los fines de semana y festivos."},
+{question: "¿En qué tipo de vías suelen producirse mayor número de accidentes con víctimas mortales?", options: ["En vías interurbanas.", "En autopistas y autovías.", "En vías urbanas."], answer: "En vías interurbanas."},
+{question: "En una vía para automóviles, ¿cuál es la velocidad máxima a la que puede circular con su motocicleta?", options: ["90 km/h.", "100 km/h.", "120 km/h"], answer: "90 km/h."},
+{question: "La señal rectangular que lleva el vehículo de delante indica…", options: ["que mide más de 12 metros.", "que es un vehículo lento.", "que es un vehículo que mide más de 2,10 metros de ancho."], answer: "que mide más de 12 metros."},
+{question: "Su motocicleta debe disponer obligatoriamente de un catadióptrico (dispositivo reflectante). ¿Dónde debe estar situado?", options: ["En la parte delantera de la motocicleta.", "En la parte trasera de la motocicleta.", "En los laterales de la motocicleta, pudiendo ser en este caso de forma triangular."], answer: "En la parte trasera de la motocicleta."},
+{question: "En una autopista, fuera de poblado, ¿qué velocidad máxima puede alcanzar una motocicleta provista con sidecar?", options: ["120 Km/h.", "80 Km/h.", "100 Km/h."], answer: "120 Km/h."},
+{question: "Por autopista, ¿qué separación lateral de seguridad debe dejar al adelantar a un camión?", options: ["Un espacio no inferior a 1,50 metros.", "1 metro, como máximo.", "Una distancia que sea proporcional al tamaño del camión y a la velocidad que circula.."], answer: "Un espacio no inferior a 1,50 metros."},
+{question: "En un paso estrecho, ¿cuál de estas señales concede la prioridad de paso respecto al sentido contrario?", options: ["La señal B.", "La señal A.", ""], answer: "La señal B."},
+{question: "Si conduce su motocicleta por una pendiente descendente pronunciada, ¿qué debe hacer?", options: ["Aprovechar el freno motor utilizando marchas cortas y, usar el freno de servicio cuando sea necesario.", "Aminorar la velocidad utilizando únicamente el freno de la rueda delantera.", "Utilizar siempre el freno trasero para evitar posibles derrapes."], answer: "Aprovechar el freno motor utilizando marchas cortas y, usar el freno de servicio cuando sea necesario."},
+{question: "Si conduce una motocicleta con sidecar, ¿puede entrar en una calle a cuya entrada se encuentra esta señal?", options: ["No.", "Sí.", ""], answer: "No."},
+{question: "Evitando los factores de riesgo, ¿puede reducirse la probabilidad de sufrir un accidente de tráfico?", options: ["No, porque tener un accidente es algo impredecible.", "Sí, especialmente aquellos que dependen del propio conductor.", "Sí, pero sólo aquellos que dependen del vehículo."], answer: "Sí, especialmente aquellos que dependen del propio conductor."},
+{question: "Si un conductor tiene más de dos años de carnet de conducir y no ha cometido ninguna infracción, ¿cuántos puntos tiene?", options: ["8 puntos.", "10 puntos.", "12 puntos"], answer: "12 puntos"}
+
+];
+
+// 👇 Seleccionamos 20 aleatorias (o todas si hay menos)
+let quizData = shuffle(allQuestions).slice(0, 20);
+
+let currentQuestion = 0;
+let score = 0;
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+
+
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if(currentQuestion >= quizData.length) {
+    container.innerHTML = `<div class="question"><strong>¡Quiz terminado!</strong><br>Tu puntaje final es ${score} de ${quizData.length}</div>`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `<strong>${currentQuestion+1}. ${q.question}</strong>`;
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      if(btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        allBtns.forEach(b => {
+          if(b.dataset.correct === "true") b.classList.add("correct");
+        });
+      }
+
+      resultDiv.textContent = `Puntaje: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+showQuestion();
+</script>
+
+</body>
+</html>
