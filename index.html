@@ -10,7 +10,7 @@
       --accent: #007bff;
     }
     *{box-sizing:border-box}
-    body{
+   /* body{
       margin:0;
       font-family:system-ui, Arial, sans-serif;
       background:#f6f7fb;
@@ -25,7 +25,38 @@
       width:100%;
       max-width:var(--max-w);
       text-align:center;
-    }
+    }*/
+    body {
+  margin: 0;
+  font-family: system-ui, Arial, sans-serif;
+  background: url('fondo.png') no-repeat center center;
+  background-size: cover; /* cubre toda la pantalla */
+  color: #fff; /* puedes ajustar según la imagen */
+  display: flex;
+  min-height: 100vh;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 30px 16px;
+  position: relative; /* necesario para overlay */
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4); /* oscurece un poco la imagen */
+  z-index: 0;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--max-w);
+  text-align: center;
+  position: relative; /* para que los botones estén por encima del overlay */
+  z-index: 1;
+}
+
     h1{
       margin:0 0 18px;
       font-size:1.5rem;
