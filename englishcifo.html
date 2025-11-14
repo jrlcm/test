@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz english cifo</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 40px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .options button {
+    display: block;
+    margin: 5px 0;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 16px;
+  }
+
+  .options button:hover { background: #ddd; }
+
+  .correct { background-color: #c8e6c9; border-color: #388e3c; color: #2e7d32; }
+  .wrong { background-color: #ffcdd2; border-color: #d32f2f; color: #c62828; }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 10px 0;
+  }
+
+  #nextBtn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  #nextBtn:hover { background: #1976D2; }
+</style>
+</head>
+<body>
+
+<h1>Quiz english cifo</h1>
+
+<div class="quiz-container" id="quiz-container"></div>
+<div class="result" id="result">Puntaje: 0</div>
+<button id="nextBtn" style="display:none;">Siguiente</button>
+
+<script>
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Tus questions aquí
+const allQuestions = [
+{question: "CEO – The highest-ranking executive in a company, responsible for major decisions, overall strategy, and leading the organization.", options: ["v", "f"], answer: "v"},
+{question: "CFO – The executive responsible for managing the financial actions of the company.", options: ["v", "f"], answer: "v"},
+{question: "COO – The executive in charge of daily operations and organizational processes.", options: ["v", "f"], answer: "v"},
+{question: "HR Department – The department responsible for recruitment, training, and employee relations.", options: ["v", "f"], answer: "v"},
+{question: "Manager – A person responsible for supervising a team and ensuring goals are met.", options: ["v", "f"], answer: "v"},
+{question: "Intern – A trainee gaining practical experience in a company.", options: ["v", "f"], answer: "v"},
+{question: "Boardroom – A room used for meetings with executives and company decision makers.", options: ["v", "f"], answer: "v"},
+{question: "Headquarters – The main office or central location of a company.", options: ["v", "f"], answer: "v"},
+{question: "Branch – A local office or location of a larger company.", options: ["v", "f"], answer: "v"},
+{question: "Department – A specific division within a company responsible for a particular function.", options: ["v", "f"], answer: "v"},
+{question: "Workstation – An employee’s desk area equipped with computer and tools.", options: ["v", "f"], answer: "v"},
+{question: "Shift – A scheduled period of work, often used in factories or customer service.", options: ["v", "f"], answer: "v"},
+{question: "Payroll – The system that tracks employee salaries, bonuses, and payments.", options: ["v", "f"], answer: "v"},
+{question: "Resignation – The act of voluntarily leaving a job or position.", options: ["v", "f"], answer: "v"},
+{question: "Promotion – An advancement to a higher position with more responsibility.", options: ["v", "f"], answer: "v"},
+{question: "Deadline – A specific time or date by which a task must be completed.", options: ["v", "f"], answer: "v"},
+{question: "Meeting – An organized gathering to discuss business topics and decisions.", options: ["v", "f"], answer: "v"},
+{question: "Agenda – A list of topics to be discussed during a meeting.", options: ["v", "f"], answer: "v"},
+{question: "Minutes – A written record of what was discussed and decided in a meeting.", options: ["v", "f"], answer: "v"},
+{question: "Supervisor – A person responsible for guiding and monitoring employee performance.", options: ["v", "f"], answer: "v"},
+{question: "Colleague – A coworker within the same company.", options: ["v", "f"], answer: "v"},
+{question: "Client – A person or company that receives products or services.", options: ["v", "f"], answer: "v"},
+{question: "Supplier – A company that provides goods or services to another company.", options: ["v", "f"], answer: "v"},
+{question: "Invoice – A commercial document requesting payment for goods or services.", options: ["v", "f"], answer: "v"},
+{question: "Director – A senior leader responsible for strategic decisions in a department.", options: ["v", "f"], answer: "v"},
+{question: "Office – A place where employees perform administrative or professional work.", options: ["v", "f"], answer: "v"},
+{question: "Lobby – The entrance or reception area of a building.", options: ["v", "f"], answer: "v"},
+{question: "Warehouse – A building where goods are stored before distribution.", options: ["v", "f"], answer: "v"},
+{question: "Factory – A facility where products are manufactured.", options: ["v", "f"], answer: "v"},
+{question: "Cubicle – A small, partially enclosed workspace inside an office.", options: ["v", "f"], answer: "v"},
+{question: "Reception – The area where visitors are welcomed and registered.", options: ["v", "f"], answer: "v"},
+{question: "Breakroom – A space where employees relax, eat, and take breaks.", options: ["v", "f"], answer: "v"},
+{question: "Printer Room – A dedicated area containing printers and copy machines.", options: ["v", "f"], answer: "v"},
+{question: "Loading Dock – The area where trucks load and unload goods.", options: ["v", "f"], answer: "v"},
+{question: "Workshop – A space equipped for hands-on or technical tasks.", options: ["v", "f"], answer: "v"},
+{question: "Conference Room – A room used for formal meetings and presentations.", options: ["v", "f"], answer: "v"},
+{question: "Open Space – A large area with shared desks and few walls.", options: ["v", "f"], answer: "v"},
+{question: "Hallway – A corridor connecting rooms or areas in a building.", options: ["v", "f"], answer: "v"},
+{question: "Security Desk – A station where guards monitor and control access.", options: ["v", "f"], answer: "v"},
+{question: "Call Center – A department handling customer service by phone.", options: ["v", "f"], answer: "v"},
+{question: "Office Floor – A level inside a building where offices are located.", options: ["v", "f"], answer: "v"},
+{question: "Front Desk – The main reception counter for inquiries and visitors.", options: ["v", "f"], answer: "v"},
+{question: "Storage Room – A small room used to store supplies and materials.", options: ["v", "f"], answer: "v"},
+{question: "Production Line – A sequence of machines or workers that assemble products.", options: ["v", "f"], answer: "v"},
+{question: "Meeting Room – A dedicated space for gatherings or discussions.", options: ["v", "f"], answer: "v"},
+{question: "Cafeteria – A dining area for employees within the workplace.", options: ["v", "f"], answer: "v"},
+{question: "Parking Lot – An outdoor or indoor area for vehicle parking.", options: ["v", "f"], answer: "v"},
+{question: "IT Department – The department responsible for technology systems and support.", options: ["v", "f"], answer: "v"},
+{question: "Legal Department – The team dealing with contracts, compliance, and legal matters.", options: ["v", "f"], answer: "v"},
+{question: "Finance Department – The division managing budgets, payments, and financial planning.", options: ["v", "f"], answer: "v"},
+{question: "Stapler – A tool used to fasten papers together with metal staples.", options: ["v", "f"], answer: "v"},
+{question: "Paperclip – A small metal clip used to hold sheets of paper together.", options: ["v", "f"], answer: "v"},
+{question: "Binder – A folder with rings used to organize documents.", options: ["v", "f"], answer: "v"},
+{question: "Notepad – A small stack of paper sheets used for writing notes.", options: ["v", "f"], answer: "v"},
+{question: "Highlighter – A pen that marks text with transparent, bright color.", options: ["v", "f"], answer: "v"},
+{question: "Envelope – A paper container used to send documents or letters.", options: ["v", "f"], answer: "v"},
+{question: "Printer – A device that produces documents on paper.", options: ["v", "f"], answer: "v"},
+{question: "Scanner – A device that converts physical documents into digital files.", options: ["v", "f"], answer: "v"},
+{question: "Keyboard – A device with keys used to input text into a computer.", options: ["v", "f"], answer: "v"},
+{question: "Mouse – A handheld device used to control the computer cursor.", options: ["v", "f"], answer: "v"},
+{question: "Monitor – A screen that displays computer output.", options: ["v", "f"], answer: "v"},
+{question: "USB Drive – A portable device used to store or transfer data.", options: ["v", "f"], answer: "v"},
+{question: "Whiteboard – A large smooth board used for writing with markers.", options: ["v", "f"], answer: "v"},
+{question: "Marker – A pen used to write on whiteboards or other surfaces.", options: ["v", "f"], answer: "v"},
+{question: "Calculator – A device used to perform mathematical operations.", options: ["v", "f"], answer: "v"},
+{question: "Filing Cabinet – A piece of furniture used to store documents in folders.", options: ["v", "f"], answer: "v"},
+{question: "Desk Lamp – A small adjustable lamp placed on a desk for lighting.", options: ["v", "f"], answer: "v"},
+{question: "Clipboard – A board with a clip used to hold papers for writing.", options: ["v", "f"], answer: "v"},
+{question: "Shredder – A machine used to cut documents into small pieces for disposal.", options: ["v", "f"], answer: "v"},
+{question: "Toner – The powder used by laser printers to create text and images.", options: ["v", "f"], answer: "v"},
+{question: "Headset – Headphones with a microphone used for calls or online meetings.", options: ["v", "f"], answer: "v"},
+{question: "Router – A device that distributes internet connection to multiple devices.", options: ["v", "f"], answer: "v"},
+{question: "Projector – A device that displays images or slides onto a wall or screen.", options: ["v", "f"], answer: "v"},
+{question: "Badge – An ID card used to identify and access work areas.", options: ["v", "f"], answer: "v"},
+{question: "Badge Reader – A device that scans employee ID cards.", options: ["v", "f"], answer: "v"},
+{question: "Delivery – The act of transporting goods from one location to another.", options: ["v", "f"], answer: "v"},
+{question: "Shipment – A batch of goods sent from one place to another.", options: ["v", "f"], answer: "v"},
+{question: "Purchase Order – A document issued to request goods from a supplier.", options: ["v", "f"], answer: "v"},
+{question: "Supplier Invoice – A bill sent by a vendor requesting payment for goods.", options: ["v", "f"], answer: "v"},
+{question: "Stock – The quantity of goods available in storage.", options: ["v", "f"], answer: "v"},
+{question: "Warehouse Clerk – An employee responsible for organizing and handling goods.", options: ["v", "f"], answer: "v"},
+{question: "Tracking Number – A code used to locate and follow a shipment.", options: ["v", "f"], answer: "v"},
+{question: "Return – The process of sending goods back to the seller.", options: ["v", "f"], answer: "v"},
+{question: "Purchase – The act of buying goods or services.", options: ["v", "f"], answer: "v"},
+{question: "Vendor – A company or person who sells goods or services.", options: ["v", "f"], answer: "v"},
+{question: "Freight – Goods transported by truck, ship, or plane.", options: ["v", "f"], answer: "v"},
+{question: "Bill of Lading – A legal document used in shipping to list transported goods.", options: ["v", "f"], answer: "v"},
+{question: "Delivery Note – A document listing items delivered to a customer.", options: ["v", "f"], answer: "v"},
+{question: "Courier – A person or service that delivers documents or packages.", options: ["v", "f"], answer: "v"},
+{question: "Warehouse Management – The process of controlling and organizing stored goods.", options: ["v", "f"], answer: "v"},
+{question: "Inventory Check – The act of counting and verifying stored items.", options: ["v", "f"], answer: "v"},
+{question: "Out of Stock – When an item is unavailable in inventory.", options: ["v", "f"], answer: "v"},
+{question: "Packaging – The materials used to protect and contain goods.", options: ["v", "f"], answer: "v"},
+{question: "Logistics – The planning and management of product transportation and storage.", options: ["v", "f"], answer: "v"},
+{question: "Quality Control – The process of ensuring products meet required standards.", options: ["v", "f"], answer: "v"},
+{question: "Procurement – The process of purchasing goods and services for a company.", options: ["v", "f"], answer: "v"},
+{question: "Lead Time – The time between ordering and receiving goods.", options: ["v", "f"], answer: "v"},
+{question: "Warehouse Slotting – Organizing products in a warehouse for efficient picking.", options: ["v", "f"], answer: "v"},
+{question: "Order Picking – The process of retrieving items to fulfill a customer order.", options: ["v", "f"], answer: "v"},
+{question: "Supply Chain – The entire network involved in producing and delivering goods.", options: ["v", "f"], answer: "v"}
+
+];
+
+// 👇 Seleccionamos 20 aleatorias (o todas si hay menos)
+let quizData = shuffle(allQuestions).slice(0, 20);
+
+let currentQuestion = 0;
+let score = 0;
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+
+
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if(currentQuestion >= quizData.length) {
+    container.innerHTML = `<div class="question"><strong>¡Quiz terminado!</strong><br>Tu puntaje final es ${score} de ${quizData.length}</div>`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `<strong>${currentQuestion+1}. ${q.question}</strong>`;
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      if(btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        allBtns.forEach(b => {
+          if(b.dataset.correct === "true") b.classList.add("correct");
+        });
+      }
+
+      resultDiv.textContent = `Puntaje: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+showQuestion();
+</script>
+
+</body>
+</html>
