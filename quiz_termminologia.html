@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz terminologia</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 40px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .options button {
+    display: block;
+    margin: 5px 0;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 16px;
+  }
+
+  .options button:hover { background: #ddd; }
+
+  .correct { background-color: #c8e6c9; border-color: #388e3c; color: #2e7d32; }
+  .wrong { background-color: #ffcdd2; border-color: #d32f2f; color: #c62828; }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 10px 0;
+  }
+
+  #nextBtn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  #nextBtn:hover { background: #1976D2; }
+</style>
+</head>
+<body>
+
+<h1>Quiz terminologia</h1>
+
+<div class="quiz-container" id="quiz-container"></div>
+<div class="result" id="result">Puntaje: 0</div>
+<button id="nextBtn" style="display:none;">Siguiente</button>
+
+<script>
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Tus questions aquí
+const allQuestions = [
+{question: "El pneumotòrax és la presència d’aire a la cavitat pleural.", options: ["v", "f"], answer: "v"},
+{question: "El quilotòrax és la presència de sang i aire dins de la pleura.", options: ["v", "f"], answer: "f"},
+{question: "El salbutamol és un broncodilatador usat com a inhalador de rescat.", options: ["v", "f"], answer: "v"},
+{question: "El vessament pleural és l’acumulació de líquid a la cavitat pleural.", options: ["v", "f"], answer: "v"},
+{question: "L’asma es caracteritza per inflamació i hiperreactivitat dels bronquis.", options: ["v", "f"], answer: "v"},
+{question: "L’emfisema pulmonar es deu a la destrucció dels alvèols i la pèrdua d’elasticitat pulmonar.", options: ["v", "f"], answer: "v"},
+{question: "L’empiema pleural és la presència de pus a la cavitat pleural.", options: ["v", "f"], answer: "v"},
+{question: "L’intercanvi gasós entre alvèols i capil·lars és un procés actiu que requereix energia", options: ["v", "f"], answer: "f"},
+{question: "L’oxigenoteràpia s’utilitza en pacients amb MPOC greu i hipòxia.", options: ["v", "f"], answer: "v"},
+{question: "La bronquitis és sempre causada per bacteris.", options: ["v", "f"], answer: "f"},
+{question: "La cianosi es deu a la presència d’hemoglobina oxigenada en excés.", options: ["v", "f"], answer: "f"},
+{question: "La grip és causada per l’influenzavirus A o B.", options: ["v", "f"], answer: "v"},
+{question: "La inspiració es produeix quan el diafragma es relaxa i puja.", options: ["v", "f"], answer: "f"},
+{question: "La MPOC es caracteritza per una obstrucció reversible del flux aeri.", options: ["v", "f"], answer: "f"},
+{question: "La pulsioximetria és una tècnica que mesura la saturació d’oxigen a la sang.", options: ["v", "f"], answer: "v"},
+{question: "La radiografia de tòrax és útil per diagnosticar pneumònia.", options: ["v", "f"], answer: "v"},
+{question: "La tos és un mecanisme reflex que ajuda a expulsar secrecions o cossos estranys.", options: ["v", "f"], answer: "v"},
+{question: "Les malalties respiratòries es poden dividir en vies altes i baixes, amb diferents etiologies.", options: ["v", "f"], answer: "v"},
+{question: "Les proves de funció pulmonar són essencials per diagnosticar la MPOC.", options: ["v", "f"], answer: "v"},
+{question: "Una crisi asmàtica sol produir dispnea, sibilàncies i tos.", options: ["v", "f"], answer: "v"},
+{question: "La terminologia mèdica forma part dels llenguatges d’especialitat.", options: ["v", "f"], answer: "v"},
+{question: "Els prefixos alteren el significat d’un terme mèdic i es col·loquen darrere de l’arrel.", options: ["v", "f"], answer: "f"},
+{question: "Els sufixos poden ser nominals o verbals segons la seva funció dins de la paraula.", options: ["v", "f"], answer: "v"},
+{question: "Inter i intra són parònims, perquè s’assemblen però signifiquen coses diferents.", options: ["v", "f"], answer: "v"},
+{question: "Els homònims tenen la mateixa grafia però significats diferents.", options: ["v", "f"], answer: "v"},
+{question: "L’arrel és l’element que aporta la idea central del terme clínic.", options: ["v", "f"], answer: "v"},
+{question: "La derivació és un procés de formació de paraules que inclou l’ús de prefixos i sufixos.", options: ["v", "f"], answer: "v"},
+{question: "El prefix peri- i el prefix circum- són sinònims.", options: ["v", "f"], answer: "v"},
+{question: "La insuficiència cardíaca és una síndrome que afecta la capacitat del ventricle per ejectar o omplir-se de sang.", options: ["v", "f"], answer: "v"},
+{question: "En la insuficiència cardíaca sistòlica la fracció d’ejecció es manté per sobre del 45%", options: ["v", "f"], answer: "f"},
+{question: "L’ecocardiograma Doppler és una prova clau per confirmar el diagnòstic d’insuficiència cardíaca.", options: ["v", "f"], answer: "v"},
+{question: "El sufix “-itis” indica inflamació.", options: ["v", "f"], answer: "v"},
+{question: "Els òrgans són estructures formades per un o més teixits que estan especialitzats a fer una determinada funció en el cos.", options: ["v", "f"], answer: "v"},
+{question: "Els parònims són termes amb significat oposat.", options: ["v", "f"], answer: "f"},
+{question: "Els termes clínics s’originen exclusivament del llatí.", options: ["v", "f"], answer: "f"},
+{question: "L’anatomia estudia l’estructura dels éssers vius.", options: ["v", "f"], answer: "v"},
+{question: "L’anèmia és un trastorn relacionat amb una disminució d’hematies o hemoglobina.", options: ["v", "f"], answer: "v"},
+{question: "La circulació major transporta la sang oxigenada des del ventricle dret cap a tots els òrgans i teixits del cor.", options: ["v", "f"], answer: "f"},
+{question: "La circulació menor porta sang del cor als pulmons i viceversa.", options: ["v", "f"], answer: "v"},
+{question: "Les arrels mèdiques sempre indiquen un òrgan o part del cos.", options: ["v", "f"], answer: "f"},
+{question: "Les tècniques diagnòstiques cardiovasculars inclouen l’ECG i l’ecocardiografia.", options: ["v", "f"], answer: "v"},
+{question: "El terme -logia (otorrinolaringologia) és un compost coordinat que vol dir 'dolor'.", options: ["v", "f"], answer: "f"},
+{question: "Mastopatia és un terme compost homogeni que prové del grec.", options: ["v", "f"], answer: "v"},
+{question: "Diarrea és un compost heterogeni.", options: ["v", "f"], answer: "f"},
+{question: "Ambidextre és un compost heterogeni.", options: ["v", "f"], answer: "f"},
+{question: "La derivació és un mecanisme de construcció de mots que elimina afixos a l’arrel.", options: ["v", "f"], answer: "f"},
+{question: "La composició és un procediment que consisteix en combinar afixos.", options: ["v", "f"], answer: "f"},
+{question: "L’afix és l’element que ens informa del significat de la paraula.", options: ["v", "f"], answer: "f"},
+{question: "La derivació, la composició i l’abreviació són els processos més utilitzats de formació de nous mots (neologisme).", options: ["v", "f"], answer: "v"},
+{question: "Les paraules sempre tenen només una arrel.", options: ["v", "f"], answer: "f"},
+{question: "Totes les paraules tenen una arrel que és la seva base.", options: ["v", "f"], answer: "v"},
+{question: "En la paraula amigdalitis la base és -litis.", options: ["v", "f"], answer: "f"},
+{question: "Els teixits, òrgans i parts del cos humà són sempre prefixos.", options: ["v", "f"], answer: "f"},
+{question: "Colostomia és la formació d’una obertura permanent al còlon.", options: ["v", "f"], answer: "v"},
+{question: "Colangièctasi és la dilatació de la melsa.", options: ["v", "f"], answer: "f"},
+{question: "Colecistitis és inflamació a l'estómac.", options: ["v", "f"], answer: "f"},
+{question: "Celiàlgia és dolor a les celles.", options: ["v", "f"], answer: "f"},
+{question: "La urèmia és l’estat d’intoxicació provocat per la retenció en sang d’elements de rebuig que no s’han excretat.", options: ["v", "f"], answer: "v"},
+{question: "Pielectàsia és la dilatació de la bufeta.", options: ["v", "f"], answer: "f"},
+{question: "La ureterectàsia és la compressió de l’urèter.", options: ["v", "f"], answer: "f"},
+{question: "Pieloplàstia és la cirurgia de la pell.", options: ["v", "f"], answer: "f"},
+{question: "-algia=Dolor", options: ["v", "f"], answer: "v"},
+{question: "-logia = Estudi o especialitat mèdica", options: ["v", "f"], answer: "v"},
+{question: "-lisi=Ruptura o dissolució", options: ["v", "f"], answer: "v"},
+{question: "-pnea=Respiració", options: ["v", "f"], answer: "v"},
+{question: "-oma=Tumor", options: ["v", "f"], answer: "v"},
+{question: "Post- = després", options: ["v", "f"], answer: "v"},
+{question: "Para- = al costat de", options: ["v", "f"], answer: "v"},
+{question: "Ecto- = a fora", options: ["v", "f"], answer: "v"},
+{question: "Latero- = costat", options: ["v", "f"], answer: "v"},
+{question: "Paranasal significa que està a prop del nas", options: ["v", "f"], answer: "v"},
+{question: "epi- és prefix, no sufix", options: ["v", "f"], answer: "v"},
+{question: "Els prefixos s’afegeixen davant de l’arrel i no modifiquen l’arrel", options: ["v", "f"], answer: "v"},
+{question: "Icterícia assenyala que ha adquirit un color groc.", options: ["v", "f"], answer: "v"},
+{question: "Cromatòpsia significa veure els objectes de color blanc.", options: ["v", "f"], answer: "f"},
+{question: "El prefix hiper- ens indica un valor negatiu.", options: ["v", "f"], answer: "f"},
+{question: "El prefix a- en alguns casos manifesta alteració.", options: ["v", "f"], answer: "v"},
+{question: "La melanina indica coloració negra.", options: ["v", "f"], answer: "v"},
+{question: "Eosin- = rosat/vermellós", options: ["v", "f"], answer: "v"},
+{question: "Leuco- = blanc", options: ["v", "f"], answer: "v"},
+{question: "An- = sense, i -estèsia = sensibilitat → anestèsia = absència de sensibilitat.", options: ["v", "f"], answer: "v"},
+{question: "Anti- = contra → antiemètic = medicament contra el vòmit,", options: ["v", "f"], answer: "v"},
+{question: "In- també és negació → intolerant = que no tolera", options: ["v", "f"], answer: "v"},
+{question: "Des- indica negació → desinfecció = absència de gèrmens", options: ["v", "f"], answer: "v"},
+{question: "Trans- vol dir “a través de” → transabdominal = a través de l’abdomen.", options: ["v", "f"], answer: "v"},
+{question: "Ad- vol dir “cap a, aproximació”", options: ["v", "f"], answer: "v"},
+{question: "Per- / cutani significa “a través de la pell”", options: ["v", "f"], answer: "v"},
+{question: "Peri- vol dir “al voltant de”, així periosti = al voltant de l’os (periosti = membrana que recobreix l’os)", options: ["v", "f"], answer: "v"},
+{question: "Epi- significa “per sobre de” i epigastri és la regió situada per sobre de l’estómac", options: ["v", "f"], answer: "v"},
+{question: "Dextro- significa “a la dreta de”, per tant dextrocàrdia és cor situat a la dreta", options: ["v", "f"], answer: "v"},
+{question: "Exo- significa “fora de”, per tant exogènic vol dir que s’origina a l’exterio", options: ["v", "f"], answer: "v"},
+{question: "Hemi- significa “meitat” i -plegia vol dir “paràlisi”, així que hemiplegia és la paràlisi d’una meitat del cos", options: ["v", "f"], answer: "v"},
+{question: "Andro-Home / Hombre Andrologia (estudio del hombre)", options: ["v", "f"], answer: "v"},
+{question: "Angio-Vasos / Vasos sanguíneos Angiostenosi (estrechamiento de un vaso)", options: ["v", "f"], answer: "v"},
+{question: "Derm- Pell / Piel Dermatitis (inflamación de la piel)", options: ["v", "f"], answer: "v"},
+{question: "Ex-Fora / Fuera Exoderma (hacia fuera)", options: ["v", "f"], answer: "v"},
+{question: "Osteo-Os / Hueso Osteoma (tumor óseo)", options: ["v", "f"], answer: "v"},
+{question: "Endo- Dins / Dentro Endometri (tejido dentro del útero)", options: ["v", "f"], answer: "v"},
+{question: "Hemi- Meitat / Mitad Hemiplegia (parálisis de la mitad del cuerpo)", options: ["v", "f"], answer: "v"},
+{question: "Infra- Sota / Debajo Infraclavicular (debajo de la clavícula)", options: ["v", "f"], answer: "v"},
+{question: "Peri- Al voltant de / Alrededor de Periosti (alrededor del hueso)", options: ["v", "f"], answer: "v"},
+{question: "Ultra- Per damunt / Más allá de Ultraradiació (radiación más allá del límite normal)", options: ["v", "f"], answer: "v"}
+
+];
+
+// 👇 Seleccionamos 20 aleatorias (o todas si hay menos)
+let quizData = shuffle(allQuestions).slice(0, 20);
+
+let currentQuestion = 0;
+let score = 0;
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+
+
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if(currentQuestion >= quizData.length) {
+    container.innerHTML = `<div class="question"><strong>¡Quiz terminado!</strong><br>Tu puntaje final es ${score} de ${quizData.length}</div>`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `<strong>${currentQuestion+1}. ${q.question}</strong>`;
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      if(btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        allBtns.forEach(b => {
+          if(b.dataset.correct === "true") b.classList.add("correct");
+        });
+      }
+
+      resultDiv.textContent = `Puntaje: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+showQuestion();
+</script>
+
+</body>
+</html>
