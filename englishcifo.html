@@ -78,7 +78,7 @@
 <h1>Quiz english cifo</h1>
 
 <div class="quiz-container" id="quiz-container"></div>
-<div class="result" id="result">Puntaje: 0</div>
+<div class="result" id="result">Quiz score: 0</div>
 <button id="nextBtn" style="display:none;">Siguiente</button>
 
 <script>
@@ -310,7 +310,7 @@ function showQuestion() {
   nextBtn.style.display = "none";
 
   if(currentQuestion >= quizData.length) {
-    container.innerHTML = `<div class="question"><strong>¡Quiz terminado!</strong><br>Tu puntaje final es ${score} de ${quizData.length}</div>`;
+    container.innerHTML = `<div class="question"><strong>¡Quiz terminado!</strong><br>Your Quiz score final es ${score} de ${quizData.length}</div>`;
     return;
   }
 
