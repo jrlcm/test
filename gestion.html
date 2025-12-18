@@ -35,6 +35,14 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
 
+  /* Aumentamos tamaño solo del texto de la pregunta */
+  .question p {
+    font-size: 22px; /* tamaño grande para mayor legibilidad */
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0;
+  }
+
   .options button {
     display: block;
     margin: 5px 0;
@@ -45,7 +53,7 @@
     cursor: pointer;
     background: #eee;
     transition: background 0.3s;
-    font-size: 16px;
+    font-size: 16px; /* tamaño de respuesta estándar */
   }
 
   .options button:hover { background: #ddd; }
@@ -90,7 +98,7 @@ function shuffle(array) {
   return array;
 }
 
-// Tus questions aquí
+// Tus preguntas aquí
 const allQuestions = [
 
 
