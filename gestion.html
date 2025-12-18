@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz gestion</title>
+<title>Quiz Gestión</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -25,7 +25,7 @@
     width: 90%;
     max-width: 600px;
     margin-bottom: 60px;
-    padding-top: 30px; /* espacio desde arriba */
+    padding-top: 30px;
   }
 
   .question {
@@ -57,7 +57,7 @@
     cursor: pointer;
     background: #eee;
     transition: background 0.3s;
-    font-size: 18px;       /* opciones más grandes */
+    font-size: 18px;
   }
 
   .options button:hover { background: #ddd; }
@@ -87,13 +87,14 @@
 </head>
 <body>
 
-<h1>Quiz Gestion</h1>
+<h1>Quiz Gestión</h1>
 
 <div class="quiz-container" id="quiz-container"></div>
 <div class="result" id="result">Puntaje: 0</div>
 <button id="nextBtn" style="display:none;">Siguiente</button>
 
 <script>
+// Función para mezclar array
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -224,29 +225,34 @@ const allQuestions = [
   { "id": 116, "question": "Una alta mal gestionada pot generar errors assistencials.", "options": ["v","f"], "answer": "v" }
 ];
 
-// 👇 Seleccionamos 30 aleatorias (o todas si hay menos)
-let quizData = shuffle(allQuestions).slice(0, 30);
+// Seleccionamos 30 preguntas aleatorias
+let quizData = shuffle(allQuestions).slice(0,30);
 
 let currentQuestion = 0;
 let score = 0;
+
 const container = document.getElementById("quiz-container");
 const resultDiv = document.getElementById("result");
 const nextBtn = document.getElementById("nextBtn");
 
-
+// Función para mostrar la pregunta
 function showQuestion() {
   container.innerHTML = "";
   nextBtn.style.display = "none";
 
   if(currentQuestion >= quizData.length) {
-    container.innerHTML = `<div class="question"><strong>¡Quiz terminado!</strong><br>Tu puntaje final es ${score} de ${quizData.length}</div>`;
+    container.innerHTML = `<div class="question"><p>¡Quiz terminado!</p><p>Tu puntaje final es ${score} de ${quizData.length}</p></div>`;
     return;
   }
 
   const q = quizData[currentQuestion];
+
   const div = document.createElement("div");
   div.className = "question";
-  div.innerHTML = `<strong>${currentQuestion+1}. ${q.question}</strong>`;
+
+  const p = document.createElement("p");
+  p.textContent = `${currentQuestion + 1}. ${q.question}`;
+  div.appendChild(p);
 
   const optionsDiv = document.createElement("div");
   optionsDiv.className = "options";
@@ -289,10 +295,12 @@ nextBtn.onclick = () => {
   showQuestion();
 };
 
+// Inicializamos el quiz
 showQuestion();
 </script>
 
 </body>
 </html>
+
 
 
