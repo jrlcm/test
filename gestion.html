@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz terminologia</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 40px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .options button {
+    display: block;
+    margin: 5px 0;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 16px;
+  }
+
+  .options button:hover { background: #ddd; }
+
+  .correct { background-color: #c8e6c9; border-color: #388e3c; color: #2e7d32; }
+  .wrong { background-color: #ffcdd2; border-color: #d32f2f; color: #c62828; }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 10px 0;
+  }
+
+  #nextBtn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  #nextBtn:hover { background: #1976D2; }
+</style>
+</head>
+<body>
+
+<h1>Quiz terminologia</h1>
+
+<div class="quiz-container" id="quiz-container"></div>
+<div class="result" id="result">Puntaje: 0</div>
+<button id="nextBtn" style="display:none;">Siguiente</button>
+
+<script>
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Tus questions aquí
+const allQuestions = [
+
+
+  { "id": 1, "question": "Els llits que constitueixen la dotació fixa d’un hospital s’anomenen llits instal·lats.", "options": ["v","f"], "answer": "v" },
+  { "id": 2, "question": "Els llits d’hospital de dia i de nit no es consideren llits d’hospitalització.", "options": ["v","f"], "answer": "v" },
+  { "id": 3, "question": "Es poden assignar llits d’hospitalització a un pacient ectòpic encara que la unitat tingui menys llits que ingressos habituals.", "options": ["v","f"], "answer": "f" },
+  { "id": 4, "question": "En els ingressos quirúrgics, la reserva de llits ha de ser nominal.", "options": ["v","f"], "answer": "v" },
+  { "id": 5, "question": "El servei encarregat de fer la gestió de llits és el servei d’Admissions.", "options": ["v","f"], "answer": "v" },
+  { "id": 6, "question": "El tècnic en documentació i administració sanitària pot assignar llits d’hospitalització a pacients d’urgències.", "options": ["v","f"], "answer": "v" },
+  { "id": 7, "question": "L’ingrés d’un pacient d’urgències al Garesan-IOC es fa des de Derivacions: nou ingrés a urgències.", "options": ["v","f"], "answer": "v" },
+  { "id": 8, "question": "Els programes de gestió hospitalària permeten una gestió integral del centre.", "options": ["v","f"], "answer": "v" },
+  { "id": 9, "question": "La fitxa del pacient permet identificar si és un pacient ectòpic.", "options": ["v","f"], "answer": "v" },
+  { "id": 10, "question": "Els llits disponibles es poden consultar al plànol d’ocupació.", "options": ["v","f"], "answer": "v" },
+  { "id": 11, "question": "El Servei d’Admissions i Documentació Clínica gestiona les derivacions entre centres.", "options": ["v","f"], "answer": "v" },
+  { "id": 12, "question": "El trasllat d’un pacient a un altre servei per rebre millor atenció s’anomena derivació.", "options": ["v","f"], "answer": "v" },
+  { "id": 13, "question": "Les interconsultes poden ser diagnòstiques, de maneig compartit o canvi de professional.", "options": ["v","f"], "answer": "v" },
+  { "id": 14, "question": "Una derivació preferent s’ha d’atendre en un màxim de 7 dies.", "options": ["v","f"], "answer": "v" },
+  { "id": 15, "question": "La derivació per manca de llits a un altre centre és un trasllat interhospitalari.", "options": ["v","f"], "answer": "v" },
+  { "id": 16, "question": "El CMBD recull dades clíniques i administratives dels pacients hospitalitzats.", "options": ["v","f"], "answer": "v" },
+  { "id": 17, "question": "El CMBD és una eina per a la planificació i avaluació sanitària.", "options": ["v","f"], "answer": "v" },
+  { "id": 18, "question": "Les dades del CMBD s’obtenen de la història clínica.", "options": ["v","f"], "answer": "v" },
+  { "id": 19, "question": "La normativa d’assignació de llits la defineix el centre sanitari.", "options": ["v","f"], "answer": "v" },
+  { "id": 20, "question": "Les tasques del SADC estan recollides en procediments interns.", "options": ["v","f"], "answer": "v" },
+  { "id": 21, "question": "Per ingressar a l’hospital cal presentar el DNI i la TSI.", "options": ["v","f"], "answer": "v" },
+  { "id": 22, "question": "Un llit és disponible quan la supervisió de planta ho comunica.", "options": ["v","f"], "answer": "v" },
+  { "id": 23, "question": "L’assignació de llits depèn de l’índex d’ocupació i l’estada mitjana.", "options": ["v","f"], "answer": "v" },
+  { "id": 24, "question": "Quan no hi ha llits, tenen prioritat els trasllats de crítics a convencional.", "options": ["v","f"], "answer": "v" },
+  { "id": 25, "question": "Un ingrés ectòpic és un ingrés en una unitat no corresponent.", "options": ["v","f"], "answer": "v" },
+  { "id": 26, "question": "El percentatge d’homes hospitalitzats al SISCAT és del 48,2%.", "options": ["v","f"], "answer": "v" },
+  { "id": 27, "question": "El CIP identifica les dades del Registre central de persones assegurades.", "options": ["v","f"], "answer": "v" },
+  { "id": 28, "question": "Les hospitalitzacions quirúrgiques del SISCAT van augmentar entre 2016 i 2018.", "options": ["v","f"], "answer": "v" },
+  { "id": 29, "question": "Les dades de morbiditat es poden consultar a l’Observatori del Sistema de Salut.", "options": ["v","f"], "answer": "v" },
+  { "id": 30, "question": "La base de dades de morbiditat permet una organització més eficient.", "options": ["v","f"], "answer": "v" },
+  { "id": 31, "question": "El CatSalut actualitza les llistes d’espera mensualment.", "options": ["v","f"], "answer": "v" },
+  { "id": 32, "question": "El termini garantit per cirurgia cardíaca valvular major és de 90 dies.", "options": ["v","f"], "answer": "v" },
+  { "id": 33, "question": "El termini de referència per proves preferents és de 30 dies.", "options": ["v","f"], "answer": "v" },
+  { "id": 34, "question": "L’ús dels serveis d’urgències augmenta per factors sociodemogràfics.", "options": ["v","f"], "answer": "v" },
+  { "id": 35, "question": "El Pla de salut de Catalunya és el marc de referència en salut pública.", "options": ["v","f"], "answer": "v" },
+  { "id": 36, "question": "La recepta electrònica recull prescripcions de tots els àmbits assistencials.", "options": ["v","f"], "answer": "v" },
+  { "id": 37, "question": "La recepta electrònica no evita la compra abusiva de medicaments.", "options": ["v","f"], "answer": "v" },
+  { "id": 38, "question": "Per a una prestació ortoprotètica cal el PAO i la TSI.", "options": ["v","f"], "answer": "v" },
+  { "id": 39, "question": "L’ingrés urgent el gestiona el SADC.", "options": ["v","f"], "answer": "v" },
+  { "id": 40, "question": "Un estudi de la son no es considera ingrés hospitalari.", "options": ["v","f"], "answer": "v" },
+  { "id": 41, "question": "Evitar estades innecessàries és un objectiu del SADC.", "options": ["v","f"], "answer": "v" },
+  { "id": 42, "question": "La UCI és una unitat per a pacients amb risc vital.", "options": ["v","f"], "answer": "v" },
+  { "id": 43, "question": "La REA acull pacients en vigilància postquirúrgica immediata.", "options": ["v","f"], "answer": "v" },
+  { "id": 44, "question": "Els llits d’UCI no són llits d’hospitalització convencional.", "options": ["v","f"], "answer": "v" },
+  { "id": 45, "question": "L’ingrés d’un pacient crític té prioritat absoluta.", "options": ["v","f"], "answer": "v" },
+  { "id": 46, "question": "El trasllat de la UCI es fa quan el pacient està estable.", "options": ["v","f"], "answer": "v" },
+  { "id": 47, "question": "Els pacients ectòpics han de tenir una ubicació temporal.", "options": ["v","f"], "answer": "v" },
+  { "id": 48, "question": "El SADC fa el seguiment dels pacients ectòpics.", "options": ["v","f"], "answer": "v" },
+  { "id": 49, "question": "Un trasllat dins del mateix centre és un trasllat intern.", "options": ["v","f"], "answer": "v" },
+  { "id": 50, "question": "Un trasllat a un altre centre és interhospitalari.", "options": ["v","f"], "answer": "v" },
+  { "id": 51, "question": "El SEM intervé principalment en trasllats urgents.", "options": ["v","f"], "answer": "v" },
+  { "id": 52, "question": "L’alta hospitalària finalitza el procés assistencial.", "options": ["v","f"], "answer": "v" },
+  { "id": 53, "question": "L’alta administrativa es gestiona des d’Admissions.", "options": ["v","f"], "answer": "v" },
+  { "id": 54, "question": "L’alta allibera un llit per a un nou ingrés.", "options": ["v","f"], "answer": "v" },
+  { "id": 55, "question": "Els nounats es registren vinculats a la mare.", "options": ["v","f"], "answer": "v" },
+  { "id": 56, "question": "El número d’història clínica del nounat és provisional.", "options": ["v","f"], "answer": "v" },
+  { "id": 57, "question": "La història clínica recull tota la informació assistencial.", "options": ["v","f"], "answer": "v" },
+  { "id": 58, "question": "El pacient té dret a accedir a la seva història clínica.", "options": ["v","f"], "answer": "v" },
+  { "id": 59, "question": "La custòdia de la història clínica correspon al centre.", "options": ["v","f"], "answer": "v" },
+  { "id": 60, "question": "Les dades sanitàries són dades especialment protegides.", "options": ["v","f"], "answer": "v" },
+  { "id": 61, "question": "La gestió de pacients influeix en la qualitat assistencial.", "options": ["v","f"], "answer": "v" },
+  { "id": 62, "question": "L’estada mitjana és un indicador de gestió hospitalària.", "options": ["v","f"], "answer": "v" },
+  { "id": 63, "question": "La coordinació entre serveis millora la continuïtat assistencial.", "options": ["v","f"], "answer": "v" },
+  { "id": 64, "question": "Tot ingrés hospitalari ha de quedar registrat.", "options": ["v","f"], "answer": "v" },
+  { "id": 65, "question": "Els ingressos poden ser urgents o programats.", "options": ["v","f"], "answer": "v" },
+  { "id": 66, "question": "Una alta mal gestionada pot generar errors administratius.", "options": ["v","f"], "answer": "v" },
+  { "id": 67, "question": "La seguretat de la informació és responsabilitat compartida.", "options": ["v","f"], "answer": "v" },
+  { "id": 68, "question": "Els errors de registre afecten la qualitat assistencial.", "options": ["v","f"], "answer": "v" },
+  { "id": 69, "question": "Els sistemes d’informació permeten analitzar dades sanitàries.", "options": ["v","f"], "answer": "v" },
+  { "id": 70, "question": "El tancament correcte de l’episodi és necessari pel CMBD.", "options": ["v","f"], "answer": "v" },
+  { "id": 71, "question": "Els drets del pacient inclouen el dret a la informació.", "options": ["v","f"], "answer": "v" },
+  { "id": 72, "question": "La confidencialitat és obligatòria per a tot el personal.", "options": ["v","f"], "answer": "v" },
+  { "id": 73, "question": "Les reclamacions dels pacients s’han de registrar formalment.", "options": ["v","f"], "answer": "v" },
+  { "id": 74, "question": "La planificació de llits redueix ingressos ectòpics.", "options": ["v","f"], "answer": "v" },
+  { "id": 75, "question": "Els indicadors permeten avaluar el sistema sanitari.", "options": ["v","f"], "answer": "v" },
+  { "id": 76, "question": "La documentació clínica ha d’acompanyar el pacient en trasllats.", "options": ["v","f"], "answer": "v" },
+  { "id": 77, "question": "Els trasllats interhospitalaris poden ser urgents o programats.", "options": ["v","f"], "answer": "v" },
+  { "id": 78, "question": "La informació al pacient millora la qualitat percebuda.", "options": ["v","f"], "answer": "v" },
+  { "id": 79, "question": "L’atenció al pacient és part de la gestió assistencial.", "options": ["v","f"], "answer": "v" },
+  { "id": 80, "question": "L’oferta de llits depèn de la pressió assistencial.", "options": ["v","f"], "answer": "v" },
+  { "id": 81, "question": "El registre del nounat es fa al servei d’Admissions.", "options": ["v","f"], "answer": "v" },
+  { "id": 82, "question": "L’ingrés del nounat és un episodi independent.", "options": ["v","f"], "answer": "v" },
+  { "id": 83, "question": "La planificació sanitària es basa en dades objectives.", "options": ["v","f"], "answer": "v" },
+  { "id": 84, "question": "Els sistemes informàtics requereixen dades veraces.", "options": ["v","f"], "answer": "v" },
+  { "id": 85, "question": "El SADC coordina ingressos, altes i trasllats.", "options": ["v","f"], "answer": "v" },
+  { "id": 86, "question": "Els pacients crítics tenen prioritat d’ingrés.", "options": ["v","f"], "answer": "v" },
+  { "id": 87, "question": "La mobilitat interna permet optimitzar l’ocupació.", "options": ["v","f"], "answer": "v" },
+  { "id": 88, "question": "El control d’estades evita col·lapses hospitalaris.", "options": ["v","f"], "answer": "v" },
+  { "id": 89, "question": "El seguiment d’altes facilita la gestió de llits.", "options": ["v","f"], "answer": "v" },
+  { "id": 90, "question": "Les unitats funcionals organitzen l’activitat assistencial.", "options": ["v","f"], "answer": "v" },
+  { "id": 91, "question": "La pressió assistencial pot generar pacients ectòpics.", "options": ["v","f"], "answer": "v" },
+  { "id": 92, "question": "La gestió centralitzada millora l’eficiència.", "options": ["v","f"], "answer": "v" },
+  { "id": 93, "question": "El registre correcte evita errors clínics.", "options": ["v","f"], "answer": "v" },
+  { "id": 94, "question": "Els ingressos programats es planifiquen prèviament.", "options": ["v","f"], "answer": "v" },
+  { "id": 95, "question": "L’assignació de llits ha de ser equitativa.", "options": ["v","f"], "answer": "v" },
+  { "id": 96, "question": "La informació clínica ha de ser completa.", "options": ["v","f"], "answer": "v" },
+  { "id": 97, "question": "Els processos assistencials han d’estar protocol·litzats.", "options": ["v","f"], "answer": "v" },
+  { "id": 98, "question": "El respecte al pacient és un principi bàsic.", "options": ["v","f"], "answer": "v" },
+  { "id": 99, "question": "La confidencialitat protegeix la intimitat del pacient.", "options": ["v","f"], "answer": "v" },
+  { "id": 100, "question": "La qualitat assistencial és mesurable.", "options": ["v","f"], "answer": "v" },
+  { "id": 101, "question": "Els indicadors permeten detectar millores.", "options": ["v","f"], "answer": "v" },
+  { "id": 102, "question": "La gestió hospitalària requereix coordinació.", "options": ["v","f"], "answer": "v" },
+  { "id": 103, "question": "La planificació evita saturacions.", "options": ["v","f"], "answer": "v" },
+  { "id": 104, "question": "L’organització sanitària ha de ser eficient.", "options": ["v","f"], "answer": "v" },
+  { "id": 105, "question": "Els recursos sanitaris són limitats.", "options": ["v","f"], "answer": "v" },
+  { "id": 106, "question": "La gestió de pacients optimitza recursos.", "options": ["v","f"], "answer": "v" },
+  { "id": 107, "question": "L’avaluació contínua millora el sistema.", "options": ["v","f"], "answer": "v" },
+  { "id": 108, "question": "La seguretat del pacient és prioritària.", "options": ["v","f"], "answer": "v" },
+  { "id": 109, "question": "Els processos administratius donen suport a l’assistència.", "options": ["v","f"], "answer": "v" },
+  { "id": 110, "question": "La informació clínica ha de ser accessible.", "options": ["v","f"], "answer": "v" },
+  { "id": 111, "question": "La gestió sanitària es basa en dades.", "options": ["v","f"], "answer": "v" },
+  { "id": 112, "question": "La coordinació entre nivells millora l’atenció.", "options": ["v","f"], "answer": "v" },
+  { "id": 113, "question": "Els circuits assistencials han de ser clars.", "options": ["v","f"], "answer": "v" },
+  { "id": 114, "question": "La formació del personal és clau.", "options": ["v","f"], "answer": "v" },
+  { "id": 115, "question": "La gestió eficient redueix errors.", "options": ["v","f"], "answer": "v" },
+  { "id": 116, "question": "Una alta mal gestionada pot generar errors assistencials.", "options": ["v","f"], "answer": "v" }
+];
+
+// 👇 Seleccionamos 30 aleatorias (o todas si hay menos)
+let quizData = shuffle(allQuestions).slice(0, 30);
+
+let currentQuestion = 0;
+let score = 0;
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+
+
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if(currentQuestion >= quizData.length) {
+    container.innerHTML = `<div class="question"><strong>¡Quiz terminado!</strong><br>Tu puntaje final es ${score} de ${quizData.length}</div>`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `<strong>${currentQuestion+1}. ${q.question}</strong>`;
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      if(btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        allBtns.forEach(b => {
+          if(b.dataset.correct === "true") b.classList.add("correct");
+        });
+      }
+
+      resultDiv.textContent = `Puntaje: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+showQuestion();
+</script>
+
+</body>
+</html>
+
+
