@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz terminologia</title>
+<title>Quiz gestion</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -24,36 +24,40 @@
   .quiz-container {
     width: 90%;
     max-width: 600px;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
+    padding-top: 30px; /* espacio desde arriba */
   }
 
   .question {
     background: #fff;
-    padding: 15px;
+    padding: 20px;
     margin: 10px 0;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
 
-  /* Aumentamos tamaño solo del texto de la pregunta */
   .question p {
-    font-size: clamp(24px, 5vw, 36px); /* mínimo 24px, máximo 36px, se adapta al ancho de pantalla */
-  font-weight: bold;
-  line-height: 1.4;
-  margin: 0;
+    font-size: 40px;       /* tamaño grande */
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 30px 0;    /* espacio debajo de la pregunta */
+  }
+
+  .options {
+    margin-top: 20px;      /* espacio extra antes de los botones */
   }
 
   .options button {
     display: block;
-    margin: 5px 0;
-    padding: 12px;
+    margin: 10px 0;
+    padding: 15px;
     width: 100%;
     border-radius: 5px;
     border: 1px solid #ccc;
     cursor: pointer;
     background: #eee;
     transition: background 0.3s;
-    font-size: 16px; /* tamaño de respuesta estándar */
+    font-size: 18px;       /* opciones más grandes */
   }
 
   .options button:hover { background: #ddd; }
@@ -63,18 +67,18 @@
 
   .result {
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.5em;
     margin: 10px 0;
   }
 
   #nextBtn {
-    margin-top: 10px;
-    padding: 10px 20px;
+    margin-top: 20px;
+    padding: 12px 25px;
     border: none;
     border-radius: 6px;
     background: #2196F3;
     color: white;
-    font-size: 1em;
+    font-size: 1.2em;
     cursor: pointer;
   }
 
@@ -83,7 +87,7 @@
 </head>
 <body>
 
-<h1>Quiz terminologia</h1>
+<h1>Quiz Gestion</h1>
 
 <div class="quiz-container" id="quiz-container"></div>
 <div class="result" id="result">Puntaje: 0</div>
