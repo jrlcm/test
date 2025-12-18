@@ -37,10 +37,10 @@
 
   /* Aumentamos tamaño solo del texto de la pregunta */
   .question p {
-    font-size: 22px; /* tamaño grande para mayor legibilidad */
-    font-weight: bold;
-    line-height: 1.4;
-    margin: 0;
+    font-size: clamp(24px, 5vw, 36px); /* mínimo 24px, máximo 36px, se adapta al ancho de pantalla */
+  font-weight: bold;
+  line-height: 1.4;
+  margin: 0;
   }
 
   .options button {
