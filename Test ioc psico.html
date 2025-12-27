@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz PSICO</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 60px;
+    padding-top: 30px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .question p {
+    font-size: 40px;       /* tamaño grande */
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 30px 0;    /* espacio debajo de la pregunta */
+  }
+
+  .options {
+    margin-top: 20px;      /* espacio extra antes de los botones */
+  }
+
+  .options button {
+    display: block;
+    margin: 10px 0;
+    padding: 15px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 18px;
+  }
+
+  .options button:hover { background: #ddd; }
+
+  .correct { background-color: #c8e6c9; border-color: #388e3c; color: #2e7d32; }
+  .wrong { background-color: #ffcdd2; border-color: #d32f2f; color: #c62828; }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.5em;
+    margin: 10px 0;
+  }
+
+  #nextBtn {
+    margin-top: 20px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+
+  #nextBtn:hover { background: #1976D2; }
+</style>
+</head>
+<body>
+
+<h1>Quiz PSICO</h1>
+
+<div class="quiz-container" id="quiz-container"></div>
+<div class="result" id="result">Puntaje: 0</div>
+<button id="nextBtn" style="display:none;">Siguiente</button>
+
+<script>
+// Función para mezclar array
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Tus preguntas (solo pongo 5 de ejemplo, reemplaza por todas las que tengas)
+const allQuestions = [
+  {
+  "question":"La por es pot acompanyar de miosi.",
+  "options":["v","f"],
+  "answer":"f"
+},
+{
+  "question":"Les emocions es desencadenen només per estímuls externs.",
+  "options":["v","f"],
+  "answer":"f"
+},
+{
+  "question":"La psicologia és una ciència que estudia la conducta humana, els processos cognitius i les emocions.",
+  "options":["v","f"],
+  "answer":"v"
+},
+{
+  "question":"El pensament no és un tret de la personalitat.",
+  "options":["v","f"],
+  "answer":"v"
+},
+{
+  "question":"La personalitat no inclou la conducta habitual.",
+  "options":["v","f"],
+  "answer":"f"
+},
+{
+  "question":"El caràcter és adquirit.",
+  "options":["v","f"],
+  "answer":"v"
+},
+{
+  "question":"El model biomèdic considera que el comportament està influenciat sobretot pel medi ambient.",
+  "options":["v","f"],
+  "answer":"f"
+},
+{
+  "question":"Segons el conductisme, totes les afirmacions proposades eren falses.",
+  "options":["v","f"],
+  "answer":"v"
+},
+{
+  "question":"Segons Freud, l’allò opera en l’àrea conscient.",
+  "options":["v","f"],
+  "answer":"f"
+},
+{
+  "question":"Segons la psicologia cognitiva, el comportament de les persones està determinat sobretot per l’entorn.",
+  "options":["v","f"],
+  "answer":"f"
+},
+{
+  "question":"La psicologia humanista és un corrent de pensament que s’inicia al segle XIX.",
+  "options":["v","f"],
+  "answer":"f"
+},
+{
+  "question":"Les necessitats d’afiliació inclouen la seguretat econòmica.",
+  "options":["v","f"],
+  "answer":"f"
+},
+  {
+    "question":"L’ansietat va acompanyada d’una resposta fisiològica de característiques molt similars a l’estrès.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"L’estrès i l’ansietat són de les reaccions psicològiques més freqüents provocades per la malaltia.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Els moviments repetitius són un símptoma físic de l’estrès.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"Reduir l’impacte dels factors estressors en l’entorn hospitalari és molt difícil.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"L’adaptació als horaris i normes de l’hospital és un estressor d’adaptació a un nou entorn i canvi d’hàbits.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"La utilització del número de l’habitació en substitució del nom del pacient és un exemple de despersonalització.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"La hipocondria pot comportar una actitud d’hipervigilància ansiosa.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Les reaccions degudes a la percepció de pèrdua poden generar una reacció semblant a un dol.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Les reaccions degudes a l’afectació de la imatge corporal poden comportar una pèrdua d’autoestima.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"En la comunicació de la malaltia en infants, totes les afirmacions proposades són correctes.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"L’etapa preoperacional correspon a l’interval d’edat dels dos als set anys.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Entre els set i els dotze anys cal evitar l’ús de conceptes massa abstractes.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"En l’edat avançada, els estats d’ansietat no es manifesten habitualment amb símptomes digestius majoritaris.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"L’augment del pes corporal no és una conseqüència habitual dels estats depressius en l’edat avançada.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"El predomini d’emocions negatives no és un canvi psicològic habitual en l’edat avançada.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+{
+    "question":"Les estratègies d’afrontament de la malaltia centrades en el problema tracten d’abordar directament l’estressor.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Cada persona està predestinada a escollir sempre el mateix tipus d’afrontament.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"Les estratègies d’afrontament centrades en les emocions tenen com a objectiu relaxar-se.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"L’estigma és un tret de personalitat que influeix en l’estratègia d’afrontament de la malaltia.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"El locus de control fa referència al grau en què una persona sent que té el control de la seva personalitat.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"Les persones resilients no acostumen a adoptar canvis.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"El suport social és utilitzat només per una minoria de pacients.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"Un grup de suport de persones amb la mateixa malaltia és un suport social d’afiliació.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"El suport social inclou els professionals de la psicologia i la psiquiatria.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"La fase psicològica de la malaltia terminal amb predomini de la il·lusió o esperança és la negociació.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Actualment el dolor en la malaltia terminal es pot controlar i combatre.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"La malaltia terminal és avançada, progressiva, sense resposta curativa raonable i amb pronòstic de vida limitat.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+{
+    "question":"Un trastorn mental implica una alteració del pensament, de l’estat d’ànim o del comportament.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Els trastorns mentals no afecten la capacitat de relació social de la persona.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"L’esquizofrènia és un trastorn psicòtic.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Els deliris i les al·lucinacions són símptomes propis dels trastorns psicòtics.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Les persones amb esquizofrènia tenen sempre discapacitat intel·lectual.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"Els trastorns de l’estat d’ànim inclouen la depressió i el trastorn bipolar.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"La depressió es caracteritza per tristesa persistent i pèrdua d’interès o plaer.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"El trastorn bipolar es caracteritza per l’alternança d’episodis depressius i maníacs.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"L’ansietat és sempre una resposta patològica.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"Els trastorns d’ansietat inclouen les fòbies, el trastorn obsessivocompulsiu i el trastorn d’ansietat generalitzada.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Les fòbies són pors irracionals davant estímuls concrets.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"El trastorn obsessivocompulsiu es caracteritza per obsessions i compulsions.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Els trastorns de la personalitat apareixen de forma puntual i transitòria.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"Els trastorns de la personalitat afecten patrons estables de pensament, emoció i conducta.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Les addiccions poden considerar-se trastorns mentals.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+{
+    "question":"La relació d’ajuda és una relació professional orientada a satisfer les necessitats del pacient.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"L’objectiu principal de la relació d’ajuda és curar la malaltia.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"L’empatia consisteix a comprendre els sentiments de l’altra persona sense jutjar-la.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Mostrar empatia implica estar d’acord amb tot el que expressa el pacient.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"L’escolta activa implica prestar atenció tant al llenguatge verbal com al no verbal.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Interrompre el pacient facilita una millor comunicació.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"La comunicació assertiva permet expressar opinions respectant els drets propis i els dels altres.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"La comunicació agressiva respecta els drets de totes les persones implicades.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"La comunicació passiva implica dificultats per expressar necessitats i sentiments.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"El llenguatge no verbal no influeix en la relació amb el pacient.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"El contacte visual adequat afavoreix la confiança del pacient.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"El silenci pot ser una eina terapèutica en la comunicació.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+  {
+    "question":"Donar consells personals forma part de la relació d’ajuda professional.",
+    "options":["v","f"],
+    "answer":"f"
+  },
+  {
+    "question":"La confidencialitat és un principi bàsic de la relació d’ajuda.",
+    "options":["v","f"],
+    "answer":"v"
+  },
+
+
+  
+];
+
+// Seleccionamos 40 preguntas aleatorias
+let quizData = shuffle(allQuestions).slice(0,40);
+
+let currentQuestion = 0;
+let score = 0;
+
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+
+// Función para mostrar la pregunta
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if(currentQuestion >= quizData.length) {
+    container.innerHTML = `<div class="question"><p>¡Quiz terminado!</p><p>Tu puntaje final es ${score} de ${quizData.length}</p></div>`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+
+  const div = document.createElement("div");
+  div.className = "question";
+
+  const p = document.createElement("p");
+  p.textContent = `${currentQuestion + 1}. ${q.question}`;
+  div.appendChild(p);
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      if(btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        allBtns.forEach(b => {
+          if(b.dataset.correct === "true") b.classList.add("correct");
+        });
+      }
+
+      resultDiv.textContent = `Puntaje: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+// Inicializamos el quiz
+showQuestion();
+</script>
+
+</body>
+</html>
