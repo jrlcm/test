@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABC Digitalizacion</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 40px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .options button {
+    display: block;
+    margin: 5px 0;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 16px;
+  }
+
+  .options button:hover { background: #ddd; }
+
+  .correct { background-color: #c8e6c9; border-color: #388e3c; color: #2e7d32; }
+  .wrong { background-color: #ffcdd2; border-color: #d32f2f; color: #c62828; }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 10px 0;
+  }
+
+  #nextBtn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  #nextBtn:hover { background: #1976D2; }
+</style>
+</head>
+<body>
+
+<h1>ABC Digitalizacion</h1>
+
+<div class="quiz-container" id="quiz-container"></div>
+<div class="result" id="result">Puntaje: 0</div>
+<button id="nextBtn" style="display:none;">Siguiente</button>
+
+<script>
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Tus questions aquí
+const allQuestions = [
+
+
+{ 
+    "question": "Quin element és clau per a la presa de decisions basada en dades?", 
+    "options": ["Telèfon fix", "Big Data i analítica", "ERP sense dades", "Recursos humans"], 
+    "answer": "Big Data i analítica" 
+  },
+  { 
+    "question": "Quin dels següents no és un avantatge de digitalitzar l’empresa?", 
+    "options": ["Presa de decisions basada en dades", "Més costos permanents", "Millora de la qualitat", "Més flexibilitat"], 
+    "answer": "Més costos permanents" 
+  },
+  { 
+    "question": "Quina tecnologia es relaciona més amb la sensorització de processos?", 
+    "options": ["IoT", "CRM", "Realitat virtual", "Blockchain"], 
+    "answer": "IoT" 
+  },
+  { 
+    "question": "Quin dels següents és un eix de transformació digital?", 
+    "options": ["Innovació contínua", "Producció manual", "Paperassa administrativa", "Infraestructures físiques tradicionals"], 
+    "answer": "Innovació contínua" 
+  },
+  { 
+    "question": "El concepte de 'transformació cap a serveis' significa:", 
+    "options": ["Que desapareixen tots els departaments", "Que l’empresa només ven productes físics", "Que no cal invertir en tecnologia", "Que s’ofereixen serveis personalitzats gràcies a les dades"], 
+    "answer": "Que s’ofereixen serveis personalitzats gràcies a les dades" 
+  },
+  { 
+    "question": "La integració de la cadena de valor implica:", 
+    "options": ["Connectar producció, logística, clients i proveïdors", "Automatitzar únicament les vendes", "Només digitalitzar la comptabilitat", "Substituir el departament de RH"], 
+    "answer": "Connectar producció, logística, clients i proveïdors" 
+  },
+  { 
+    "question": "Quina funció té l’anàlisi DAFO en un projecte de digitalització?", 
+    "options": ["Detectar debilitats, amenaces, fortaleses i oportunitats", "Triar un proveïdor tecnològic", "Mesurar la productivitat", "Controlar la comptabilitat"], 
+    "answer": "Detectar debilitats, amenaces, fortaleses i oportunitats" 
+  },
+  { 
+    "question": "Quin departament millora amb CRM i eines de màrqueting automatitzat?", 
+    "options": ["Vendes i màrqueting", "Logística", "Producció", "Recursos humans"], 
+    "answer": "Vendes i màrqueting" 
+  },
+  { 
+    "question": "Quina tecnologia permet manteniment predictiu a la indústria digitalitzada?", 
+    "options": ["Fax digital", "Impressió 3D", "Big Data i IA", "Blockchain"], 
+    "answer": "Big Data i IA" 
+  },
+  { 
+    "question": "En un projecte de transformació digital, quin aspecte és clau perquè tingui èxit?", 
+    "options": ["Reduir inversions tecnològiques", "Treballar només en IT", "Evitar el canvi cultural", "Implicar tots els departaments"], 
+    "answer": "Implicar tots els departaments" 
+  },
+  { 
+    "question": "Quina eina digital s’acostuma a implantar a la fase inicial del procés de digitalització?", 
+    "options": ["Impressió 3D", "CRM o ERP", "Sistemes SCADA", "Blockchain"], 
+    "answer": "CRM o ERP" 
+  },
+  { 
+    "question": "Quina és la finalitat principal d’un pla de digitalització?", 
+    "options": ["Estalviar salaris", "Evitar la innovació", "Substituir els departaments clàssics", "Tenir un full de ruta estratègic"], 
+    "answer": "Tenir un full de ruta estratègic" 
+  },
+  { 
+    "question": "Quin és el primer pas d’un procés de transformació digital en una empresa?", 
+    "options": ["Fer un DAFO digital", "Implementar IoT directament", "Implantar un ERP", "La presa de consciència digital"], 
+    "answer": "La presa de consciència digital" 
+  },
+  { 
+    "question": "En quin apartat del procés de digitalització apareix la frase 'tot el que pugui ser software serà software'?", 
+    "options": ["Transformació cap a serveis", "Procés de digitalització en l’empresa", "Estratègia de màrqueting digital", "Convergència IT-OT"], 
+    "answer": "Procés de digitalització en l’empresa" 
+  },
+  { 
+    "question": "Quina és la diferència principal entre IT i OT?", 
+    "options": ["IT gestiona dades i sistemes; OT controla processos físics i maquinària", "IT és per a màrqueting i OT per a comptabilitat", "Són exactament el mateix", "IT només es fa servir en oficines i OT a casa"], 
+    "answer": "IT gestiona dades i sistemes; OT controla processos físics i maquinària" 
+  },
+  { 
+    "question": "Quina diferència hi ha entre informació i coneixement?", 
+    "options": ["La informació sempre implica comprensió profunda", "El coneixement no depèn de l’experiència", "El coneixement és informació interpretada i aplicada amb experiència", "La informació no pot ser mai emmagatzemada"], 
+    "answer": "El coneixement és informació interpretada i aplicada amb experiència" 
+  },
+  { 
+    "question": "Quina característica defineix la quarta revolució industrial?", 
+    "options": ["La invenció del transistor i els primers ordinadors personals", "La invenció de l’acer i la introducció del telègraf", "La convergència del món físic, digital i biològic amb tecnologies com IA, IoT i big data", "L’aparició de les colònies tèxtils i l’ús de la força hidràulica"], 
+    "answer": "La convergència del món físic, digital i biològic amb tecnologies com IA, IoT i big data" 
+  },
+  { 
+    "question": "Quin objectiu principal té la cinquena revolució industrial?", 
+    "options": ["Col·laboració entre humans i màquines per aconseguir una producció sostenible i centrada en el benestar social", "Prioritzar únicament la productivitat i reducció de costos", "Automatitzar completament els processos sense intervenció humana", "Eliminar la creativitat humana en favor de la IA"], 
+    "answer": "Col·laboració entre humans i màquines per aconseguir una producció sostenible i centrada en el benestar social" 
+  },
+ 
+  {
+    "question": "Quin avantatge clau aporta el núvol a la comptabilitat?",
+    "options": [
+      "Mínima formació necessària d'utilització",
+      "Necessitat de programari local costós",
+      "Amplitud d'eines i programes per gestionar la comptabilitat",
+      "Escalabilitat i accés remot a la informació financera"
+    ],
+    "answer": "Escalabilitat i accés remot a la informació financera"
+  },
+  {
+    "question": "Quina funció té l’IT dins el departament financer d'una empresa?",
+    "options": [
+      "Totes són correctes.",
+      "Processar i analitzar dades per a la presa de decisions.",
+      "Organitzar els préstecs pendents de l'empresa.",
+      "Gestió de mitjans de finançaments propis de l'empresa."
+    ],
+    "answer": "Totes són correctes."
+  },
+  {
+    "question": "Quina relació hi ha entre el núvol i la sostenibilitat?",
+    "options": [
+      "Incrementa el malbaratament energètic",
+      "Permet un ús més eficient dels recursos i energia",
+      "Redueix la possibilitat de compartir recursos",
+      "Obliga a utilitzar més centres físics"
+    ],
+    "answer": "Permet un ús més eficient dels recursos i energia"
+  },
+  {
+    "question": "Quin sistema és típic de l’àmbit OT?",
+    "options": [
+      "Plataformes d’e-learning per formar treballadors",
+      "ERP per integrar la gestió financera",
+      "CRM per gestionar relacions amb clients",
+      "SCADA per supervisar i controlar processos industrials"
+    ],
+    "answer": "SCADA per supervisar i controlar processos industrials"
+  },
+  {
+    "question": "Quin avantatge té la convergència IT-OT en logística?",
+    "options": [
+      "Mantenir un mètode de feina tradicional",
+      "Augment d’estocs al magatzem",
+      "Incrementar processos i gestions documentals",
+      "Optimització del manteniment, reducció de costos i visibilitat en temps real"
+    ],
+    "answer": "Optimització del manteniment, reducció de costos i visibilitat en temps real"
+  },
+  {
+    "question": "Quin model de núvol proporciona infraestructures bàsiques virtualitzades?",
+    "options": [
+      "IaaS (Infrastructure as a Service)",
+      "SaaS (Software as a Service)",
+      "CRM (Customer Relationship Management)",
+      "ERP (Enterprise Resource Planning)"
+    ],
+    "answer": "IaaS (Infrastructure as a Service)"
+  },
+  {
+    "question": "Quina característica defineix la tercera revolució industrial?",
+    "options": [
+      "La invenció de l’acer i els productes químics",
+      "L’ús del carbó i la mecanització del tèxtil",
+      "La introducció de l’electrònica, la informàtica i l’automatització",
+      "La personalització massiva amb IA i big data"
+    ],
+    "answer": "La introducció de l’electrònica, la informàtica i l’automatització"
+  },
+  {
+    "question": "Quin avantatge clau aporta la digitalització a la comptabilitat d’una empresa?",
+    "options": [
+      "Utilització d'eines convencionals com ara fulls de càlcul.",
+      "Gestionar la documentació empresarial manualment.",
+      "Automatitzar processos i reduir errors humans.",
+      "Substituir totalment el departament comptable."
+    ],
+    "answer": "Automatitzar processos i reduir errors humans."
+  },
+  {
+    "question": "Quin avantatge aporta la convergència IT-OT?",
+    "options": [
+      "Més eficiència operativa i manteniment predictiu",
+      "Separació més estricta entre dades i operacions",
+      "Eliminació de la seguretat cibernètica",
+      "Reducció del monitoratge en temps real"
+    ],
+    "answer": "Més eficiència operativa i manteniment predictiu"
+  },
+  {
+    "question": "Què permet la sensorització en la indústria?",
+    "options": [
+      "Capturar dades dels processos per controlar-los i optimitzar-los",
+      "Eliminar la interconnexió entre màquines",
+      "Reduir la precisió dels sistemes de fabricació",
+      "Substituir la necessitat d’anàlisi de dades"
+    ],
+    "answer": "Capturar dades dels processos per controlar-los i optimitzar-los"
+  },
+  {
+    "question": "Una empresa que aplica tecnologies digitals habilitadores es caracteritza per:",
+    "options": [
+      "Innovació constant i adaptabilitat al mercat",
+      "Constància en el temps de la manera que s'apliquen els processos",
+      "Reducció de dades d'informació",
+      "Exclusió del client"
+    ],
+    "answer": "Innovació constant i adaptabilitat al mercat"
+  },
+  {
+    "question": "Quina innovació va ser clau en la primera revolució industrial?",
+    "options": [
+      "La màquina de vapor i l’ús del carbó com a font d’energia",
+      "L’automatització amb ordinadors i internet",
+      "La impressió 3D i la intel·ligència artificial",
+      "L’electricitat i el motor de combustió interna"
+    ],
+    "answer": "La màquina de vapor i l’ús del carbó com a font d’energia"
+  },
+  {
+    "question": "Quin model de núvol facilita entorns per desenvolupar aplicacions?",
+    "options": [
+      "HRM (Human Resource Management)",
+      "SaaS (Software as a Service)",
+      "PaaS (Platform as a Service)",
+      "WMS (Warehouse Management System)"
+    ],
+    "answer": "PaaS (Platform as a Service)"
+  },
+  {
+    "question": "Què ofereix la computació en núvol?",
+    "options": [
+      "Reducció automàtica del consum sense gestió",
+      "Eliminació de la seguretat digital",
+      "Exclusivament emmagatzematge físic en servidors locals",
+      "Infraestructura flexible i escalable sota demanda"
+    ],
+    "answer": "Infraestructura flexible i escalable sota demanda"
+  }
+
+
+
+];
+
+// 👇 Seleccionamos 15 aleatorias (o todas si hay menos)
+let quizData = shuffle(allQuestions).slice(0, 15);
+
+let currentQuestion = 0;
+let score = 0;
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+
+
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if(currentQuestion >= quizData.length) {
+    container.innerHTML = `<div class="question"><strong>¡Quiz terminado!</strong><br>Tu puntaje final es ${score} de ${quizData.length}</div>`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `<strong>${currentQuestion+1}. ${q.question}</strong>`;
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      if(btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        allBtns.forEach(b => {
+          if(b.dataset.correct === "true") b.classList.add("correct");
+        });
+      }
+
+      resultDiv.textContent = `Puntaje: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+showQuestion();
+</script>
+
+</body>
+</html>
