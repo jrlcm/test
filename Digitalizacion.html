@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mis Quizzes</title>
+  <style>
+    :root{
+      --max-w: 420px;
+      --accent: #007bff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui, Arial, sans-serif;
+      background:#f6f7fb;
+      color:#111;
+      display:flex;
+      min-height:100vh;
+      align-items:flex-start;
+      justify-content:center;
+      padding:30px 16px;
+    }
+    .wrap{
+      width:100%;
+      max-width:var(--max-w);
+      text-align:center;
+    }
+    h1{
+      margin:0 0 18px;
+      font-size:1.5rem;
+      letter-spacing:0.2px;
+    }
+    .hint{
+      margin:0 0 18px;
+      font-size:0.9rem;
+      color:#555;
+    }
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .quizbtn{
+      display:block;
+      width:100%;
+      padding:18px 14px;
+      background:linear-gradient(180deg,var(--accent),#0056b3);
+      color:#fff;
+      text-decoration:none;
+      border-radius:12px;
+      font-size:1.05rem;
+      font-weight:600;
+      text-align:center;
+      box-shadow:0 6px 18px rgba(0,0,0,0.08);
+      transition:transform .12s ease, box-shadow .12s ease;
+      border:2px solid rgba(255,255,255,0.08);
+    }
+    .quizbtn:active{ transform:translateY(1px) }
+    .quizbtn:hover{ box-shadow:0 10px 28px rgba(0,0,0,0.12) }
+
+    .controls{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      justify-content:center;
+      margin-bottom:14px;
+      font-size:0.9rem;
+      color:#444;
+    }
+    .small{
+      font-size:0.85rem;
+      color:#666;
+    }
+
+    /* iframe cuando openInIframe = true */
+    .quizFrame{
+      width:100%;
+      height:600px;
+      border:1px solid #ddd;
+      border-radius:8px;
+      margin-top:20px;
+    }
+
+    @media (max-width:420px){
+      :root{--max-w:100%}
+      .quizbtn{padding:20px; font-size:1.15rem}
+      .quizFrame{height:520px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Selecciona un Quiz</h1>
+    <p class="hint">Toca el botón para abrir el quiz. (Puedes cambiar el comportamiento en el script.)</p>
+
+    <div class="controls">
+      <span class="small">Abrir dentro de la página:</span>
+      <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer">
+        <input id="toggleIframe" type="checkbox" />
+        <span class="small">ON / OFF</span>
+      </label>
+    </div>
+
+    <div id="list" class="list" aria-live="polite"></div>
+
+    <!-- iframe se añadirá dinámicamente si se activa -->
+  </div>
+
+  <script>
+    // =========================
+    // EDITA AQUÍ: lista de quizzes
+    // usa rutas relativas (ej: 'quiz6.html' o 'quizzes/quiz6.html')
+    const quizzes = [
+      { file: 'ABC Digitalizacion.html', title: ' ABC Digitalizacion' },
+      //{ file: '*******', title: 'ABC *****' },
+     
+     
+    ];
+    // =========================
+
+    const list = document.getElementById('list');
+    const toggle = document.getElementById('toggleIframe');
+
+    function buildList() {
+      list.innerHTML = '';
+      if (!quizzes || quizzes.length === 0) {
+        list.innerHTML = '<div class="small">No hay quizzes. Añade archivos .html y ponlos en el array <code>quizzes</code>.</div>';
+        return;
+      }
+      quizzes.forEach(q => {
+        const a = document.createElement('a');
+        a.className = 'quizbtn';
+        a.href = q.file;
+        a.textContent = q.title;
+        a.setAttribute('role','button');
+        a.setAttribute('aria-label','Abrir ' + q.title);
+        a.addEventListener('click', e => {
+          // si está marcado, cargamos en iframe y anulamos navegación normal
+          if (toggle.checked) {
+            e.preventDefault();
+            loadInIframe(q.file);
+          }
+        });
+        list.appendChild(a);
+      });
+    }
+
+    function loadInIframe(file) {
+      let iframe = document.getElementById('quizFrame');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'quizFrame';
+        iframe.className = 'quizFrame';
+        // insertar después de la lista
+        document.querySelector('.wrap').appendChild(iframe);
+      }
+      iframe.src = file;
+      // desplazar suavemente hacia el iframe
+      setTimeout(()=>iframe.scrollIntoView({behavior:'smooth', block:'start'}), 120);
+    }
+
+    // inicializa
+    buildList();
+
+    // si cambias el checkbox y ya hay iframe abierto, lo eliminamos
+    toggle.addEventListener('change', () => {
+      const iframe = document.getElementById('quizFrame');
+      if (!toggle.checked && iframe) iframe.remove();
+    });
+  </script>
+</body>
+</html>
