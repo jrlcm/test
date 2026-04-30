@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz PSICO</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0 5px 0;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .top-panel {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .top-panel p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    padding-top: 10px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .question p {
+    font-size: 34px;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 30px 0;
+  }
+
+  .options {
+    margin-top: 20px;
+  }
+
+  .options button {
+    display: block;
+    margin: 10px 0;
+    padding: 15px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+
+  .options button:hover {
+    background: #ddd;
+  }
+
+  .options button:disabled {
+    cursor: not-allowed;
+  }
+
+  .correct {
+    background-color: #c8e6c9 !important;
+    border-color: #388e3c !important;
+    color: #2e7d32 !important;
+  }
+
+  .wrong {
+    background-color: #ffcdd2 !important;
+    border-color: #d32f2f !important;
+    color: #c62828 !important;
+  }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 10px 0;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  button.main-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.main-btn:hover {
+    background: #1976D2;
+  }
+
+  button.reset-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #e53935;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.reset-btn:hover {
+    background: #c62828;
+  }
+
+  .small-text {
+    font-size: 15px !important;
+    font-weight: normal !important;
+    color: #555;
+  }
+
+  @media (max-width: 600px) {
+    .question p {
+      font-size: 28px;
+    }
+
+    .options button {
+      font-size: 20px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Quiz EXTRACCION</h1>
+<div class="subtitle">Preguntas aleatorias sin repetir hasta completar todo el temario</div>
+
+<div class="top-panel">
+  <p id="totalQuestionsText">Preguntas totales: 0</p>
+  <p id="pendingQuestionsText">Preguntas pendientes: 0</p>
+  <p id="completedQuestionsText">Preguntas realizadas: 0</p>
+</div>
+
+<div class="quiz-container" id="quiz-container"></div>
+
+<div class="result" id="result">Puntuación: 0</div>
+
+<div class="buttons">
+  <button id="nextBtn" class="main-btn" style="display:none;">Siguiente</button>
+  <button id="resetBtn" class="reset-btn">Reiniciar progreso</button>
+</div>
+
+<script>
+/* ============================
+   FUNCIÓN PARA MEZCLAR ARRAYS
+============================ */
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+
+/* ============================
+   AÑADE AQUÍ TUS PREGUNTAS
+   No tienes que indicar cuántas hay.
+   El código las cuenta automáticamente.
+============================ */
+const allQuestions = [
+  
+ 
+  {"question":"La renovació que suposa la definició de Terris sobre el concepte de salut és que requereix absència de malaltia.","options":["V","F"],"answer":"F"},
+  {"question":"La malaltia pot ser de tres tipus, en funció dels seus paràmetres d’inici i curs: aguda, crònica i dinàmica, si passa fases en remissió.","options":["V","F"],"answer":"F"},
+  {"question":"Els factors més influents en l’estat de salut d’una persona són els lligats a l’estil de vida.","options":["V","F"],"answer":"V"},
+  {"question":"El quocient format entre el número total de subjectes malalts en un període de temps determinat i la població total expressat en tant per mil és la taxa de mortalitat.","options":["V","F"],"answer":"F"},
+  {"question":"Si calculem la taxa d’incidència d’una determinada malaltia en el denominador col·loquem el número total de casos nous trobats de la malaltia.","options":["V","F"],"answer":"F"},
+  {"question":"L’esperança de vida és un indicador de qualitat de vida.","options":["V","F"],"answer":"V"},
+  {"question":"La diabetis com a conseqüència d’una pancreatectomia és una malaltia iatrogènica.","options":["V","F"],"answer":"V"},
+  {"question":"La síndrome de Down és un epònim.","options":["V","F"],"answer":"V"},
+  {"question":"La nosologia és la branca de la medicina que estudia la fisiologia de les malalties.","options":["V","F"],"answer":"F"},
+  {"question":"Les malalties psicosocials són aquelles en que la psique té una afectació sobre el sistema somàtic.","options":["V","F"],"answer":"F"},
+  {"question":"Les malalties inflamatòries que cursen amb edema, envermelliment i inflor són d’origen infecciós.","options":["V","F"],"answer":"F"},
+  {"question":"La poliúria apareix sovint relacionada amb la polidípsia i es tracta de volums d’orina en 12 h superiors a 2-2,5 L.","options":["V","F"],"answer":"F"},
+  {"question":"La febre és un símptoma de les malalties infeccioses.","options":["V","F"],"answer":"F"},
+  {"question":"La cianosi, coloració groguenca de la pell i la conjuntiva dels ulls, és causada per la presència de bilirubina.","options":["V","F"],"answer":"F"},
+  {"question":"La profilaxi és un conjunt de mesures per evitar l’aparició d’una malaltia i les seves seqüeles.","options":["V","F"],"answer":"V"},
+  {"question":"La fase de la malaltia en que apareixen signes i símptomes inespecífics s’anomena etapa prodròmica.","options":["V","F"],"answer":"V"},
+  {"question":"Una dona embarassada de cinc mesos s’ha engreixat 20 quilos, té la pressió molt alta i la glucosa elevada en sang. El metge li proposa una dieta, és prevenció primària.","options":["V","F"],"answer":"F"},
+  {"question":"L’ecografia és un procediment diagnòstic que utilitza radiacions ionitzants.","options":["V","F"],"answer":"F"},
+  {"question":"La concentració de colesterol en sang és una anàlisi de tipus hematològic.","options":["V","F"],"answer":"F"},
+  {"question":"La broncoscòpia és un procediment que es realitza fent un abordatge per toracotomia.","options":["V","F"],"answer":"F"},
+  {"question":"La renovació que suposa la definició de l’Organització Mundial de la Salut sobre el concepte de salut és que incorpora funcionalitat.","options":["V","F"],"answer":"F"},
+  {"question":"Segons Lalonde, el determinant de la salut que més incideix sobre els nivells de salut pública és la biologia humana.","options":["V","F"],"answer":"F"},
+  {"question":"Els fàrmacs teratogènics provoquen malalties genètiques als nounats.","options":["V","F"],"answer":"F"},
+  {"question":"S’anomena oligúria la micció d’un volum d’orina inferior a 500 mL per dia.","options":["V","F"],"answer":"V"},
+  {"question":"La dificultat per respirar s’anomena disfàgia.","options":["V","F"],"answer":"F"},
+  {"question":"La medicina preventiva és responsabilitat exclusivament de l’atenció primària.","options":["V","F"],"answer":"F"},
+  {"question":"La posició del pacient per administrar un enema és la genupectoral.","options":["V","F"],"answer":"F"},
+  {"question":"La campanya de vacunació pel Virus del Papil·loma Humà que s’ha extès a tots els infants de 12 anys forma part d’un sistema de prevenció primària.","options":["V","F"],"answer":"V"},
+  {"question":"L’aparell per mesurar la tensió arterial s’anomena esfingomanòmetre.","options":["V","F"],"answer":"V"},
+  {"question":"L’ecografia és un tipus de procediment diagnòstic invasiu.","options":["V","F"],"answer":"F"},
+  {"question":"L’electrocardiograma és un procediment diagnòstic que funciona per ultrasons.","options":["V","F"],"answer":"F"},
+  {"question":"La pulsioximetria és un procediment terapèutic que permet tractar els dèficits en el percentatge de saturació d’oxigen de l’hemoglobina en sang.","options":["V","F"],"answer":"F"},
+  {"question":"La sedació és un tipus d’anestèsia que s’utilitza en procediments quirúrgics amb resultat de pèrdua de coneixement i pèrdua de la sensació de dolor.","options":["V","F"],"answer":"F"},
+  {"question":"Per la realització d’una colonoscòpia s’utilitza com a anestèsia de primera elecció una locoregional de tipus espinal o raquídia.","options":["V","F"],"answer":"F"},
+  {"question":"Una gastrectomia és l’extirpació o resecció de l’estòmac.","options":["V","F"],"answer":"V"},
+  {"question":"L’estudi de la concentració de triglicèrids en sang és una anàlisi de tipus bioquímic.","options":["V","F"],"answer":"V"},
+  {"question":"Per diagnosticar presència de plaques a les artèries coronàries, utilitzarem un procediment anomenat angiografia.","options":["V","F"],"answer":"V"},
+  {"question":"En una radiografia les estructures menys denses apareixen de color més blanquinós.","options":["V","F"],"answer":"F"},
+  {"question":"Percussió és el procediment que utilitzem durant l’exploració física d’un pacient quan volem descobrir la forma i mida dels seus òrgans interns.","options":["V","F"],"answer":"F"},
+  {"question":"Les metàstasis que s’han donat per via limfàtica ataquen més freqüentment pulmons, ossos i fetge.","options":["V","F"],"answer":"F"},
+  {"question":"El parènquima tumoral està constituït per cèl·lules no neoplàsiques, bàsicament teixit conjuntiu.","options":["V","F"],"answer":"F"},
+  {"question":"Una mamografia és un tipus de procediment diagnòstic de neoplàsies que ens permetrà saber la mida del tumor.","options":["V","F"],"answer":"V"},
+  {"question":"Actualment a Catalunya hi ha actius els programes de cribratge de detecció precoç de càncer de mama, càncer de coll d’úter i càncer de còlon i recte.","options":["V","F"],"answer":"V"},
+  {"question":"La primesa extrema associada a debilitat en pacients oncològics s’anomena caquèxia tumoral.","options":["V","F"],"answer":"V"},
+  {"question":"Les vellositats coriòniques són les estructures que es fusionen amb l’endometri uterí permetent el pas d’oxigen i nutrients entre la mare i l’embrió en desenvolupament.","options":["V","F"],"answer":"V"},
+  {"question":"Quan hi ha meconi al líquid amniòtic parlem d’aigües brutes i administrem antibiòtic.","options":["V","F"],"answer":"V"},
+  {"question":"El cribratge de l’estreptococ del grup B en l’embaràs es realitza el segon trimestre.","options":["V","F"],"answer":"F"},
+  {"question":"La fase més llarga en un part és el deslliurament.","options":["V","F"],"answer":"F"},
+  {"question":"En un avortament retingut hi ha un període de temps entre la mort del fetus i el diagnòstic ecogràfic.","options":["V","F"],"answer":"V"},
+  {"question":"En un embaràs molar sempre hi ha curetatge o aspiració com a procediment expulsiu.","options":["V","F"],"answer":"V"},
+  {"question":"El test APGAR és un procediment de cribratge prenatal.","options":["V","F"],"answer":"F"},
+  {"question":"Gestant de 41.2 setmanes acudeix per treball de part i es considera un part a terme.","options":["V","F"],"answer":"V"},
+  {"question":"La coloració habitual/sana del líquid amniòtic és marró-verdosa.","options":["V","F"],"answer":"F"},
+  {"question":"L’oxitocina és l’hormona que s’administra per afavorir l’esborrament del cèrvix i la dilatació.","options":["V","F"],"answer":"F"},
+  {"question":"El parènquima tumoral és el teixit de sosteniment que dóna nutrients al tumor.","options":["V","F"],"answer":"F"},
+  {"question":"La classificació de les neoplàsies TNM es basa en l’índex mitòtic del teixit tumoral.","options":["V","F"],"answer":"F"},
+  {"question":"La fecundació es dóna a l’endometri uterí.","options":["V","F"],"answer":"F"},
+  {"question":"En un avortament diferit sempre és necessari el curetatge com a procediment d’expulsió.","options":["V","F"],"answer":"F"},
+  {"question":"Nounat APGAR 8/10, necessita assistència mèdica immediata.","options":["V","F"],"answer":"F"},
+  {"question":"L’osteoporosi es deu a un excés de secreció de calcitonina a l’organisme.","options":["V","F"],"answer":"F"},
+  {"question":"L’hormona adrenocorticotropa ACTH és segregada per l’escorça suprarenal.","options":["V","F"],"answer":"F"},
+  {"question":"La unitat estructural del teixit ossi esponjós és la trabècula.","options":["V","F"],"answer":"V"},
+  {"question":"Epífisi és el nom que rep la canya dels ossos llargs.","options":["V","F"],"answer":"F"},
+  {"question":"Un pacient que presenta una reacció adversa després de prendre una medicació ben prescrita però s’ha pres el doble de la dosi es tracta com una intoxicació.","options":["V","F"],"answer":"V"},
+  {"question":"Una fractura irregular en que l’os trenca la continuïtat de la pell s’anomena oblíqua tancada.","options":["V","F"],"answer":"F"},
+  {"question":"Les hormones actuen solament sobre les seves cèl·lules diana.","options":["V","F"],"answer":"V"},
+  {"question":"El síndrome de Cushing és una patologia provocada per dany a l’escorça suprarenal i poca producció hormonal d’aquest.","options":["V","F"],"answer":"F"},
+  {"question":"Les al·lucinacions auditives són el principal tret característic d’un quadre agut d’una persona que pateix un trastorn bipolar.","options":["V","F"],"answer":"F"},
+  {"question":"Deliri és l’alteració que cursa tenint interpretacions falses de la realitat.","options":["V","F"],"answer":"V"},
+  {"question":"Les agulles de Kirschner són utilitzades en tractaments conservadors de fractures.","options":["V","F"],"answer":"F"},
+  {"question":"Les cremades de segon grau superficial es caracteritzen pel dolor i la pèrdua de les glàndules sebàcies de la zona afectada.","options":["V","F"],"answer":"F"},
+  {"question":"Segons la regla dels 9 de Maslow, els genitals suposen un 1% de la superfície corporal total.","options":["V","F"],"answer":"F"},
+  {"question":"La luxació és el desplaçament d’una superfície articular respecte l’altra, que dóna lloc a una posició incongruent de l’articulació.","options":["V","F"],"answer":"V"},
+  {"question":"Per poder codificar i catalogar les fractures obertes s’utilitza la classificació de Bennet.","options":["V","F"],"answer":"F"},
+  {"question":"L’afinitat és la capacitat de discriminar una molècula d’una altra, saber triar i unir-se a la molècula adient.","options":["V","F"],"answer":"V"},
+  {"question":"El principal factor que condiciona l’absorció d’un fàrmac és la biodisponibilitat.","options":["V","F"],"answer":"F"},
+  {"question":"Una intoxicació pot ser deguda a l’administració d’un medicament amb una bomba de perfusió que té una fallada mecànica.","options":["V","F"],"answer":"V"},
+  {"question":"Les RAM es poden classificar en funció de les circumstàncies que les produeixen: accidentals, voluntàries o causades per terceres persones.","options":["V","F"],"answer":"F"},
+  {"question":"La cirurgia refractiva és el procediment d’elecció per al tractament de la catarata senil.","options":["V","F"],"answer":"F"},
+  {"question":"L’espai per on creixen els ossos en llargada és la metàfisi.","options":["V","F"],"answer":"V"},
+  {"question":"La calcitonina és una hormona segregada per la tiroides que estimula l’osteòlisi.","options":["V","F"],"answer":"F"},
+  {"question":"L’articulació del genoll és un exemple d’amfiartrosi sinovial.","options":["V","F"],"answer":"F"},
+  {"question":"Diàfisi és el nom que rep la canya dels ossos llargs.","options":["V","F"],"answer":"V"},
+  {"question":"El menisc és una articulació de tipus diartrosi.","options":["V","F"],"answer":"F"},
+  {"question":"L’os calcani està situat a l’extremitat superior.","options":["V","F"],"answer":"F"},
+  {"question":"L’escara és un tipus de teixit que apareix com a seqüela d’una cremada de primer o segon grau.","options":["V","F"],"answer":"F"},
+  {"question":"S’ha de tenir especial cura amb la prescripció de fàrmacs anticoagulants pel risc de generar tolerància.","options":["V","F"],"answer":"F"},
+  {"question":"La síntesi de les gonadotropines es realitza a l’hipotàlem.","options":["V","F"],"answer":"F"},
+  {"question":"La trompa d’Eustaqui és un conducte que comunica la faringe amb l’oïda interna.","options":["V","F"],"answer":"F"},
+  {"question":"La porció del principi actiu que arriba a la circulació sistèmica s’anomena fracció biodisponible.","options":["V","F"],"answer":"V"},
+  {"question":"De tots els grups de medicaments, els que generen més dependència i tolerància són els opiacis.","options":["V","F"],"answer":"F"},
+  {"question":"Arrencar un fol·licle pil·lós és fàcil en una cremada de segon grau superficial.","options":["V","F"],"answer":"F"},
+  {"question":"Les hormones que s’uneixen a receptors de membrana per travessar la membrana plasmàtica i fer el seu efecte regulador a l’interior de la cèl·lula s’anomenen hormones proteiques.","options":["V","F"],"answer":"V"},
+  {"question":"L’alteració que cursa amb tenir percepcions falses o que no existeixen es coneix com a al·lucinació.","options":["V","F"],"answer":"V"},
+  {"question":"La bipolaritat és un trastorn de l’estat d’ànim en que el pacient passa per etapes depressives i etapes maníaques.","options":["V","F"],"answer":"V"},
+  {"question":"El trastorn obsessiu-compulsiu a nivell de classificació es troba dins els trastorns de tipus neuròtic.","options":["V","F"],"answer":"V"},
+  {"question":"El xenoempelt és un tipus d’empelt que es pot considerar permanent a la pell del receptor.","options":["V","F"],"answer":"F"},
+  {"question":"Quan hi ha algun problema que dificulta l’eliminació de CO₂ per l’aparell respiratori s’acumula l’anhídrid carbònic en sang i en conseqüència disminueix el pH; parlem d’acidosi respiratòria.","options":["V","F"],"answer":"V"},
+  {"question":"El sufix «otomia» fa referència a la creació d’una obertura artificial en un teixit.","options":["V","F"],"answer":"F"},
+  {"question":"Un dolor és agut quan apareix de manera sobtada.","options":["V","F"],"answer":"V"},
+  {"question":"Una gasometria arterial és un exemple de procediment de prevenció primària.","options":["V","F"],"answer":"F"},
+  {"question":"Les posicions en exploració mèdica només tenen rellevància en l’exploració física.","options":["V","F"],"answer":"F"},
+  {"question":"Una exploració de l’esquena habitualment es farà amb el pacient en decúbit dorsal.","options":["V","F"],"answer":"F"},
+  {"question":"Per administrar anestèsia epidural, cal efectuar-se una punció.","options":["V","F"],"answer":"V"},
+  {"question":"Una intervenció quirúrgica per extirpar un tumor s’engloba en la prevenció secundària.","options":["V","F"],"answer":"F"},
+  {"question":"L’exploració física consta de cinc punts: inspecció, palpació, percussió, auscultació i olfacte.","options":["V","F"],"answer":"V"},
+  {"question":"En relació amb la documentació clínica que es lliura al pacient, al moment de l’alta rep l’informe d’alta, el full de proves complementàries i el full d’ordres mèdiques.","options":["V","F"],"answer":"F"},
+  {"question":"L’esfigmomanòmetre es fa servir per auscultar l’aparell respiratori i cardiovascular.","options":["V","F"],"answer":"F"},
+  {"question":"Són mesures profilàctiques aquelles que tracten d’evitar l’aparició de la malaltia o les seves seqüeles.","options":["V","F"],"answer":"V"},
+  {"question":"El tractament pal·liatiu és el que intenta alleujar o oferir el màxim de benestar al pacient perquè no es pot assolir un tractament curatiu.","options":["V","F"],"answer":"V"},
+  {"question":"La postura de Fowler es fa servir en algunes proves diagnòstiques, sobretot en les rectals.","options":["V","F"],"answer":"F"},
+  {"question":"Com a procediments per al diagnòstic només tenim l’exploració física i les proves complementàries.","options":["V","F"],"answer":"F"},
+  {"question":"L’anèmia ferropènica és una malaltia carencial.","options":["V","F"],"answer":"V"},
+  {"question":"La ressonància magnètica és un procediment terapèutic que funciona per emissió de raigs X.","options":["V","F"],"answer":"F"},
+  {"question":"La diabetis mellitus postpancreatectomia és un exemple de malaltia secundària.","options":["V","F"],"answer":"V"},
+  {"question":"Febre, tos i mareig són exemples de signes dins la semiòtica.","options":["V","F"],"answer":"F"},
+  {"question":"L’Índex de Swaroop és un determinant de salut que valora el percentatge de mortalitat en majors de 50 anys.","options":["V","F"],"answer":"F"},
+  {"question":"La radioteràpia és una teràpia que fa ús de radiacions ionitzants d’alta energia per destruir masses cancerígenes i reduir la mida dels tumors.","options":["V","F"],"answer":"V"},
+  {"question":"La preeclàmpsia apareix quan la hipertensió coexisteix amb la proteïnúria gestacional a partir de la setmana 20 d’embaràs, i si no es tracta pot evolucionar a eclàmpsia.","options":["V","F"],"answer":"V"},
+  {"question":"Els components principals d’un tumor són el parènquima tumoral i l’estroma.","options":["V","F"],"answer":"V"},
+  {"question":"Un diagnòstic de càncer es pot sospitar amb l’anamnesi i l’exploració física, però s’ha de confirmar amb biòpsia i examen histopatològic.","options":["V","F"],"answer":"V"},
+  {"question":"La biòpsia és el procediment diagnòstic més sensible i específic per conèixer el tipus de cèl·lules, l’índex mitòtic i l’estat de la neoplàsia.","options":["V","F"],"answer":"V"},
+  {"question":"La quimioteràpia és, generalment, un tractament sistèmic que actua atacant la divisió cel·lular.","options":["V","F"],"answer":"V"},
+  {"question":"Els procediments oncològics es divideixen bàsicament en procediments diagnòstics i procediments terapèutics segons la seva finalitat.","options":["V","F"],"answer":"V"},
+  {"question":"El part eutòcic és sempre un part instrumental amb fòrceps, espàtules o ventosa.","options":["V","F"],"answer":"F"},
+  {"question":"En el sistema TNM, el valor M2 indica absència de metàstasi.","options":["V","F"],"answer":"F"},
+  {"question":"La disseminació limfàtica és la via de propagació que caracteritza especialment els carcinomes.","options":["V","F"],"answer":"V"},
+  {"question":"En el sistema TNM, la lletra T descriu la mida del tumor i si ha envaït el teixit proper.","options":["V","F"],"answer":"V"},
+  {"question":"En la placenta prèvia, el tacte vaginal està totalment contraindicat i la prova diagnòstica d’elecció és l’ecografia transvaginal.","options":["V","F"],"answer":"V"},
+  {"question":"Les neoplàsies malignes es caracteritzen per estar encapsulades i per no envair altres teixits.","options":["V","F"],"answer":"F"},
+  {"question":"Els pulmons, el fetge i els ossos són llocs freqüents de metàstasi per la seva gran vascularització.","options":["V","F"],"answer":"V"},
+  {"question":"El puerperi és l’etapa que va des de l’expulsió de la placenta fins a 40 dies després del part.","options":["V","F"],"answer":"V"},
+  {"question":"Una neoplàsia és un creixement anormal d’un teixit provocat per una reproducció cel·lular desordenada.","options":["V","F"],"answer":"V"},
+  {"question":"La placenta prèvia és una patologia de la primera meitat de l’embaràs i la prova diagnòstica d’elecció és el tacte vaginal.","options":["V","F"],"answer":"F"},
+  {"question":"La tomografia per emissió de positrons PET combina imatges de TAC i imatges del PET, i en oncologia utilitza sovint la fludesoxiglucosa 18FDG.","options":["V","F"],"answer":"V"},
+  {"question":"Les neoplàsies benignes acostumen a ser localitzades, encapsulades i de creixement lent.","options":["V","F"],"answer":"V"},
+  {"question":"La placenta prèvia és una patologia de la segona meitat de l’embaràs i suposa un 20% de les hemorràgies del tercer trimestre.","options":["V","F"],"answer":"V"},
+  {"question":"Una luxació és la separació total de les superfícies òssies que formen una articulació, i si la separació és parcial es parla de subluxació.","options":["V","F"],"answer":"V"},
+  {"question":"Segons el document, una de cada quatre persones pateix o patirà un trastorn mental al llarg de la vida.","options":["V","F"],"answer":"V"},
+  {"question":"L’ansietat és una resposta emocional d’alerta davant una amenaça que activa mecanismes de defensa per lluitar o fugir.","options":["V","F"],"answer":"V"},
+  {"question":"Les cremades de primer grau produeixen habitualment butllofes.","options":["V","F"],"answer":"F"},
+  {"question":"La contusió és un traumatisme amb lesió de les parts toves que no presenta solució de continuïtat a la pell.","options":["V","F"],"answer":"V"},
+  {"question":"Les cremades de tercer grau provoquen dolor perquè les terminacions nervioses es conserven.","options":["V","F"],"answer":"F"},
+  {"question":"La regla del palmell de la mà és vàlida per a adults i per a nens, i calcula que el palmell equival aproximadament al 0,8-1% de la superfície corporal total.","options":["V","F"],"answer":"V"},
+  {"question":"El diagnòstic dels trastorns mentals només el pot fer l’especialista en salut mental, i un sol símptoma no sol permetre establir el diagnòstic.","options":["V","F"],"answer":"V"},
+  {"question":"Una cremada incrementa deu vegades la pèrdua d’aigua corporal, i una cremada del 50% de la superfície corporal pot comportar la pèrdua de 6 litres d’aigua.","options":["V","F"],"answer":"V"},
+  {"question":"En la classificació de Gustilo, la fractura oberta de grau II es caracteritza per una ferida de més de 10 cm i gran inestabilitat.","options":["V","F"],"answer":"F"},
+  {"question":"En l’informe de politraumatisme, el TAC cranial es fa per descartar un TCE.","options":["V","F"],"answer":"V"},
+  {"question":"Un hematoma és una hemorràgia en què la sang arriba a la superfície corporal.","options":["V","F"],"answer":"F"},
+  {"question":"Un medicament està format per un principi actiu o una associació de principis actius, i un excipient sense activitat terapèutica.","options":["V","F"],"answer":"V"},
+  {"question":"La depressió emmascarada és aquella que no mostra els símptomes típics exposats, sinó que es presenta en forma de símptomes i signes somàtics, com el dolor.","options":["V","F"],"answer":"V"},
+  {"question":"La fractura patològica o espontània és aquella que es produeix sense traumatisme agut o per un traumatisme que seria incapaç de fracturar un os sa.","options":["V","F"],"answer":"V"},
+  {"question":"Les ferides incises són produïdes per instruments de fulla afilada i la seva profunditat és més gran que la seva longitud.","options":["V","F"],"answer":"F"},
+  {"question":"L’excipient d’un medicament no té activitat terapèutica, però serveix per donar estabilitat i forma al principi actiu i permetre administrar-lo a la dosi adequada.","options":["V","F"],"answer":"V"},
+  {"question":"Les cremades de segon grau profund no formen butllofes, són exsudatives i molt doloroses, i es curen en uns 15 dies.","options":["V","F"],"answer":"F"},
+  {"question":"Una fractura és la solució de continuïtat del teixit ossi en qualsevol os del cos.","options":["V","F"],"answer":"V"},
+  {"question":"La regla dels 9 de Wallace és vàlida tant per a adults com per a nens.","options":["V","F"],"answer":"F"},
+  {"question":"Les malalties congènites són sempre hereditàries.","options":["V","F"],"answer":"F"},
+  {"question":"Un agent patogen és qualsevol microorganisme capaç de produir una malaltia.","options":["V","F"],"answer":"V"},
+  {"question":"El període d'incubació és el temps entre l'exposició a un agent patogen i l'aparició dels primers símptomes.","options":["V","F"],"answer":"V"},
+  {"question":"La incidència d'una malaltia es refereix al nombre total de casos existents en una població en un moment determinat.","options":["V","F"],"answer":"F"},
+  {"question":"La remissió d'una malaltia significa una millora o desaparició temporal dels símptomes.","options":["V","F"],"answer":"V"},
+  {"question":"La sensibilitat d'una prova diagnòstica es refereix a la seva capacitat per identificar correctament els individus sans.","options":["V","F"],"answer":"F"},
+  {"question":"Un diagnòstic diferencial implica considerar diverses malalties que podrien explicar els símptomes del pacient.","options":["V","F"],"answer":"V"},
+  {"question":"La tomografia computeritzada (TC) produeix imatges transversals detallades del cos mitjançant raigs X.","options":["V","F"],"answer":"V"},
+  {"question":"L'ecografia és especialment útil per visualitzar estructures òssies denses.","options":["V","F"],"answer":"F"},
+  {"question":"Un signe és una dada subjectiva que el pacient explica, com ara el dolor, mentre que un símptoma és objectivable per l'examinador, com la febre.","options":["V","F"],"answer":"F"},
+  {"question":"Tots els procediments diagnòstics tenen com a objectiu confirmar una malaltia que el pacient ja pateix.","options":["V","F"],"answer":"F"},
+  {"question":"La prevenció primària consisteix en detectar malalties en estadis inicials mitjançant programes de cribratge poblacionals.","options":["V","F"],"answer":"F"},
+  {"question":"La ressonància magnètica utilitza radiació ionitzant per obtenir imatges detallades dels teixits tous.","options":["V","F"],"answer":"F"},
+  {"question":"L'ecografia és una tècnica que utilitza ones de so d’alta freqüència i no implica exposició a radiacions.","options":["V","F"],"answer":"V"},
+  {"question":"La recidiva es refereix a la volta a la malaltia després de la curació biològica.","options":["V","F"],"answer":"V"},
+  {"question":"Vacunar-se contra el virus del papil·loma humà (VPH) és una mesura de prevenció secundària.","options":["V","F"],"answer":"F"},
+  {"question":"Participar en un programa de rehabilitació cardíaca després d’un infart és un exemple de prevenció terciària.","options":["V","F"],"answer":"V"},
+  {"question":"L’ergometria és una prova que serveix per avaluar la resposta del cor durant l’exercici físic, però no proporciona informació sobre la capacitat respiratòria.","options":["V","F"],"answer":"F"},
+  {"question":"L'ecografia utilitza ones sonores d'alta freqüència per crear imatges en temps real.","options":["V","F"],"answer":"V"},
+  {"question":"Les tècniques de medicina nuclear utilitzen substàncies radioactives per obtenir imatges funcionals del cos.","options":["V","F"],"answer":"V"},
+  {"question":"La còrnia és la capa més externa del globus ocular.","options":["V","F"],"answer":"F"},
+  {"question":"Les hormones sexuals són lipídiques i, per tant, travessen lliurement la membrana plasmàtica de les seves cèl·lules diana.","options":["V","F"],"answer":"V"},
+  {"question":"L’os calcani es troba a l’extremitat inferior.","options":["V","F"],"answer":"V"},
+  {"question":"Les fractures patològiques de fèmur es donen pel centre de la diàfisi.","options":["V","F"],"answer":"F"},
+  {"question":"El marge terapèutic és la diferència entre la concentració màxima i el nivell tòxic d’un fàrmac.","options":["V","F"],"answer":"V"},
+  {"question":"L’escarectomia és l’eliminació de teixit necrosat d’una cremada.","options":["V","F"],"answer":"V"},
+  {"question":"Nivells alts de PTH en sang estimulen l’osteogènesi.","options":["V","F"],"answer":"F"},
+  {"question":"El canell és una articulació el·lipsoïdal o condília.","options":["V","F"],"answer":"V"},
+  {"question":"Lligament encreuat anterior pot ser substituït en cirurgia pel tendó rotulià.","options":["V","F"],"answer":"V"},
+  {"question":"El gegantisme està relacionat amb l’hormona GH o somatotropina.","options":["V","F"],"answer":"V"},
+  {"question":"Els estats d’hiperventilació relacionats amb les crisis d’ansietat, estats ansiosos o altres patologies poden provocar alcalosi respiratòria.","options":["V","F"],"answer":"V"},
+  {"question":"L’estrabisme és una patologia en què hi ha incapacitat de l’ull per convergir en un mateix punt.","options":["V","F"],"answer":"V"},
+  {"question":"Les glàndules exocrines secreten hormones, són per exemple el tiroide o les suprarenals.","options":["V","F"],"answer":"F"},
+  {"question":"La fractura de Colles afecta l’extrem distal del cúbit i del radi.","options":["V","F"],"answer":"F"},
+  {"question":"La patologia de cataractes, comporta l’opacitat de la retina.","options":["V","F"],"answer":"F"},
+  {"question":"El maluc és una articulació de tipus el·lipsoïdal/condília.","options":["V","F"],"answer":"F"},
+  {"question":"Un pacient pren una medicació que li havien prescrit a la seva parella perquè té el mateix refredat i aquesta li fa reacció. Aquest fet té la consideració de RAM.","options":["V","F"],"answer":"F"},
+  {"question":"Les idees i percepcions anormals amb allunyament de la realitat són pròpies dels trastorns psicòtics.","options":["V","F"],"answer":"V"},
+  {"question":"Quan es parla de DM sense més informació, es considera DM tipus II.","options":["V","F"],"answer":"V"}
+  
+
+
+  /*
+  EJEMPLO PARA AÑADIR MÁS:
+
+  ,
+  {
+    "question": "Aquí va la pregunta nueva.",
+    "options": ["v", "f"],
+    "answer": "v"
+  }
+
+  */
+];
+
+
+/* ============================
+   VARIABLES PRINCIPALES
+============================ */
+let answeredQuestions = JSON.parse(localStorage.getItem("answeredQuestions")) || [];
+let currentQuestion = 0;
+let score = 0;
+let quizData = [];
+
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const totalQuestionsText = document.getElementById("totalQuestionsText");
+const pendingQuestionsText = document.getElementById("pendingQuestionsText");
+const completedQuestionsText = document.getElementById("completedQuestionsText");
+
+
+/* ============================
+   ACTUALIZAR PANEL SUPERIOR
+============================ */
+function updateProgressPanel() {
+  const total = allQuestions.length;
+  const completed = answeredQuestions.length;
+  const pending = total - completed;
+
+  totalQuestionsText.textContent = `Preguntas totales: ${total}`;
+  pendingQuestionsText.textContent = `Preguntas pendientes: ${pending}`;
+  completedQuestionsText.textContent = `Preguntas realizadas: ${completed}`;
+}
+
+
+/* ============================
+   PREPARAR TEST
+============================ */
+function prepareQuiz() {
+  if (allQuestions.length === 0) {
+    container.innerHTML = `
+      <div class="question">
+        <p>No hay preguntas todavía.</p>
+        <p class="small-text">Añade preguntas dentro de la variable allQuestions.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Si ya has hecho todas, se reinicia automáticamente
+  if (answeredQuestions.length >= allQuestions.length) {
+    answeredQuestions = [];
+    localStorage.removeItem("answeredQuestions");
+
+    alert("Has completado todas las preguntas. Se reinicia el ciclo.");
+  }
+
+  updateProgressPanel();
+
+  let availableQuestions = allQuestions
+    .map((question, index) => index)
+    .filter(index => !answeredQuestions.includes(index));
+
+  let numberOfQuestionsToday = parseInt(
+    prompt(`¿Cuántas preguntas quieres hacer hoy? Te quedan ${availableQuestions.length} pendientes.`)
+  );
+
+  if (
+    isNaN(numberOfQuestionsToday) ||
+    numberOfQuestionsToday <= 0 ||
+    numberOfQuestionsToday > availableQuestions.length
+  ) {
+    numberOfQuestionsToday = availableQuestions.length;
+  }
+
+  shuffle(availableQuestions);
+
+  let selectedIndexes = availableQuestions.slice(0, numberOfQuestionsToday);
+
+  quizData = selectedIndexes.map(index => {
+    return {
+      ...allQuestions[index],
+      originalIndex: index
+    };
+  });
+
+  showQuestion();
+}
+
+
+/* ============================
+   MOSTRAR PREGUNTA
+============================ */
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if (currentQuestion >= quizData.length) {
+    updateProgressPanel();
+
+    const pending = allQuestions.length - answeredQuestions.length;
+
+    container.innerHTML = `
+      <div class="question">
+        <p>Quiz terminado</p>
+        <p>Tu puntuación final es ${score} de ${quizData.length}</p>
+        <p class="small-text">
+          Preguntas pendientes para otro día: ${pending}
+        </p>
+        ${
+          pending === 0
+          ? `<p class="small-text">Has completado todas las preguntas. La próxima vez se reiniciará el ciclo.</p>`
+          : `<p class="small-text">La próxima vez saldrán preguntas que todavía no has hecho.</p>`
+        }
+      </div>
+    `;
+
+    resultDiv.textContent = `Puntuación final: ${score}/${quizData.length}`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+
+  const div = document.createElement("div");
+  div.className = "question";
+
+  const p = document.createElement("p");
+  p.textContent = `${currentQuestion + 1}. ${q.question}`;
+  div.appendChild(p);
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+
+  // Si quieres que siempre salga V primero y F segundo, comenta la línea siguiente:
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      // Guardamos esta pregunta como realizada justo al contestarla
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+
+      if (btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+
+        allBtns.forEach(b => {
+          if (b.dataset.correct === "true") {
+            b.classList.add("correct");
+          }
+        });
+      }
+
+      resultDiv.textContent = `Puntuación: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+
+/* ============================
+   BOTÓN SIGUIENTE
+============================ */
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+
+/* ============================
+   BOTÓN REINICIAR PROGRESO
+============================ */
+resetBtn.onclick = () => {
+  const confirmReset = confirm("¿Seguro que quieres reiniciar el progreso? Volverán a salir todas las preguntas.");
+
+  if (confirmReset) {
+    localStorage.removeItem("answeredQuestions");
+    location.reload();
+  }
+};
+
+
+/* ============================
+   INICIAR QUIZ
+============================ */
+prepareQuiz();
+</script>
+
+</body>
+</html>
