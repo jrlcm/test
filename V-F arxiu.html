@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Arxiu</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0 5px 0;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .top-panel {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .top-panel p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    padding-top: 10px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .question p {
+    font-size: 34px;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 30px 0;
+  }
+
+  .options {
+    margin-top: 20px;
+  }
+
+  .options button {
+    display: block;
+    margin: 10px 0;
+    padding: 15px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+
+  .options button:hover {
+    background: #ddd;
+  }
+
+  .options button:disabled {
+    cursor: not-allowed;
+  }
+
+  .correct {
+    background-color: #c8e6c9 !important;
+    border-color: #388e3c !important;
+    color: #2e7d32 !important;
+  }
+
+  .wrong {
+    background-color: #ffcdd2 !important;
+    border-color: #d32f2f !important;
+    color: #c62828 !important;
+  }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 10px 0;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  button.main-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.main-btn:hover {
+    background: #1976D2;
+  }
+
+  button.reset-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #e53935;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.reset-btn:hover {
+    background: #c62828;
+  }
+
+  .small-text {
+    font-size: 15px !important;
+    font-weight: normal !important;
+    color: #555;
+  }
+
+  @media (max-width: 600px) {
+    .question p {
+      font-size: 28px;
+    }
+
+    .options button {
+      font-size: 20px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Quiz ARXIU</h1>
+<div class="subtitle">Preguntas aleatorias sin repetir hasta completar todo el temario</div>
+
+<div class="top-panel">
+  <p id="totalQuestionsText">Preguntas totales: 0</p>
+  <p id="pendingQuestionsText">Preguntas pendientes: 0</p>
+  <p id="completedQuestionsText">Preguntas realizadas: 0</p>
+</div>
+
+<div class="quiz-container" id="quiz-container"></div>
+
+<div class="result" id="result">Puntuación: 0</div>
+
+<div class="buttons">
+  <button id="nextBtn" class="main-btn" style="display:none;">Siguiente</button>
+  <button id="resetBtn" class="reset-btn">Reiniciar progreso</button>
+</div>
+
+<script>
+/* ============================
+   FUNCIÓN PARA MEZCLAR ARRAYS
+============================ */
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+
+/* ============================
+   AÑADE AQUÍ TUS PREGUNTAS
+   No tienes que indicar cuántas hay.
+   El código las cuenta automáticamente.
+============================ */
+const allQuestions = [
+  
+ 
+{"question":"La història clínica és el document bàsic de l’assistència sanitària.","options":["V","F"],"answer":"V"},
+{"question":"La documentació sanitària és només aquella que integra la història clínica del pacient.","options":["V","F"],"answer":"F"},
+{"question":"A un centre sanitari no hi pot haver documentació no sanitària.","options":["V","F"],"answer":"F"},
+{"question":"Un document de petició de transport sanitari és documentació sanitària clínica.","options":["V","F"],"answer":"F"},
+{"question":"El full de derivació és documentació sanitària clínica.","options":["V","F"],"answer":"F"},
+{"question":"Els 11 primers termes del CIP de la senyora Joana Puig Penya, nascuda el 01/07/1976 són PUPE 0 760701.","options":["V","F"],"answer":"F"},
+{"question":"La documentació de la HC, com l’informe d’alta, ha d’estar escrit a màquina o ordinador.","options":["V","F"],"answer":"F"},
+{"question":"A l’anvers de la targeta sanitària individual hi consta, entre altres dades, el nivell de cobertura.","options":["V","F"],"answer":"V"},
+{"question":"S’anomena tipus documental a l’agrupació de models d’informes clínics necessaris per a la gestió sanitària i administrativa dels centres.","options":["V","F"],"answer":"V"},
+{"question":"El consentiment informat és un document que té caràcter medicolegal.","options":["V","F"],"answer":"V"},
+{"question":"La història clínica té una doble vessant, l’assistencial i cientificotècnica i la legal.","options":["V","F"],"answer":"V"},
+{"question":"El pacient ha de poder accedir a tota la informació continguda en la seva història clínica, sense excepcions i en qualsevol moment.","options":["V","F"],"answer":"F"},
+{"question":"La codificació estàndard d’un CIP pot variar en casos en que el codi resultant sigui una paraula mal sonant.","options":["V","F"],"answer":"V"},
+{"question":"Si es contempla que una visita mèdica ha de durar 15 minuts, a l’agenda de cites mèdiques planificarem quatre visites per hora.","options":["V","F"],"answer":"F"},
+{"question":"L’obligació de guardar la confidencialitat de les dades del pacient afecta només al personal sanitari d’un establiment clínic.","options":["V","F"],"answer":"F"},
+{"question":"La confidencialitat professional ha d’evitar el «contínuum assistencial».","options":["V","F"],"answer":"F"},
+{"question":"En els casos de malaltia greu, podem informar a un fill de l’afecció del seu pare, que s’ha interessat pel diagnòstic sense la presència de l’interessat.","options":["V","F"],"answer":"F"},
+{"question":"Només poden emetre receptes mèdiques metges, odontòlegs, podòlegs i infermeres.","options":["V","F"],"answer":"F"},
+{"question":"Un DVA només es pot redactar en situació de malaltia incurable i discapacitant.","options":["V","F"],"answer":"F"},
+{"question":"El consentiment informat ha d’estar sempre recollit per escrit.","options":["V","F"],"answer":"F"},
+{"question":"El document suggereix que els professionals poden tenir reticències a l'hora de restringir l'accés a dades sensibles.","options":["V","F"],"answer":"V"},
+{"question":"El dret a la portabilitat és independent del dret d'accés segons la LOPDP-GDD.","options":["V","F"],"answer":"V"},
+{"question":"El dret a la supressió pot ser exercit pel pacient sense cap requisit previ.","options":["V","F"],"answer":"F"},
+{"question":"El dret d'accés permet al pacient accedir a la seva història clínica en qualsevol moment, sense cap excepció.","options":["V","F"],"answer":"F"},
+{"question":"El dret de rectificació només s'aplica quan el pacient proporciona una prova de l'error en les dades personals.","options":["V","F"],"answer":"V"},
+{"question":"Els centres sanitaris no han d'establir nivells de confidencialitat per a casos particulars, segons el document.","options":["V","F"],"answer":"F"},
+{"question":"Els circuits d'informació i documents són establerts pel personal mèdic.","options":["V","F"],"answer":"F"},
+{"question":"Els circuits d'informació i documents són establerts per la Societat Catalana de Documentació Mèdica.","options":["V","F"],"answer":"F"},
+{"question":"Els professionals poden restringir l'accés a determinades dades segons la seva pròpia discreció sense la necessitat d'una sol·licitud formal del pacient.","options":["V","F"],"answer":"F"},
+{"question":"Els professionals poden restringir l'accés a les dades personals sense haver de justificar-ho davant del pacient.","options":["V","F"],"answer":"F"},
+{"question":"L’obligació de confidencialitat de les dades del pacient acaba amb la seva mort.","options":["V","F"],"answer":"F"},
+{"question":"La Comissió de Documentació dels centres sanitaris està formada només per metges.","options":["V","F"],"answer":"F"},
+{"question":"La CTMDC estableix criteris sobre l'accés a les dades personals amb conformitat a la normativa sobre protecció de dades.","options":["V","F"],"answer":"V"},
+{"question":"La limitació del tractament pot ser sol·licitada pel pacient quan consideri que alguna informació és inexacta.","options":["V","F"],"answer":"V"},
+{"question":"La Llei 41/2002 estableix clarament que els informes sociosanitaris no han de contenir dades relatives a la situació econòmica del pacient.","options":["V","F"],"answer":"V"},
+{"question":"La Llei de Protecció de Dades no estableix cap límit de temps per a la conservació de les històries clíniques.","options":["V","F"],"answer":"F"},
+{"question":"La Llei de Protecció de Dades no permet la transmissió directa de dades personals de responsable a responsable.","options":["V","F"],"answer":"F"},
+{"question":"La targeta sanitària individual s’emet a les comunitats autònomes i només són vàlides per a la comunitat autònoma que l’ha emès.","options":["V","F"],"answer":"F"},
+{"question":"La vigilància epidemiològica en la salut pública consisteix en la recollida, l'anàlisi, la interpretació i la difusió de tota la informació relacionada amb l’aparició i l’extensió de malalties i els seus determinants.","options":["V","F"],"answer":"V"},
+{"question":"La importància del sistema d’informació és que es pugui arxivar informació i millor que no es pugui recuperar.","options":["V","F"],"answer":"F"},
+{"question":"La emprenta del taló d’un nadó en nèixer o una gota de sang es poden considerar un document.","options":["V","F"],"answer":"V"},
+{"question":"Quant als elements d’un document. La tinta emprada per crear un document és el suport que conté la informació del document.","options":["V","F"],"answer":"F"},
+{"question":"Una Història Clínica es pot considerar un document secundari perquè conté altres documents.","options":["V","F"],"answer":"F"},
+{"question":"Un tesaurus es pot considerar un document de tipus terciari perquè recull conceptes sobre un tema concret i serveix per a recuperar informació.","options":["V","F"],"answer":"V"},
+{"question":"Tota la informació que es genera al centre sanitari i la seva documentació és considera documentació sanitària.","options":["V","F"],"answer":"F"},
+{"question":"El pacient es considera en el sistema d’informació hospitalari com a un usuari extern.","options":["V","F"],"answer":"V"},
+{"question":"En una cadena documental hi ha tres tipus d’agents: els productors, els gestors i els usuaris. El pacient es pot considerar com un productor d’informació, igual que un metge, infermera, familiars i qualsevol qui aporti informació a la HC.","options":["V","F"],"answer":"V"},
+{"question":"A la biblioteca d’un hospital es gestiona informació interna i a la Unitat de Documentació Clínica la informació externa.","options":["V","F"],"answer":"F"},
+{"question":"Un informe clínic d’alta és un document híbrid.","options":["V","F"],"answer":"V"},
+{"question":"Un comunicat de malalties de declaració obligatòria el pot signar i omplir un tècnic en documentació i administració sanitàries.","options":["V","F"],"answer":"F"},
+{"question":"La norma que regula o fa referència al dret d’informació sobre la salut que tenen les persones i l’obligació d’informar per part dels professionals de la salut és, entre d’altres, la Llei 41/2002 d’autonomia del pacient.","options":["V","F"],"answer":"V"},
+{"question":"El consentiment informat per una intervenció quirúrgica en el cas d’un menor de 16 anys l’ha de donar el representant del menor.","options":["V","F"],"answer":"F"},
+{"question":"La Llei 21/2000 preveu un termini de conservació del consentiment informat de 15 anys.","options":["V","F"],"answer":"V"},
+{"question":"Un full de derivació o volant és el mateix que el full d’interconsulta.","options":["V","F"],"answer":"F"},
+{"question":"El volant o full de derivació és un document que forma part de la Història Clínica.","options":["V","F"],"answer":"F"},
+{"question":"Una petició de transport sanitari és un document no sanitari.","options":["V","F"],"answer":"F"},
+{"question":"Una factura de productes sanitaris d’una clínica dental és un document sanitari.","options":["V","F"],"answer":"F"},
+{"question":"El document de derivació és el mateix que el full d’interconsulta.","options":["V","F"],"answer":"F"},
+{"question":"Si manquen dades per tal d’elaborar un informe d’alta, se’n pot lliurar un de provisional.","options":["V","F"],"answer":"V"},
+{"question":"El consentiment informat mai pot realitzar-se de forma verbal.","options":["V","F"],"answer":"F"},
+{"question":"El deure de la confidencialitat acaba amb la mort de la persona.","options":["V","F"],"answer":"F"},
+{"question":"L’accés a les dades d’un pacient només el poden tenir aquells professionals directament relacionats amb la seva atenció.","options":["V","F"],"answer":"V"},
+{"question":"Una baixa mèdica per contingències professionals només pot ser per accident de treball.","options":["V","F"],"answer":"F"},
+{"question":"L’informe clínic d’alta no forma part de la història clínica del pacient.","options":["V","F"],"answer":"F"},
+{"question":"El pacient no es considera usuari del sistema d’informació sanitària.","options":["V","F"],"answer":"F"},
+{"question":"La codificació del CIP inclou un indicador de gènere.","options":["V","F"],"answer":"V"},
+{"question":"La polsera identificativa amb el codi de barres del pacient hospitalari és un document depenent del Servei d’Admissions i Documentació Clínica.","options":["V","F"],"answer":"V"},
+{"question":"Una sol·licitud de proves complementàries és un document sanitari clínic.","options":["V","F"],"answer":"F"},
+{"question":"L’establiment d’un diagnòstic no forma part del mètode clínic, ja que aquest només es planteja la presentació d’hipòtesis.","options":["V","F"],"answer":"F"},
+{"question":"El consentiment informat, per norma, ha de ser un document tancat, ja redactat, on quedin especificades totes les característiques de cada procés al qual fa referència.","options":["V","F"],"answer":"F"},
+{"question":"Donat que l’HC pot ser consultada pel pacient i altres usuaris, no es permet l’ús d’acrònims en la redacció dels documents, per tal de maximitzar la llegibilitat i la comprensió.","options":["V","F"],"answer":"F"},
+{"question":"L’ordenament en l'àmbit documental a la HC tradicional pot ser per episodi assistencial o per tipus de documents.","options":["V","F"],"answer":"F"},
+{"question":"El model d’HC que es fa servir a l’atenció primària és la cronològica (HCC).","options":["V","F"],"answer":"F"},
+{"question":"A la Història Clínica Hospitalària les activitats estan enfocades a la curació i la relació metge-pacient és contínua.","options":["V","F"],"answer":"F"},
+{"question":"A la Història Clínica d’Atenció Primària l’entorn social adquireix molta importància i el recull de dades es manté al llarg del temps.","options":["V","F"],"answer":"V"},
+{"question":"S’ha d’afegir una etiqueta adhesiva sobre les radiografies arxivades a la HC per tal d’estar normalitzades.","options":["V","F"],"answer":"F"},
+{"question":"A banda de l’organització cronològica, els documents en paper de la HC poden estar ordenats alfabèticament.","options":["V","F"],"answer":"F"},
+{"question":"Un dels avantatges de la informatització de la història clínica és que facilita la recollida i recuperació posterior de les dades.","options":["V","F"],"answer":"V"},
+{"question":"A la història clínica tradicional totes les dades porten un ordenament cronològic.","options":["V","F"],"answer":"V"},
+{"question":"Seguint la normativa respecte al CMBD, podem donar homogeneïtat al format extern dels diferents documents clínics.","options":["V","F"],"answer":"F"},
+{"question":"A un diagrama de flux una figura de rombe indica que un procés genera un document.","options":["V","F"],"answer":"F"},
+{"question":"L’estructura d’una comunicació escrita de tipus oficial consta de quatre elements: encapçalament, cos, conclusió i peu.","options":["V","F"],"answer":"F"},
+{"question":"La gràfica diària és un document que omple el metge i que ha d’estar a la història clínica.","options":["V","F"],"answer":"F"},
+{"question":"La categoria del Tècnic Superior en Documentació i Administració Sanitària no justifica el seu accés a la HC dels pacients.","options":["V","F"],"answer":"F"},
+{"question":"Els informes d’alta, els quirúrgics i els de curs clínic s’han de preservar durant 5 anys des de l’última assistència.","options":["V","F"],"answer":"F"},
+{"question":"La Comissió Tècnica en Matèria de Documentació Clínica estableix criteris per a la translació de la informació sanitària generada al mateix centre, però també a la documentació i dades externes generades per altres institucions i que arriben al centre.","options":["V","F"],"answer":"V"},
+{"question":"Digitalització i migració són dos tipus de translació de la informació.","options":["V","F"],"answer":"V"},
+{"question":"La llei 16/2010 estableix que la Història Clínica s’ha de fer fins als 15 anys des de l’última assistència, però altres documents poden tenir un temps de conservació major, com alguns relacionats amb la maternitat i el naixement.","options":["V","F"],"answer":"V"},
+{"question":"La HC només pot tenir funció clínica-assistencial.","options":["V","F"],"answer":"F"},
+{"question":"Els indicadors d'activitat del Servei d’Admissió i Documentació Clínica inclouen el nombre de nous documents normalitzats introduïts a la història clínica.","options":["V","F"],"answer":"V"},
+{"question":"Les auditories es realitzen cada 3 anys i mai tenen caràcter retroactiu.","options":["V","F"],"answer":"F"},
+{"question":"La Comissió Tècnica en Matèria de Documentació Mèdica estableix criteris homogenis sobre l'ús dels suports originals en la translació de la informació.","options":["V","F"],"answer":"F"},
+{"question":"Els circuits d'informació i documents estan establerts per les unitats de digitalització i no per la Comissió de Documentació.","options":["V","F"],"answer":"F"},
+{"question":"Els serveis d'Admissió i Documentació Clínica són responsables de l'avaluació i la promoció de la qualitat de la història clínica.","options":["V","F"],"answer":"V"},
+{"question":"El Model d'Excel·lència a la gestió, EFQM, és el més utilitzat a Catalunya per a l'avaluació de centres sanitaris.","options":["V","F"],"answer":"V"},
+{"question":"La relació metge pacient a la HC del hospital és sempre esporàdica.","options":["V","F"],"answer":"F"},
+{"question":"La HC hospitalària està centrada en l’entorn social de pacient.","options":["V","F"],"answer":"F"},
+{"question":"El registre de medicació és un document que omple el metge i que ha d’estar a la història clínica.","options":["V","F"],"answer":"F"},
+{"question":"La identificació dels pacients abans de qualsevol procediment és un requisit segons l'estàndard IPSG.1.","options":["V","F"],"answer":"V"},
+{"question":"La Comissió de Documentació dels centres sanitaris és un òrgan unidisciplinari.","options":["V","F"],"answer":"F"},
+{"question":"Un desavantatge de la història clínica tradicional és que NO resulta fàcil establir relacions entre les diverses actuacions de l’assistència al pacient.","options":["V","F"],"answer":"V"},
+{"question":"El consentiment informat per a procediments quirúrgics o invasius no és necessari segons l'estàndard PFR.6.4.","options":["V","F"],"answer":"F"},
+{"question":"La Comissió de Documentació garanteix la distribució i seguretat de la informació, però no la seva accessibilitat.","options":["V","F"],"answer":"F"},
+{"question":"El model d’atenció centrada en el pacient és promogut pel Model d’Acreditació de la Joint Commission.","options":["V","F"],"answer":"V"},
+{"question":"La Comissió de Documentació dels centres sanitaris no inclou representants del personal de gestió documental.","options":["V","F"],"answer":"F"},
+{"question":"El procés de consentiment informat només implica al pacient, no al seu metge.","options":["V","F"],"answer":"F"},
+{"question":"La Comissió Tècnica en Matèria de Documentació Clínica regula la custòdia, conservació i destrucció de la documentació clínica.","options":["V","F"],"answer":"V"},
+{"question":"La Comissió Tècnica en Matèria de Documentació Clínica no té com a objectiu homogeneïtzar els criteris sobre els drets d'informació concernents a la salut.","options":["V","F"],"answer":"F"},
+{"question":"El consentiment informat només es registra a la història clínica del pacient mitjançant firma, no verbalment.","options":["V","F"],"answer":"F"},
+{"question":"Actualment, amb la possibilitat que la HC sigui electrònica, es pot dir que la Història Clínica sanitària és única a tot el país, independentment del centre en què un pacient sigui atès.","options":["V","F"],"answer":"F"},
+{"question":"El principi d’història clínica única s’hauria de complir almenys pel que respecta a un centre sanitari.","options":["V","F"],"answer":"V"},
+{"question":"L’informe d'anestèsia és un document que com a mínim ha de tenir la història clínica d’assistència primària.","options":["V","F"],"answer":"F"},
+{"question":"El full d’informe d’interconsulta és necessari quan el pacient vol demanar una segona opinió i ho fa a través d’aquest document, sent vàlid amb la seva signatura.","options":["V","F"],"answer":"F"},
+{"question":"La Gràfica de constants diària és un document d’infermeria que s’acostuma a fer servir en atenció primària.","options":["V","F"],"answer":"F"},
+{"question":"L’emplenament de la HC és una obligació dels professionals que atenen el pacient i no cal que se sàpiga qui ha fet alguna actuació perquè s’entén que es treballa en equip, l’equip del servei mèdic corresponent.","options":["V","F"],"answer":"F"},
+{"question":"A la Història Clínica Compartida de Catalunya el pacient no hi té accés directament.","options":["V","F"],"answer":"V"},
+{"question":"La interoperabilitat sintàctica fa referència a l’intercanvi de documents.","options":["V","F"],"answer":"V"},
+{"question":"La història clínica te com una de les seves característiques que ha de ser oportuna.","options":["V","F"],"answer":"V"},
+{"question":"La Meva Salut és la Història Clínica Electrònica a la que el metge accedeix directament i pot fer les anotacions directament al curs clínic.","options":["V","F"],"answer":"F"},
+{"question":"La telesalut inclou tota acció que impliqui una distància en l’àmbit sanitari des de l’educació sanitària a distància fins una consulta per videoconferència.","options":["V","F"],"answer":"V"},
+{"question":"DICOM fa referència a un estàndard internacional per a l’intercanvi de informes clínics.","options":["V","F"],"answer":"F"},
+{"question":"Als informes clínics es recomana fer servir acrònims, per exemple per dir tensió arterial posar TA i així s’estalvia temps. Per tant quant més millor.","options":["V","F"],"answer":"F"},
+{"question":"Al cas de les Històries Clíniques en paper, constituïdes per fulls i que es disposen en carpeta i aquesta a dins d’un sobre, les mides del paper han de ser normalitzades. Actualment, als document no són importants aquestes mides perquè els documents són electrònics.","options":["V","F"],"answer":"F"},
+{"question":"En un procés de digitalització és permès l’ús de tecnologies de reconeixement de caràcters (tipus OCR) per poder després extreure paraules o informació del document.","options":["V","F"],"answer":"F"},
+{"question":"L’avaluació de qualitat de l’assistència sanitària es fa per imperatiu legal.","options":["V","F"],"answer":"V"},
+{"question":"El model d’avaluació de la qualitat que és voluntari i de verificació externa és el model d’acreditació.","options":["V","F"],"answer":"V"},
+{"question":"Les auditories dels Arxius clínics són per millorar la qualitat dels documents fets servir en els processos assistencials però i no contribueixen a augmentar la seguretat del pacient.","options":["V","F"],"answer":"F"},
+{"question":"L’auditoria es fa amb caràcter d’acordar accions per la millora de l’assistència i no per jutjar com s’estan fent les coses.","options":["V","F"],"answer":"V"},
+{"question":"Si una HC té 100 camps per omplir i només se n’omplen 95, es considera un document deficient.","options":["V","F"],"answer":"F"},
+{"question":"La digitalització de documents redueix la traçabilitat de la informació.","options":["V","F"],"answer":"F"},
+{"question":"El principal motiu per externalitzar l’arxiu d’HC és la falta d'espai.","options":["V","F"],"answer":"V"},
+{"question":"Els arxius clínics han de fer auditories internes, però no externes.","options":["V","F"],"answer":"F"},
+{"question":"Un dels desavantatges de l’arxiu descentralitzat de les HC és la necessitat de disposar d’un gran espai adaptat amb bones comunicacions amb els diferents serveis de l’hospital.","options":["V","F"],"answer":"F"},
+{"question":"En una classificació d’arxius de doble dígit terminal, buscarem l’expedient 23 a la primera secció dels arxius classificats amb la numeració del 00 al 49.","options":["V","F"],"answer":"F"},
+{"question":"La Classificació Decimal Universal (CDU) és la més emprada en els arxius clínics.","options":["V","F"],"answer":"F"},
+{"question":"La principal funció de l’arxiu d’HC és la conservació dels documents sanitaris.","options":["V","F"],"answer":"V"},
+{"question":"La confidencialitat és un dels principis bàsics de l’arxiu clínic.","options":["V","F"],"answer":"V"},
+{"question":"La digitalització de documents afecta la privacitat dels pacients.","options":["V","F"],"answer":"V"},
+{"question":"La identificació incorrecta d’històries clíniques és un risc associat als arxius descentralitzats.","options":["V","F"],"answer":"V"},
+{"question":"Les polítiques de gestió de documents redueixen la necessitat d’auditories en arxius clínics.","options":["V","F"],"answer":"F"},
+{"question":"Els arxius clínics digitals requereixen protecció contra incendis.","options":["V","F"],"answer":"V"},
+{"question":"Els arxius electrònics faciliten el seguiment dels pacients amb malalties cròniques.","options":["V","F"],"answer":"V"},
+{"question":"La manca de control en l'accés als arxius electrònics és un risc de seguretat.","options":["V","F"],"answer":"V"},
+{"question":"Els arxius clínics centralitzats estalvien costos en infraestructura d’emmagatzematge.","options":["V","F"],"answer":"V"},
+{"question":"La indexació correcta dels documents és important en els arxius clínics digitals.","options":["V","F"],"answer":"V"},
+{"question":"Els arxius descentralitzats tenen un major risc de duplicació de documents.","options":["V","F"],"answer":"V"},
+{"question":"L’índex de control d’HC no subministrades és un dels índexs de control de procés d’arxivament d’HC.","options":["V","F"],"answer":"F"},
+{"question":"Els arxius clínics centralitzats faciliten la col·laboració entre departaments hospitalaris.","options":["V","F"],"answer":"F"},
+{"question":"La pèrdua de documents és un risc més elevat en arxius clínics digitals.","options":["V","F"],"answer":"F"},
+{"question":"Actualment, la digitalització de documents permet reduir l’arxiu dels documents d’HC en suport paper al 100%.","options":["V","F"],"answer":"F"},
+{"question":"El principal motiu perquè un centre sanitari decideixi externalitzar l’arxiu d’HC és la seguretat.","options":["V","F"],"answer":"F"},
+{"question":"Els arxius clínics han de permetre l’accés a qualsevol professional sanitari per poder atendre els pacients.","options":["V","F"],"answer":"F"},
+{"question":"Un dels desavantatges de l’arxiu descentralitzat de les HC és que és dificulta que la HC sigui única.","options":["V","F"],"answer":"V"},
+{"question":"En una classificació d’arxius de triple dígit terminal, arxivarem totes les HC que tinguin els tres últims dígits iguals a la mateixa lleixa.","options":["V","F"],"answer":"V"},
+{"question":"Alhora d’arxivar documents per ordre alfabètic, l’abecedari i normes que es prenen com a criteri d’ordre, les decideix la pròpia organització.","options":["V","F"],"answer":"V"},
+{"question":"Un centre sanitari pot decidir arxivar les HC durant un temps major que l’indicat a la normativa.","options":["V","F"],"answer":"V"},
+{"question":"El millor lloc per ubicar un arxiu de documents en paper tal i com històries clíniques o documents com consentiments informats, és als soterranis de l’edifici.","options":["V","F"],"answer":"F"},
+{"question":"A l’actualitat segons normativa, cal conservar en paper algun document de la Història Clínica.","options":["V","F"],"answer":"V"},
+{"question":"El risc de duplicar HHCC i la seva identificació correcta es menor en arxius centralitzats que els que són descentralitzats.","options":["V","F"],"answer":"V"},
+{"question":"Qualsevol document que es generi en l’assistència al pacient es considera un document d’arxiu.","options":["V","F"],"answer":"F"},
+{"question":"El format digital permet veure un document o la informació que conté de cinc maneres diferents: vista d’impressió, de lectura, disseny web, esquema i esborrany.","options":["V","F"],"answer":"V"},
+{"question":"Els Arxius que avui dia són de tipus electrònic no precisen aplicar mesures contra el foc, humitat, etc.","options":["V","F"],"answer":"F"},
+{"question":"L’arxiu d’històries clíniques està regulada per la llei bàsica reguladora de l’autonomia del pacient.","options":["V","F"],"answer":"V"},
+{"question":"La unitat arxivística de l’Arxiu clínic és l’Informe d’Alta.","options":["V","F"],"answer":"F"},
+{"question":"Amb el suport electrònic està garantit que no hi ha pèrdua d’informació i que sempre es podrà accedir a ella.","options":["V","F"],"answer":"F"},
+{"question":"La unitat d’instal·lació de l’Arxiu Clínic és el sobre contenidor amb la HC.","options":["V","F"],"answer":"F"},
+{"question":"Quan parlem de conservació ens referim a retardar el deteriorament a llarg termini, en canvi, la preservació es defineix a la protecció a curt termini.","options":["V","F"],"answer":"F"},
+{"question":"S’entén per instal·lació l’ubicar físicament la HC a l’arxiu classificada i ordenada per poder localitzar-la.","options":["V","F"],"answer":"V"},
+{"question":"L’accés del personal sanitari a la història clínica està limitat segons les funcions i necessitats assistencials.","options":["V","F"],"answer":"V"},
+{"question":"La manca de normalització documental pot afectar la qualitat i la comparabilitat de les dades sanitàries.","options":["V","F"],"answer":"V"},
+{"question":"L’informe clínic d’alta és una eina de comunicació que afavoreix el contínuum assistencial.","options":["V","F"],"answer":"V"},
+{"question":"La normativa que regula els continguts de l’informe clínic d’alta per a recollir la informació del CMBD és el RD 1093/2010.","options":["V","F"],"answer":"V"},
+{"question":"La normativa que regula els drets del pacient en relació amb la informació clínica és la Llei d’Autonomia del Pacient 21/2000.","options":["V","F"],"answer":"V"},
+{"question":"És obligatori entregar un informe clínic d’alta al pacient, ni que sigui provisional.","options":["V","F"],"answer":"V"},
+{"question":"Al flux d’informació entre diversos centres assistencials intervé l’aplicació via telemàtica is8.","options":["V","F"],"answer":"F"},
+{"question":"Els professionals administratius poden tenir accés a determinades dades de la història clínica segons el seu perfil professional.","options":["V","F"],"answer":"V"},
+{"question":"La història clínica electrònica té la mateixa validesa legal que la història clínica en suport paper, sempre que compleixi els requisits legals.","options":["V","F"],"answer":"V"},
+{"question":"Els impresos de sol·licitud de proves complementàries no formen part de la història clínica.","options":["V","F"],"answer":"V"},
+{"question":"Un document administratiu pot tenir conseqüències jurídiques.","options":["V","F"],"answer":"V"},
+{"question":"Un full de petició de transport és un document administratiu no sanitari.","options":["V","F"],"answer":"V"},
+{"question":"La targeta sanitària individual TSI, és un document sanitari no clínic.","options":["V","F"],"answer":"V"},
+{"question":"Una polsera identificativa amb codi de barres no es considera un document.","options":["V","F"],"answer":"F"},
+{"question":"No totes les malalties infeccioses són de declaració obligatòria, sinó només les incloses en el sistema de MDO.","options":["V","F"],"answer":"V"},
+{"question":"El dret d’accés del pacient a la seva història clínica implica que pot utilitzar qualsevol equip informàtic del centre per consultar-la directament.","options":["V","F"],"answer":"F"},
+{"question":"Els documents clínics tenen exclusivament una funció clínica i no poden tenir cap altra utilitat.","options":["V","F"],"answer":"F"},
+{"question":"La implantació de la història clínica electrònica ha fet innecessaris els circuits documentals als centres sanitaris.","options":["V","F"],"answer":"F"},
+{"question":"Entre les funcions del tècnic en documentació sanitària s’inclou la detecció i resolució de duplicitats d’històries clíniques.","options":["V","F"],"answer":"V"},
+{"question":"El full d'Evolució Clínica de la Història Clínica Clàssica forma part del bloc de l'Anamnesi, ja que ambdues reflecteixen observacions segons una seqüència cronològica.","options":["V","F"],"answer":"F"},
+{"question":"El disseny corporatiu implica que qualsevol document, fins i tot les cartes, han de portar un logo identificatiu.","options":["V","F"],"answer":"V"},
+{"question":"Un ofici només té una data en canvi una carta és un document que porta la data de l’escrit i la data del registre.","options":["V","F"],"answer":"F"},
+{"question":"En el concepte d’HC única per pacient i centre, tots els documents generats durant diferents episodis assistencials, hospitalització o ambulatòria, es conserven en carpetes separades.","options":["V","F"],"answer":"F"},
+{"question":"L'evolució i planificació de cures d'infermeria es classifica com a document mèdic, ja que conté la seqüència d'administració de medicaments pautats pel facultatiu.","options":["V","F"],"answer":"F"},
+{"question":"La Llei 21/2000 de Catalunya sobre els drets d’informació concernents a la salut i autonomia del pacient i la seva homòloga a nivell estatal, la Llei 41/2002, preveuen la creació de la Comissió Tècnica en Matèria de Documentació Mèdica.","options":["V","F"],"answer":"V"},
+{"question":"El termini mínim de conservació obligatori de la Història Clínica a tot l'Estat és de 15 anys des de l'alta de cada procés assistencial, sense excepció i sense que les Comunitats Autònomes el puguin modificar.","options":["V","F"],"answer":"F"},
+{"question":"L’ús d’acrònims en la Història clínica és molt recomanat sempre que hi hagi un glossari on s’especifiquin amb el seu significat.","options":["V","F"],"answer":"F"},
+{"question":"La Història Clínica serveix per a la planificació i la gestió de recursos sanitaris.","options":["V","F"],"answer":"V"},
+{"question":"El FIP serveix per a posar en relació unívoca a un pacient amb el seu núm. d’història clínica i viceversa.","options":["V","F"],"answer":"V"},
+{"question":"És obligatori en ser donat d’alta un pacient entregar-li en mà l’informe clínic d’alta signat pel metge responsable. Aquest document s’ha d’arxivar l’original en paper.","options":["V","F"],"answer":"F"},
+{"question":"Les característiques de la història clínica són entre d’altres la veracitat, pertinència i oportuna.","options":["V","F"],"answer":"V"},
+{"question":"El nombre d’històries clíniques noves per període es calcula restant el número de la darrera HC – número de la primera HC del període d’estudi.","options":["V","F"],"answer":"F"},
+{"question":"Hi ha dos tipus de digitalització: translació i migració.","options":["V","F"],"answer":"F"},
+{"question":"És un indicador de qualitat del Servei d’Admissió i Documentació clínica el percentatge d’històries clíniques duplicades.","options":["V","F"],"answer":"V"},
+{"question":"A les auditories es fa l’avaluació d’una organització. El model d’excel·lència a la gestió és el que es fa servir per a l’autorització i obertura d’un nou hospital.","options":["V","F"],"answer":"F"},
+{"question":"L'objectiu de la Història Clínica d'Atenció Primària HCAP és recollir dades de forma puntual durant l'episodi assistencial, sense donar importància a l'entorn social del pacient.","options":["V","F"],"answer":"F"},
+{"question":"El model d'Història Clínica Orientada per Problemes HCOP s'utilitza principalment en l'àmbit hospitalari i la seva estructura dificulta la gestió dels processos assistencials des del punt de vista del contínuum assistencial.","options":["V","F"],"answer":"F"},
+{"question":"L'Informe d'Anestèsia i el Full d'Intervenció Quirúrgica són dos documents diferents; el primer és responsabilitat de l'anestesista i el segon, del cirurgià, un cop acabada la intervenció.","options":["V","F"],"answer":"V"},
+{"question":"Els documents logístics formen part de la informació interna del centre sanitari.","options":["V","F"],"answer":"V"},
+{"question":"Un índex de rendibilitat és baix significa que hi ha moltes consultes i l’arxiu està saturat.","options":["V","F"],"answer":"F"},
+{"question":"En la carpeta de la història clínica d’un pacient els documents han d’estar ordenats sempre per episodis assistencials de manera cronològica.","options":["V","F"],"answer":"V"},
+{"question":"L’índex d’eficàcia a l’arxivament de les històries clíniques indica si funciona bé un arxiu clínic.","options":["V","F"],"answer":"V"},
+{"question":"Actualment, ha desaparegut l’obsolescència tecnològica en els documents perquè al núvol es poden mantenir indefinidament.","options":["V","F"],"answer":"F"},
+{"question":"L’Índex de rendibilitat d’un arxiu d’històries clíniques és la relació entre el número de les històries clíniques que són buscades o consultades a l’any i les arxivades a l’actiu, passiu i històric.","options":["V","F"],"answer":"V"},
+{"question":"Un arxiu mixt pot aparèixer com a pas intermedi entre un sistema descentralitzat i un sistema centralitzat.","options":["V","F"],"answer":"V"},
+{"question":"La història clínica d’un pacient que ha estat atès en un hospital per una intervenció quirúrgica senzilla es podria expurgar totalment passats 15 anys i reutilitzar el seu número per una altra persona o pacient.","options":["V","F"],"answer":"F"},
+{"question":"Una bona manera d’arxivar els consentiments informats originals en paper és pel triple dígit terminal.","options":["V","F"],"answer":"F"},
+{"question":"Un arxiu clínic d’una clínica privada que tanca ha de fer una destrucció segura de tots els seus documents.","options":["V","F"],"answer":"F"},
+{"question":"L’avantatge principal d’un arxiu centralitzat és que facilita una visió global i integrada de tota la informació del pacient.","options":["V","F"],"answer":"V"},
+{"question":"Actualment, amb els sistemes d’informació electrònics, segueix sent un problema la duplicació d’històries clíniques i és molt important fer comprovacions abans d’obrir-ne una de nova.","options":["V","F"],"answer":"V"},
+{"question":"Externalitzar un arxiu clínic implica col·locar l’arxiu en un edifici annex a l’hospital.","options":["V","F"],"answer":"F"},
+{"question":"La conservació de la documentació fa referència a les mesures ambientals i la preservació de la documentació clínica es refereix a les tècniques d’arxiu com la digitalització.","options":["V","F"],"answer":"F"},
+{"question":"En un arxiu clínic descentralitzat cada servei o unitat assistencial conserva les seves pròpies històries clíniques de manera independent.","options":["V","F"],"answer":"V"},
+{"question":"En parlar de la instal·lació dels expedients cal determinar el sistema d’ordenació que pot ser alfabètic o numèric.","options":["V","F"],"answer":"V"},
+{"question":"A l’hora d’arxivar documents per ordre alfabètic, es tindran en compte les normes estàndards de la Real Acadèmia de la Llengua.","options":["V","F"],"answer":"F"},
+{"question":"La digitalització de documents que s’incorporen a la història clínica electrònica es diu migració.","options":["V","F"],"answer":"F"},
+{"question":"Externalitzar un arxiu clínic vol dir posar el dipòsit o guardar les històries clíniques en un edifici que estigui separat de les consultes i de l’hospital.","options":["V","F"],"answer":"F"},
+{"question":"La unitat arxivística fonamental de l’arxiu clínic és el fitxer mestre de pacients.","options":["V","F"],"answer":"F"}  
+
+
+  /*
+  EJEMPLO PARA AÑADIR MÁS:
+
+  ,
+  {
+    "question": "Aquí va la pregunta nueva.",
+    "options": ["v", "f"],
+    "answer": "v"
+  }
+
+  */
+];
+
+
+/* ============================
+   VARIABLES PRINCIPALES
+============================ */
+let answeredQuestions = JSON.parse(localStorage.getItem("answeredQuestions")) || [];
+let currentQuestion = 0;
+let score = 0;
+let quizData = [];
+
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const totalQuestionsText = document.getElementById("totalQuestionsText");
+const pendingQuestionsText = document.getElementById("pendingQuestionsText");
+const completedQuestionsText = document.getElementById("completedQuestionsText");
+
+
+/* ============================
+   ACTUALIZAR PANEL SUPERIOR
+============================ */
+function updateProgressPanel() {
+  const total = allQuestions.length;
+  const completed = answeredQuestions.length;
+  const pending = total - completed;
+
+  totalQuestionsText.textContent = `Preguntas totales: ${total}`;
+  pendingQuestionsText.textContent = `Preguntas pendientes: ${pending}`;
+  completedQuestionsText.textContent = `Preguntas realizadas: ${completed}`;
+}
+
+
+/* ============================
+   PREPARAR TEST
+============================ */
+function prepareQuiz() {
+  if (allQuestions.length === 0) {
+    container.innerHTML = `
+      <div class="question">
+        <p>No hay preguntas todavía.</p>
+        <p class="small-text">Añade preguntas dentro de la variable allQuestions.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Si ya has hecho todas, se reinicia automáticamente
+  if (answeredQuestions.length >= allQuestions.length) {
+    answeredQuestions = [];
+    localStorage.removeItem("answeredQuestions");
+
+    alert("Has completado todas las preguntas. Se reinicia el ciclo.");
+  }
+
+  updateProgressPanel();
+
+  let availableQuestions = allQuestions
+    .map((question, index) => index)
+    .filter(index => !answeredQuestions.includes(index));
+
+  let numberOfQuestionsToday = parseInt(
+    prompt(`¿Cuántas preguntas quieres hacer hoy? Te quedan ${availableQuestions.length} pendientes.`)
+  );
+
+  if (
+    isNaN(numberOfQuestionsToday) ||
+    numberOfQuestionsToday <= 0 ||
+    numberOfQuestionsToday > availableQuestions.length
+  ) {
+    numberOfQuestionsToday = availableQuestions.length;
+  }
+
+  shuffle(availableQuestions);
+
+  let selectedIndexes = availableQuestions.slice(0, numberOfQuestionsToday);
+
+  quizData = selectedIndexes.map(index => {
+    return {
+      ...allQuestions[index],
+      originalIndex: index
+    };
+  });
+
+  showQuestion();
+}
+
+
+/* ============================
+   MOSTRAR PREGUNTA
+============================ */
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if (currentQuestion >= quizData.length) {
+    updateProgressPanel();
+
+    const pending = allQuestions.length - answeredQuestions.length;
+
+    container.innerHTML = `
+      <div class="question">
+        <p>Quiz terminado</p>
+        <p>Tu puntuación final es ${score} de ${quizData.length}</p>
+        <p class="small-text">
+          Preguntas pendientes para otro día: ${pending}
+        </p>
+        ${
+          pending === 0
+          ? `<p class="small-text">Has completado todas las preguntas. La próxima vez se reiniciará el ciclo.</p>`
+          : `<p class="small-text">La próxima vez saldrán preguntas que todavía no has hecho.</p>`
+        }
+      </div>
+    `;
+
+    resultDiv.textContent = `Puntuación final: ${score}/${quizData.length}`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+
+  const div = document.createElement("div");
+  div.className = "question";
+
+  const p = document.createElement("p");
+  p.textContent = `${currentQuestion + 1}. ${q.question}`;
+  div.appendChild(p);
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+
+  // Si quieres que siempre salga V primero y F segundo, comenta la línea siguiente:
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      // Guardamos esta pregunta como realizada justo al contestarla
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+
+      if (btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+
+        allBtns.forEach(b => {
+          if (b.dataset.correct === "true") {
+            b.classList.add("correct");
+          }
+        });
+      }
+
+      resultDiv.textContent = `Puntuación: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+
+/* ============================
+   BOTÓN SIGUIENTE
+============================ */
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+
+/* ============================
+   BOTÓN REINICIAR PROGRESO
+============================ */
+resetBtn.onclick = () => {
+  const confirmReset = confirm("¿Seguro que quieres reiniciar el progreso? Volverán a salir todas las preguntas.");
+
+  if (confirmReset) {
+    localStorage.removeItem("answeredQuestions");
+    location.reload();
+  }
+};
+
+
+/* ============================
+   INICIAR QUIZ
+============================ */
+prepareQuiz();
+</script>
+
+</body>
+</html>
