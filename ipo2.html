@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz IPO2</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0 5px 0;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .top-panel {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .top-panel p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    padding-top: 10px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .question p {
+    font-size: 34px;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 30px 0;
+  }
+
+  .options {
+    margin-top: 20px;
+  }
+
+  .options button {
+    display: block;
+    margin: 10px 0;
+    padding: 15px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+
+  .options button:hover {
+    background: #ddd;
+  }
+
+  .options button:disabled {
+    cursor: not-allowed;
+  }
+
+  .correct {
+    background-color: #c8e6c9 !important;
+    border-color: #388e3c !important;
+    color: #2e7d32 !important;
+  }
+
+  .wrong {
+    background-color: #ffcdd2 !important;
+    border-color: #d32f2f !important;
+    color: #c62828 !important;
+  }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 10px 0;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  button.main-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.main-btn:hover {
+    background: #1976D2;
+  }
+
+  button.reset-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #e53935;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.reset-btn:hover {
+    background: #c62828;
+  }
+
+  .small-text {
+    font-size: 15px !important;
+    font-weight: normal !important;
+    color: #555;
+  }
+
+  @media (max-width: 600px) {
+    .question p {
+      font-size: 28px;
+    }
+
+    .options button {
+      font-size: 20px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Quiz IPO2</h1>
+<div class="subtitle">Preguntas aleatorias sin repetir hasta completar todo el temario</div>
+
+<div class="top-panel">
+  <p id="totalQuestionsText">Preguntas totales: 0</p>
+  <p id="pendingQuestionsText">Preguntas pendientes: 0</p>
+  <p id="completedQuestionsText">Preguntas realizadas: 0</p>
+</div>
+
+<div class="quiz-container" id="quiz-container"></div>
+
+<div class="result" id="result">Puntuación: 0</div>
+
+<div class="buttons">
+  <button id="nextBtn" class="main-btn" style="display:none;">Siguiente</button>
+  <button id="resetBtn" class="reset-btn">Reiniciar progreso</button>
+</div>
+
+<script>
+/* ============================
+   FUNCIÓN PARA MEZCLAR ARRAYS
+============================ */
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+
+/* ============================
+   AÑADE AQUÍ TUS PREGUNTAS
+   No tienes que indicar cuántas hay.
+   El código las cuenta automáticamente.
+============================ */
+const allQuestions = [
+  
+ 
+  {"question":"L’emprenedoria és la capacitat d’identificar oportunitats i convertir-les en projectes que generen valor.","options":["V","F"],"answer":"V"},
+  {"question":"L’esperit emprenedor implica iniciativa, creativitat, resiliència i assumpció de riscos calculats.","options":["V","F"],"answer":"V"},
+  {"question":"L’autoocupació consisteix a crear el propi lloc de treball mitjançant una iniciativa pròpia.","options":["V","F"],"answer":"V"},
+  {"question":"La cultura emprenedora està formada per valors i actituds orientats a la innovació i la iniciativa.","options":["V","F"],"answer":"V"},
+  {"question":"La intraemprenedoria consisteix a innovar dins d’una empresa o organització existent.","options":["V","F"],"answer":"V"},
+  {"question":"L’emprenedoria social busca resoldre problemes socials o ambientals.","options":["V","F"],"answer":"V"},
+  {"question":"La innovació consisteix a introduir una idea, producte, servei o procés nou o millorat.","options":["V","F"],"answer":"V"},
+  {"question":"La innovació sostenible té en compte l’impacte econòmic, social i ambiental.","options":["V","F"],"answer":"V"},
+  {"question":"Els ODS formen part de l’Agenda 2030.","options":["V","F"],"answer":"V"},
+  {"question":"El desenvolupament sostenible busca satisfer les necessitats actuals sense comprometre les futures.","options":["V","F"],"answer":"V"},
+
+  {"question":"L’economia circular busca reutilitzar recursos i reduir residus.","options":["V","F"],"answer":"V"},
+  {"question":"Digitalitzar documents pot ser un exemple d’innovació sostenible.","options":["V","F"],"answer":"V"},
+  {"question":"La iniciativa emprenedora ajuda a detectar oportunitats.","options":["V","F"],"answer":"V"},
+  {"question":"La proactivitat consisteix a anticipar-se i actuar abans que apareguin problemes.","options":["V","F"],"answer":"V"},
+  {"question":"La resiliència permet superar dificultats i continuar millorant.","options":["V","F"],"answer":"V"},
+  {"question":"Assumir riscos calculats implica analitzar la situació abans de decidir.","options":["V","F"],"answer":"V"},
+  {"question":"El treball col·laboratiu implica compartir responsabilitats i objectius.","options":["V","F"],"answer":"V"},
+  {"question":"La creativitat és la capacitat de generar idees noves o originals.","options":["V","F"],"answer":"V"},
+  {"question":"El pensament crític ajuda a prendre decisions raonades.","options":["V","F"],"answer":"V"},
+  {"question":"La competència digital és clau en el món laboral actual.","options":["V","F"],"answer":"V"},
+
+  {"question":"La competència digital inclou comunicar, crear continguts i protegir dades.","options":["V","F"],"answer":"V"},
+  {"question":"La transformació digital incorpora tecnologia per millorar processos.","options":["V","F"],"answer":"V"},
+  {"question":"La innovació tecnològica aplica tecnologia per crear o millorar productes i serveis.","options":["V","F"],"answer":"V"},
+  {"question":"La identitat digital és la imatge que una persona projecta a internet.","options":["V","F"],"answer":"V"},
+  {"question":"La petjada digital és el rastre d’informació que deixem en línia.","options":["V","F"],"answer":"V"},
+  {"question":"Protegir les dades personals és important per evitar riscos de seguretat.","options":["V","F"],"answer":"V"},
+  {"question":"La bretxa digital és la desigualtat en l’accés a la tecnologia.","options":["V","F"],"answer":"V"},
+  {"question":"Les eines digitals col·laboratives faciliten el treball en equip.","options":["V","F"],"answer":"V"},
+  {"question":"La innovació oberta incorpora idees externes a l’organització.","options":["V","F"],"answer":"V"},
+  {"question":"El crowdsourcing obté aportacions d’un grup ampli de persones.","options":["V","F"],"answer":"V"},
+  {"question":"La Blue Ocean Strategy busca espais de mercat amb poca competència.","options":["V","F"],"answer":"V"},
+  {"question":"Les metodologies àgils són flexibles i iteratives.","options":["V","F"],"answer":"V"},
+  {"question":"El Design Thinking està centrat en les necessitats de les persones usuàries.","options":["V","F"],"answer":"V"},
+  {"question":"Lean Startup permet validar idees amb menys risc.","options":["V","F"],"answer":"V"},
+  {"question":"El Business Model Canvas resumeix els elements clau d’un model de negoci.","options":["V","F"],"answer":"V"},
+  {"question":"Modernitzar el sector productiu implica aplicar innovació i sostenibilitat.","options":["V","F"],"answer":"V"},
+  {"question":"La innovació social busca generar impacte positiu a la societat.","options":["V","F"],"answer":"V"},
+  {"question":"La responsabilitat social implica actuar de manera ètica i sostenible.","options":["V","F"],"answer":"V"},
+  {"question":"La col·laboració interdisciplinària combina coneixements de diferents àrees.","options":["V","F"],"answer":"V"},
+  {"question":"La resolució creativa de problemes ajuda a trobar solucions innovadores.","options":["V","F"],"answer":"V"},
+  {"question":"Una necessitat és una situació que una persona o grup vol resoldre.","options":["V","F"],"answer":"V"},
+  {"question":"Un problema emprenedor pot convertir-se en una oportunitat de negoci.","options":["V","F"],"answer":"V"},
+  {"question":"Identificar problemes ajuda a crear idees útils i realistes.","options":["V","F"],"answer":"V"},
+  {"question":"Una oportunitat de negoci permet desenvolupar un producte o servei viable.","options":["V","F"],"answer":"V"},
+  {"question":"Una idea emprenedora busca resoldre una necessitat o problema.","options":["V","F"],"answer":"V"},
+  {"question":"Validar una idea serveix per comprovar si interessa als usuaris.","options":["V","F"],"answer":"V"},
+  {"question":"El feedback és la informació que aporten els usuaris sobre una idea o producte.","options":["V","F"],"answer":"V"},
+  {"question":"El feedback ajuda a detectar errors i millorar la proposta.","options":["V","F"],"answer":"V"},
+  {"question":"Un prototip és una versió inicial o simplificada d’un producte.","options":["V","F"],"answer":"V"},
+  {"question":"Un MVP és la versió mínima viable d’un projecte.","options":["V","F"],"answer":"V"},
+  {"question":"Pivotar significa modificar una idea quan no funciona com s’esperava.","options":["V","F"],"answer":"V"},
+  {"question":"Perseverar significa continuar amb una idea validada positivament.","options":["V","F"],"answer":"V"},
+  {"question":"El Design Thinking té fases com empatitzar, idear i prototipar.","options":["V","F"],"answer":"V"},
+  {"question":"Empatitzar significa comprendre les necessitats dels usuaris.","options":["V","F"],"answer":"V"},
+  {"question":"La fase de definició concreta quin problema es vol solucionar.","options":["V","F"],"answer":"V"},
+  {"question":"La fase d’ideació consisteix a generar possibles solucions.","options":["V","F"],"answer":"V"},
+  {"question":"La fase de prototipat crea una versió simple de la solució.","options":["V","F"],"answer":"V"},
+  {"question":"La fase de testatge permet provar el prototip amb usuaris.","options":["V","F"],"answer":"V"},
+  {"question":"Lean Startup es basa en crear, mesurar i aprendre.","options":["V","F"],"answer":"V"},
+  {"question":"Crear, mesurar i aprendre ajuda a millorar idees amb dades reals.","options":["V","F"],"answer":"V"},
+  {"question":"El Canvas ajuda a ordenar visualment un projecte o negoci.","options":["V","F"],"answer":"V"},
+  {"question":"La proposta de valor és el benefici principal que s’ofereix als usuaris.","options":["V","F"],"answer":"V"},
+  {"question":"El client objectiu és el grup de persones a qui va dirit el projecte.","options":["V","F"],"answer":"V"},
+  {"question":"La segmentació de clients divideix els usuaris segons característiques comunes.","options":["V","F"],"answer":"V"},
+  {"question":"Els canals són les vies per arribar als clients o usuaris.","options":["V","F"],"answer":"V"},
+  {"question":"Els recursos clau són necessaris perquè el projecte funcioni.","options":["V","F"],"answer":"V"},
+  {"question":"Les activitats clau són les tasques principals d’un projecte.","options":["V","F"],"answer":"V"},
+  {"question":"Els socis clau col·laboren en el desenvolupament del projecte.","options":["V","F"],"answer":"V"},
+  {"question":"La viabilitat indica si un projecte pot funcionar realment.","options":["V","F"],"answer":"V"},
+  {"question":"La viabilitat econòmica comprova si els ingressos poden cobrir els costos.","options":["V","F"],"answer":"V"},
+  {"question":"La viabilitat tècnica analitza si es disposa dels recursos i coneixements necessaris.","options":["V","F"],"answer":"V"},
+  {"question":"La viabilitat social estudia l’impacte positiu del projecte en la societat.","options":["V","F"],"answer":"V"},
+  {"question":"Un estudi de mercat analitza clients, competència i entorn.","options":["V","F"],"answer":"V"},
+  {"question":"El benchmarking permet comparar-se amb altres projectes.","options":["V","F"],"answer":"V"},
+  {"question":"Una prova pilot serveix per provar un servei amb pocs usuaris.","options":["V","F"],"answer":"V"},
+  {"question":"Una hipòtesi de negoci és una suposició que s’ha de validar.","options":["V","F"],"answer":"V"},
+  {"question":"El procés iteratiu consisteix a repetir proves i millores.","options":["V","F"],"answer":"V"},
+  {"question":"Una necessitat no coberta és una necessitat sense una solució adequada.","options":["V","F"],"answer":"V"},
+  {"question":"La presa de decisions basada en dades utilitza informació real per decidir.","options":["V","F"],"answer":"V"},
+  {"question":"L’experiència d’usuari és la percepció que té una persona sobre un producte o servei.","options":["V","F"],"answer":"V"},
+  {"question":"Validar el problema significa comprovar que el problema existeix realment.","options":["V","F"],"answer":"V"},
+  {"question":"Validar la solució significa comprovar que resol el problema dels usuaris.","options":["V","F"],"answer":"V"},
+  {"question":"Una enquesta de validació recull opinions de possibles usuaris.","options":["V","F"],"answer":"V"},
+  {"question":"Una entrevista d’usuari ajuda a conèixer necessitats i problemes.","options":["V","F"],"answer":"V"},
+  {"question":"Una idea emprenedora necessita una base sòlida i validada.","options":["V","F"],"answer":"V"},
+  {"question":"Els prototips ajuden a detectar errors abans del llançament final.","options":["V","F"],"answer":"V"},
+  {"question":"Les dades obtingudes dels usuaris ajuden a millorar un projecte.","options":["V","F"],"answer":"V"},
+  {"question":"Les metodologies àgils faciliten adaptar-se als canvis.","options":["V","F"],"answer":"V"},
+  {"question":"La innovació pot millorar la competitivitat d’una empresa.","options":["V","F"],"answer":"V"},
+  {"question":"La sostenibilitat pot generar avantatges socials i econòmics.","options":["V","F"],"answer":"V"}
+
+
+
+  /*
+  EJEMPLO PARA AÑADIR MÁS:
+
+  ,
+  {
+    "question": "Aquí va la pregunta nueva.",
+    "options": ["v", "f"],
+    "answer": "v"
+  }
+
+  */
+];
+
+
+/* ============================
+   VARIABLES PRINCIPALES
+============================ */
+let answeredQuestions = JSON.parse(localStorage.getItem("answeredQuestions")) || [];
+let currentQuestion = 0;
+let score = 0;
+let quizData = [];
+
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const totalQuestionsText = document.getElementById("totalQuestionsText");
+const pendingQuestionsText = document.getElementById("pendingQuestionsText");
+const completedQuestionsText = document.getElementById("completedQuestionsText");
+
+
+/* ============================
+   ACTUALIZAR PANEL SUPERIOR
+============================ */
+function updateProgressPanel() {
+  const total = allQuestions.length;
+  const completed = answeredQuestions.length;
+  const pending = total - completed;
+
+  totalQuestionsText.textContent = `Preguntas totales: ${total}`;
+  pendingQuestionsText.textContent = `Preguntas pendientes: ${pending}`;
+  completedQuestionsText.textContent = `Preguntas realizadas: ${completed}`;
+}
+
+
+/* ============================
+   PREPARAR TEST
+============================ */
+function prepareQuiz() {
+  if (allQuestions.length === 0) {
+    container.innerHTML = `
+      <div class="question">
+        <p>No hay preguntas todavía.</p>
+        <p class="small-text">Añade preguntas dentro de la variable allQuestions.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Si ya has hecho todas, se reinicia automáticamente
+  if (answeredQuestions.length >= allQuestions.length) {
+    answeredQuestions = [];
+    localStorage.removeItem("answeredQuestions");
+
+    alert("Has completado todas las preguntas. Se reinicia el ciclo.");
+  }
+
+  updateProgressPanel();
+
+  let availableQuestions = allQuestions
+    .map((question, index) => index)
+    .filter(index => !answeredQuestions.includes(index));
+
+  let numberOfQuestionsToday = parseInt(
+    prompt(`¿Cuántas preguntas quieres hacer hoy? Te quedan ${availableQuestions.length} pendientes.`)
+  );
+
+  if (
+    isNaN(numberOfQuestionsToday) ||
+    numberOfQuestionsToday <= 0 ||
+    numberOfQuestionsToday > availableQuestions.length
+  ) {
+    numberOfQuestionsToday = availableQuestions.length;
+  }
+
+  shuffle(availableQuestions);
+
+  let selectedIndexes = availableQuestions.slice(0, numberOfQuestionsToday);
+
+  quizData = selectedIndexes.map(index => {
+    return {
+      ...allQuestions[index],
+      originalIndex: index
+    };
+  });
+
+  showQuestion();
+}
+
+
+/* ============================
+   MOSTRAR PREGUNTA
+============================ */
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if (currentQuestion >= quizData.length) {
+    updateProgressPanel();
+
+    const pending = allQuestions.length - answeredQuestions.length;
+
+    container.innerHTML = `
+      <div class="question">
+        <p>Quiz terminado</p>
+        <p>Tu puntuación final es ${score} de ${quizData.length}</p>
+        <p class="small-text">
+          Preguntas pendientes para otro día: ${pending}
+        </p>
+        ${
+          pending === 0
+          ? `<p class="small-text">Has completado todas las preguntas. La próxima vez se reiniciará el ciclo.</p>`
+          : `<p class="small-text">La próxima vez saldrán preguntas que todavía no has hecho.</p>`
+        }
+      </div>
+    `;
+
+    resultDiv.textContent = `Puntuación final: ${score}/${quizData.length}`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+
+  const div = document.createElement("div");
+  div.className = "question";
+
+  const p = document.createElement("p");
+  p.textContent = `${currentQuestion + 1}. ${q.question}`;
+  div.appendChild(p);
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+
+  // Si quieres que siempre salga V primero y F segundo, comenta la línea siguiente:
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      // Guardamos esta pregunta como realizada justo al contestarla
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+
+      if (btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+
+        allBtns.forEach(b => {
+          if (b.dataset.correct === "true") {
+            b.classList.add("correct");
+          }
+        });
+      }
+
+      resultDiv.textContent = `Puntuación: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+
+/* ============================
+   BOTÓN SIGUIENTE
+============================ */
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+
+/* ============================
+   BOTÓN REINICIAR PROGRESO
+============================ */
+resetBtn.onclick = () => {
+  const confirmReset = confirm("¿Seguro que quieres reiniciar el progreso? Volverán a salir todas las preguntas.");
+
+  if (confirmReset) {
+    localStorage.removeItem("answeredQuestions");
+    location.reload();
+  }
+};
+
+
+/* ============================
+   INICIAR QUIZ
+============================ */
+prepareQuiz();
+</script>
+
+</body>
+</html>
