@@ -60,7 +60,7 @@
   }
 
   .question p {
-    font-size: 34px;
+    font-size: 32px;
     font-weight: bold;
     line-height: 1.4;
     margin: 0 0 30px 0;
@@ -86,10 +86,6 @@
 
   .options button:hover {
     background: #ddd;
-  }
-
-  .options button:disabled {
-    cursor: not-allowed;
   }
 
   .correct {
@@ -146,20 +142,15 @@
     background: #c62828;
   }
 
-  .small-text {
-    font-size: 15px !important;
-    font-weight: normal !important;
-    color: #555;
-  }
-
-  @media (max-width: 600px) {
-    .question p {
-      font-size: 28px;
-    }
-
-    .options button {
-      font-size: 20px;
-    }
+  .short-answer {
+    margin-top: 25px;
+    padding: 20px;
+    background: #e3f2fd;
+    border-left: 6px solid #2196F3;
+    border-radius: 8px;
+    font-size: 24px;
+    line-height: 1.5;
+    color: #0d47a1;
   }
 </style>
 </head>
@@ -167,7 +158,7 @@
 <body>
 
 <h1>Quiz IPO2</h1>
-<div class="subtitle">Preguntas aleatorias sin repetir hasta completar todo el temario</div>
+<div class="subtitle">Preguntas aleatorias sin repetir</div>
 
 <div class="top-panel">
   <p id="totalQuestionsText">Preguntas totales: 0</p>
@@ -185,9 +176,7 @@
 </div>
 
 <script>
-/* ============================
-   FUNCIÓN PARA MEZCLAR ARRAYS
-============================ */
+
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -196,127 +185,212 @@ function shuffle(array) {
   return array;
 }
 
-
-/* ============================
-   AÑADE AQUÍ TUS PREGUNTAS
-   No tienes que indicar cuántas hay.
-   El código las cuenta automáticamente.
-============================ */
-const allQuestions = [
-  
- 
-  {"question":"L’emprenedoria és la capacitat d’identificar oportunitats i convertir-les en projectes que generen valor.","options":["V","F"],"answer":"V"},
-  {"question":"L’esperit emprenedor implica iniciativa, creativitat, resiliència i assumpció de riscos calculats.","options":["V","F"],"answer":"V"},
-  {"question":"L’autoocupació consisteix a crear el propi lloc de treball mitjançant una iniciativa pròpia.","options":["V","F"],"answer":"V"},
-  {"question":"La cultura emprenedora està formada per valors i actituds orientats a la innovació i la iniciativa.","options":["V","F"],"answer":"V"},
-  {"question":"La intraemprenedoria consisteix a innovar dins d’una empresa o organització existent.","options":["V","F"],"answer":"V"},
-  {"question":"L’emprenedoria social busca resoldre problemes socials o ambientals.","options":["V","F"],"answer":"V"},
-  {"question":"La innovació consisteix a introduir una idea, producte, servei o procés nou o millorat.","options":["V","F"],"answer":"V"},
-  {"question":"La innovació sostenible té en compte l’impacte econòmic, social i ambiental.","options":["V","F"],"answer":"V"},
-  {"question":"Els ODS formen part de l’Agenda 2030.","options":["V","F"],"answer":"V"},
-  {"question":"El desenvolupament sostenible busca satisfer les necessitats actuals sense comprometre les futures.","options":["V","F"],"answer":"V"},
-
-  {"question":"L’economia circular busca reutilitzar recursos i reduir residus.","options":["V","F"],"answer":"V"},
-  {"question":"Digitalitzar documents pot ser un exemple d’innovació sostenible.","options":["V","F"],"answer":"V"},
-  {"question":"La iniciativa emprenedora ajuda a detectar oportunitats.","options":["V","F"],"answer":"V"},
-  {"question":"La proactivitat consisteix a anticipar-se i actuar abans que apareguin problemes.","options":["V","F"],"answer":"V"},
-  {"question":"La resiliència permet superar dificultats i continuar millorant.","options":["V","F"],"answer":"V"},
-  {"question":"Assumir riscos calculats implica analitzar la situació abans de decidir.","options":["V","F"],"answer":"V"},
-  {"question":"El treball col·laboratiu implica compartir responsabilitats i objectius.","options":["V","F"],"answer":"V"},
-  {"question":"La creativitat és la capacitat de generar idees noves o originals.","options":["V","F"],"answer":"V"},
-  {"question":"El pensament crític ajuda a prendre decisions raonades.","options":["V","F"],"answer":"V"},
-  {"question":"La competència digital és clau en el món laboral actual.","options":["V","F"],"answer":"V"},
-
-  {"question":"La competència digital inclou comunicar, crear continguts i protegir dades.","options":["V","F"],"answer":"V"},
-  {"question":"La transformació digital incorpora tecnologia per millorar processos.","options":["V","F"],"answer":"V"},
-  {"question":"La innovació tecnològica aplica tecnologia per crear o millorar productes i serveis.","options":["V","F"],"answer":"V"},
-  {"question":"La identitat digital és la imatge que una persona projecta a internet.","options":["V","F"],"answer":"V"},
-  {"question":"La petjada digital és el rastre d’informació que deixem en línia.","options":["V","F"],"answer":"V"},
-  {"question":"Protegir les dades personals és important per evitar riscos de seguretat.","options":["V","F"],"answer":"V"},
-  {"question":"La bretxa digital és la desigualtat en l’accés a la tecnologia.","options":["V","F"],"answer":"V"},
-  {"question":"Les eines digitals col·laboratives faciliten el treball en equip.","options":["V","F"],"answer":"V"},
-  {"question":"La innovació oberta incorpora idees externes a l’organització.","options":["V","F"],"answer":"V"},
-  {"question":"El crowdsourcing obté aportacions d’un grup ampli de persones.","options":["V","F"],"answer":"V"},
-  {"question":"La Blue Ocean Strategy busca espais de mercat amb poca competència.","options":["V","F"],"answer":"V"},
-  {"question":"Les metodologies àgils són flexibles i iteratives.","options":["V","F"],"answer":"V"},
-  {"question":"El Design Thinking està centrat en les necessitats de les persones usuàries.","options":["V","F"],"answer":"V"},
-  {"question":"Lean Startup permet validar idees amb menys risc.","options":["V","F"],"answer":"V"},
-  {"question":"El Business Model Canvas resumeix els elements clau d’un model de negoci.","options":["V","F"],"answer":"V"},
-  {"question":"Modernitzar el sector productiu implica aplicar innovació i sostenibilitat.","options":["V","F"],"answer":"V"},
-  {"question":"La innovació social busca generar impacte positiu a la societat.","options":["V","F"],"answer":"V"},
-  {"question":"La responsabilitat social implica actuar de manera ètica i sostenible.","options":["V","F"],"answer":"V"},
-  {"question":"La col·laboració interdisciplinària combina coneixements de diferents àrees.","options":["V","F"],"answer":"V"},
-  {"question":"La resolució creativa de problemes ajuda a trobar solucions innovadores.","options":["V","F"],"answer":"V"},
-  {"question":"Una necessitat és una situació que una persona o grup vol resoldre.","options":["V","F"],"answer":"V"},
-  {"question":"Un problema emprenedor pot convertir-se en una oportunitat de negoci.","options":["V","F"],"answer":"V"},
-  {"question":"Identificar problemes ajuda a crear idees útils i realistes.","options":["V","F"],"answer":"V"},
-  {"question":"Una oportunitat de negoci permet desenvolupar un producte o servei viable.","options":["V","F"],"answer":"V"},
-  {"question":"Una idea emprenedora busca resoldre una necessitat o problema.","options":["V","F"],"answer":"V"},
-  {"question":"Validar una idea serveix per comprovar si interessa als usuaris.","options":["V","F"],"answer":"V"},
-  {"question":"El feedback és la informació que aporten els usuaris sobre una idea o producte.","options":["V","F"],"answer":"V"},
-  {"question":"El feedback ajuda a detectar errors i millorar la proposta.","options":["V","F"],"answer":"V"},
-  {"question":"Un prototip és una versió inicial o simplificada d’un producte.","options":["V","F"],"answer":"V"},
-  {"question":"Un MVP és la versió mínima viable d’un projecte.","options":["V","F"],"answer":"V"},
-  {"question":"Pivotar significa modificar una idea quan no funciona com s’esperava.","options":["V","F"],"answer":"V"},
-  {"question":"Perseverar significa continuar amb una idea validada positivament.","options":["V","F"],"answer":"V"},
-  {"question":"El Design Thinking té fases com empatitzar, idear i prototipar.","options":["V","F"],"answer":"V"},
-  {"question":"Empatitzar significa comprendre les necessitats dels usuaris.","options":["V","F"],"answer":"V"},
-  {"question":"La fase de definició concreta quin problema es vol solucionar.","options":["V","F"],"answer":"V"},
-  {"question":"La fase d’ideació consisteix a generar possibles solucions.","options":["V","F"],"answer":"V"},
-  {"question":"La fase de prototipat crea una versió simple de la solució.","options":["V","F"],"answer":"V"},
-  {"question":"La fase de testatge permet provar el prototip amb usuaris.","options":["V","F"],"answer":"V"},
-  {"question":"Lean Startup es basa en crear, mesurar i aprendre.","options":["V","F"],"answer":"V"},
-  {"question":"Crear, mesurar i aprendre ajuda a millorar idees amb dades reals.","options":["V","F"],"answer":"V"},
-  {"question":"El Canvas ajuda a ordenar visualment un projecte o negoci.","options":["V","F"],"answer":"V"},
-  {"question":"La proposta de valor és el benefici principal que s’ofereix als usuaris.","options":["V","F"],"answer":"V"},
-  {"question":"El client objectiu és el grup de persones a qui va dirit el projecte.","options":["V","F"],"answer":"V"},
-  {"question":"La segmentació de clients divideix els usuaris segons característiques comunes.","options":["V","F"],"answer":"V"},
-  {"question":"Els canals són les vies per arribar als clients o usuaris.","options":["V","F"],"answer":"V"},
-  {"question":"Els recursos clau són necessaris perquè el projecte funcioni.","options":["V","F"],"answer":"V"},
-  {"question":"Les activitats clau són les tasques principals d’un projecte.","options":["V","F"],"answer":"V"},
-  {"question":"Els socis clau col·laboren en el desenvolupament del projecte.","options":["V","F"],"answer":"V"},
-  {"question":"La viabilitat indica si un projecte pot funcionar realment.","options":["V","F"],"answer":"V"},
-  {"question":"La viabilitat econòmica comprova si els ingressos poden cobrir els costos.","options":["V","F"],"answer":"V"},
-  {"question":"La viabilitat tècnica analitza si es disposa dels recursos i coneixements necessaris.","options":["V","F"],"answer":"V"},
-  {"question":"La viabilitat social estudia l’impacte positiu del projecte en la societat.","options":["V","F"],"answer":"V"},
-  {"question":"Un estudi de mercat analitza clients, competència i entorn.","options":["V","F"],"answer":"V"},
-  {"question":"El benchmarking permet comparar-se amb altres projectes.","options":["V","F"],"answer":"V"},
-  {"question":"Una prova pilot serveix per provar un servei amb pocs usuaris.","options":["V","F"],"answer":"V"},
-  {"question":"Una hipòtesi de negoci és una suposició que s’ha de validar.","options":["V","F"],"answer":"V"},
-  {"question":"El procés iteratiu consisteix a repetir proves i millores.","options":["V","F"],"answer":"V"},
-  {"question":"Una necessitat no coberta és una necessitat sense una solució adequada.","options":["V","F"],"answer":"V"},
-  {"question":"La presa de decisions basada en dades utilitza informació real per decidir.","options":["V","F"],"answer":"V"},
-  {"question":"L’experiència d’usuari és la percepció que té una persona sobre un producte o servei.","options":["V","F"],"answer":"V"},
-  {"question":"Validar el problema significa comprovar que el problema existeix realment.","options":["V","F"],"answer":"V"},
-  {"question":"Validar la solució significa comprovar que resol el problema dels usuaris.","options":["V","F"],"answer":"V"},
-  {"question":"Una enquesta de validació recull opinions de possibles usuaris.","options":["V","F"],"answer":"V"},
-  {"question":"Una entrevista d’usuari ajuda a conèixer necessitats i problemes.","options":["V","F"],"answer":"V"},
-  {"question":"Una idea emprenedora necessita una base sòlida i validada.","options":["V","F"],"answer":"V"},
-  {"question":"Els prototips ajuden a detectar errors abans del llançament final.","options":["V","F"],"answer":"V"},
-  {"question":"Les dades obtingudes dels usuaris ajuden a millorar un projecte.","options":["V","F"],"answer":"V"},
-  {"question":"Les metodologies àgils faciliten adaptar-se als canvis.","options":["V","F"],"answer":"V"},
-  {"question":"La innovació pot millorar la competitivitat d’una empresa.","options":["V","F"],"answer":"V"},
-  {"question":"La sostenibilitat pot generar avantatges socials i econòmics.","options":["V","F"],"answer":"V"}
-
-
-
-  /*
-  EJEMPLO PARA AÑADIR MÁS:
-
-  ,
+const allQuestions =[
   {
-    "question": "Aquí va la pregunta nueva.",
-    "options": ["v", "f"],
-    "answer": "v"
-  }
+    "question":"Què és l’emprenedoria?",
+    "options":["Resposta curta"],
+    "answer":"La emprendeduría es la capacidad de identificar oportunidades y transformarlas en proyectos o ideas que aporten valor económico, social o ambiental."
+  },
+  {
+    "question":"Què és l’esperit emprenedor?",
+    "options":["Resposta curta"],
+    "answer":"El espíritu emprendedor es la actitud de tomar iniciativa, asumir riesgos calculados y buscar oportunidades de mejora o innovación."
+  },
+  {
+    "question":"Què és l’autoocupació?",
+    "options":["Resposta curta"],
+    "answer":"La autoocupación consiste en crear el propio puesto de trabajo mediante una actividad profesional o empresarial propia."
+  },
+  {
+    "question":"Què és la cultura emprenedora?",
+    "options":["Resposta curta"],
+    "answer":"La cultura emprendedora es el conjunto de valores, habilidades y actitudes relacionadas con la creatividad, la innovación y la iniciativa."
+  },
+  {
+    "question":"Què és la intraemprenedoria?",
+    "options":["Resposta curta"],
+    "answer":"La intraemprendeduría consiste en innovar y desarrollar proyectos dentro de una empresa ya existente."
+  },
+  {
+    "question":"Què és l’emprenedoria social?",
+    "options":["Resposta curta"],
+    "answer":"La emprendeduría social busca solucionar problemas sociales o ambientales mediante proyectos sostenibles e innovadores."
+  },
+  {
+    "question":"Què és la innovació?",
+    "options":["Resposta curta"],
+    "answer":"La innovación consiste en introducir mejoras o nuevas ideas en productos, servicios o procesos para aportar valor."
+  },
+  {
+    "question":"Què és la innovació sostenible?",
+    "options":["Resposta curta"],
+    "answer":"La innovación sostenible busca mejorar productos o procesos teniendo en cuenta el impacto económico, social y ambiental."
+  },
+  {
+    "question":"Què són els ODS?",
+    "options":["Resposta curta"],
+    "answer":"Los ODS son los Objetivos de Desarrollo Sostenible de la Agenda 2030 impulsada por Naciones Unidas."
+  },
+  {
+    "question":"Què és el desenvolupament sostenible?",
+    "options":["Resposta curta"],
+    "answer":"El desarrollo sostenible consiste en satisfacer las necesidades actuales sin perjudicar a las generaciones futuras."
+  },
 
-  */
+  {
+    "question":"Què és l’economia circular?",
+    "options":["Resposta curta"],
+    "answer":"La economía circular es un modelo que busca reducir residuos, reutilizar materiales y aprovechar mejor los recursos."
+  },
+  {
+    "question":"Dona un exemple d’innovació sostenible.",
+    "options":["Resposta curta"],
+    "answer":"Un ejemplo de innovación sostenible sería digitalizar documentos para reducir el consumo de papel y recursos."
+  },
+  {
+    "question":"Quines característiques té una persona emprenedora?",
+    "options":["Resposta curta"],
+    "answer":"Una persona emprendedora suele tener iniciativa, creatividad, resiliencia, capacidad de adaptación y motivación."
+  },
+  {
+    "question":"Què és la proactivitat?",
+    "options":["Resposta curta"],
+    "answer":"La proactividad es la capacidad de actuar y anticiparse a problemas o necesidades antes de que aparezcan."
+  },
+  {
+    "question":"Què és la resiliència?",
+    "options":["Resposta curta"],
+    "answer":"La resiliencia es la capacidad de superar dificultades, adaptarse y continuar avanzando."
+  },
+  {
+    "question":"Què és assumir riscos calculats?",
+    "options":["Resposta curta"],
+    "answer":"Asumir riesgos calculados significa tomar decisiones después de analizar las posibles consecuencias."
+  },
+  {
+    "question":"Què és el treball col·laboratiu?",
+    "options":["Resposta curta"],
+    "answer":"El trabajo colaborativo consiste en trabajar en equipo compartiendo objetivos, tareas y conocimientos."
+  },
+  {
+    "question":"Què és la creativitat?",
+    "options":["Resposta curta"],
+    "answer":"La creatividad es la capacidad de generar ideas nuevas u originales para resolver problemas."
+  },
+  {
+    "question":"Què és el pensament crític?",
+    "options":["Resposta curta"],
+    "answer":"El pensamiento crítico consiste en analizar información y tomar decisiones razonadas y fundamentadas."
+  },
+  {
+    "question":"Què és la competència digital?",
+    "options":["Resposta curta"],
+    "answer":"La competencia digital es la capacidad de utilizar herramientas digitales de forma segura y eficiente."
+  },
+
+  {
+    "question":"Per què és important la competència digital?",
+    "options":["Resposta curta"],
+    "answer":"La competencia digital es importante porque facilita la comunicación, el trabajo y la innovación."
+  },
+  {
+    "question":"Què és la transformació digital?",
+    "options":["Resposta curta"],
+    "answer":"La transformación digital consiste en incorporar tecnología digital para mejorar procesos y servicios."
+  },
+  {
+    "question":"Què és la innovació tecnològica?",
+    "options":["Resposta curta"],
+    "answer":"La innovación tecnológica consiste en aplicar tecnología para mejorar productos, servicios o procesos."
+  },
+  {
+    "question":"Què és la identitat digital?",
+    "options":["Resposta curta"],
+    "answer":"La identidad digital es la imagen o información que una persona proyecta en internet."
+  },
+  {
+    "question":"Què és la petjada digital?",
+    "options":["Resposta curta"],
+    "answer":"La huella digital es el rastro de información que dejamos al utilizar internet y herramientas digitales."
+  },
+  {
+    "question":"Per què cal protegir les dades personals?",
+    "options":["Resposta curta"],
+    "answer":"Es importante proteger los datos personales para evitar problemas de seguridad o usos indebidos."
+  },
+  {
+    "question":"Què és la bretxa digital?",
+    "options":["Resposta curta"],
+    "answer":"La brecha digital es la desigualdad en el acceso o uso de las tecnologías digitales."
+  },
+  {
+    "question":"Què és una eina digital col·laborativa?",
+    "options":["Resposta curta"],
+    "answer":"Es una herramienta digital que facilita el trabajo en equipo y la comunicación entre personas."
+  },
+  {
+    "question":"Què és la innovació oberta?",
+    "options":["Resposta curta"],
+    "answer":"La innovación abierta consiste en incorporar ideas y colaboraciones externas a una organización."
+  },
+  {
+    "question":"Què és el crowdsourcing?",
+    "options":["Resposta curta"],
+    "answer":"El crowdsourcing consiste en obtener ideas o soluciones de un grupo amplio de personas."
+  },
+
+  {
+    "question":"Què és la Blue Ocean Strategy?",
+    "options":["Resposta curta"],
+    "answer":"Es una estrategia que busca crear mercados nuevos con poca competencia."
+  },
+  {
+    "question":"Què és una metodologia àgil?",
+    "options":["Resposta curta"],
+    "answer":"Una metodología ágil es una forma de trabajo flexible y adaptada a cambios continuos."
+  },
+  {
+    "question":"Què és el Design Thinking?",
+    "options":["Resposta curta"],
+    "answer":"El Design Thinking es una metodología centrada en las necesidades reales de las personas usuarias."
+  },
+  {
+    "question":"Què és Lean Startup?",
+    "options":["Resposta curta"],
+    "answer":"Lean Startup es una metodología basada en crear, medir y aprender para validar ideas rápidamente."
+  },
+  {
+    "question":"Què és el Business Model Canvas?",
+    "options":["Resposta curta"],
+    "answer":"El Business Model Canvas es una herramienta visual para organizar y analizar un modelo de negocio."
+  },
+  {
+    "question":"Què és modernitzar el sector productiu?",
+    "options":["Resposta curta"],
+    "answer":"Modernizar el sector productivo consiste en mejorar procesos mediante innovación y tecnología."
+  },
+  {
+    "question":"Què és la innovació social?",
+    "options":["Resposta curta"],
+    "answer":"La innovación social consiste en crear soluciones que mejoren la sociedad y el bienestar colectivo."
+  },
+  {
+    "question":"Què és la responsabilitat social?",
+    "options":["Resposta curta"],
+    "answer":"La responsabilidad social implica actuar de forma ética y respetuosa con la sociedad y el medio ambiente."
+  },
+  {
+    "question":"Què és la col·laboració interdisciplinària?",
+    "options":["Resposta curta"],
+    "answer":"La colaboración interdisciplinaria consiste en trabajar con personas de diferentes áreas o especialidades."
+  },
+  {
+    "question":"Què és la resolució creativa de problemes?",
+    "options":["Resposta curta"],
+    "answer":"La resolución creativa de problemas consiste en encontrar soluciones innovadoras ante dificultades."
+  }
 ];
 
-
-/* ============================
-   VARIABLES PRINCIPALES
-============================ */
 let answeredQuestions = JSON.parse(localStorage.getItem("answeredQuestions")) || [];
 let currentQuestion = 0;
 let score = 0;
@@ -331,10 +405,6 @@ const totalQuestionsText = document.getElementById("totalQuestionsText");
 const pendingQuestionsText = document.getElementById("pendingQuestionsText");
 const completedQuestionsText = document.getElementById("completedQuestionsText");
 
-
-/* ============================
-   ACTUALIZAR PANEL SUPERIOR
-============================ */
 function updateProgressPanel() {
   const total = allQuestions.length;
   const completed = answeredQuestions.length;
@@ -345,28 +415,7 @@ function updateProgressPanel() {
   completedQuestionsText.textContent = `Preguntas realizadas: ${completed}`;
 }
 
-
-/* ============================
-   PREPARAR TEST
-============================ */
 function prepareQuiz() {
-  if (allQuestions.length === 0) {
-    container.innerHTML = `
-      <div class="question">
-        <p>No hay preguntas todavía.</p>
-        <p class="small-text">Añade preguntas dentro de la variable allQuestions.</p>
-      </div>
-    `;
-    return;
-  }
-
-  // Si ya has hecho todas, se reinicia automáticamente
-  if (answeredQuestions.length >= allQuestions.length) {
-    answeredQuestions = [];
-    localStorage.removeItem("answeredQuestions");
-
-    alert("Has completado todas las preguntas. Se reinicia el ciclo.");
-  }
 
   updateProgressPanel();
 
@@ -374,23 +423,9 @@ function prepareQuiz() {
     .map((question, index) => index)
     .filter(index => !answeredQuestions.includes(index));
 
-  let numberOfQuestionsToday = parseInt(
-    prompt(`¿Cuántas preguntas quieres hacer hoy? Te quedan ${availableQuestions.length} pendientes.`)
-  );
-
-  if (
-    isNaN(numberOfQuestionsToday) ||
-    numberOfQuestionsToday <= 0 ||
-    numberOfQuestionsToday > availableQuestions.length
-  ) {
-    numberOfQuestionsToday = availableQuestions.length;
-  }
-
   shuffle(availableQuestions);
 
-  let selectedIndexes = availableQuestions.slice(0, numberOfQuestionsToday);
-
-  quizData = selectedIndexes.map(index => {
+  quizData = availableQuestions.map(index => {
     return {
       ...allQuestions[index],
       originalIndex: index
@@ -400,35 +435,20 @@ function prepareQuiz() {
   showQuestion();
 }
 
-
-/* ============================
-   MOSTRAR PREGUNTA
-============================ */
 function showQuestion() {
+
   container.innerHTML = "";
   nextBtn.style.display = "none";
 
   if (currentQuestion >= quizData.length) {
-    updateProgressPanel();
-
-    const pending = allQuestions.length - answeredQuestions.length;
 
     container.innerHTML = `
       <div class="question">
         <p>Quiz terminado</p>
-        <p>Tu puntuación final es ${score} de ${quizData.length}</p>
-        <p class="small-text">
-          Preguntas pendientes para otro día: ${pending}
-        </p>
-        ${
-          pending === 0
-          ? `<p class="small-text">Has completado todas las preguntas. La próxima vez se reiniciará el ciclo.</p>`
-          : `<p class="small-text">La próxima vez saldrán preguntas que todavía no has hecho.</p>`
-        }
+        <p>Puntuación final: ${score}/${quizData.length}</p>
       </div>
     `;
 
-    resultDiv.textContent = `Puntuación final: ${score}/${quizData.length}`;
     return;
   }
 
@@ -439,6 +459,7 @@ function showQuestion() {
 
   const p = document.createElement("p");
   p.textContent = `${currentQuestion + 1}. ${q.question}`;
+
   div.appendChild(p);
 
   const optionsDiv = document.createElement("div");
@@ -446,42 +467,121 @@ function showQuestion() {
 
   const filteredOptions = q.options.filter(opt => opt.trim() !== "");
 
-  // Si quieres que siempre salga V primero y F segundo, comenta la línea siguiente:
-  shuffle(filteredOptions);
+  // ============================
+  // RESPUESTA CORTA
+  // ============================
+  if (
+    filteredOptions.length === 1 &&
+    filteredOptions[0] === "Resposta curta"
+  ) {
 
-  filteredOptions.forEach(option => {
-    const btn = document.createElement("button");
-    btn.textContent = option;
-    btn.dataset.correct = option === q.answer ? "true" : "false";
+    const showBtn = document.createElement("button");
 
-    btn.onclick = () => {
-      const allBtns = optionsDiv.querySelectorAll("button");
-      allBtns.forEach(b => b.disabled = true);
+    showBtn.textContent = "Mostrar resposta";
 
-      // Guardamos esta pregunta como realizada justo al contestarla
+    showBtn.className = "main-btn";
+
+    showBtn.onclick = () => {
+
+      if (!div.querySelector(".short-answer")) {
+
+        const answerDiv = document.createElement("div");
+
+        answerDiv.className = "short-answer";
+
+        answerDiv.innerHTML = `
+          <strong>Resposta:</strong><br><br>
+          ${q.answer}
+        `;
+
+        div.appendChild(answerDiv);
+      }
+
       const originalIndex = q.originalIndex;
 
       if (!answeredQuestions.includes(originalIndex)) {
+
         answeredQuestions.push(originalIndex);
-        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+
+        localStorage.setItem(
+          "answeredQuestions",
+          JSON.stringify(answeredQuestions)
+        );
+      }
+
+      updateProgressPanel();
+
+      nextBtn.style.display = "block";
+
+      showBtn.disabled = true;
+
+      showBtn.textContent = "Resposta mostrada";
+    };
+
+    optionsDiv.appendChild(showBtn);
+
+    div.appendChild(optionsDiv);
+
+    container.appendChild(div);
+
+    return;
+  }
+
+  // ============================
+  // V/F Y TEST NORMAL
+  // ============================
+
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+
+    const btn = document.createElement("button");
+
+    btn.textContent = option;
+
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+
+      const allBtns = optionsDiv.querySelectorAll("button");
+
+      allBtns.forEach(b => b.disabled = true);
+
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+
+        answeredQuestions.push(originalIndex);
+
+        localStorage.setItem(
+          "answeredQuestions",
+          JSON.stringify(answeredQuestions)
+        );
       }
 
       updateProgressPanel();
 
       if (btn.dataset.correct === "true") {
+
         btn.classList.add("correct");
+
         score++;
+
       } else {
+
         btn.classList.add("wrong");
 
         allBtns.forEach(b => {
+
           if (b.dataset.correct === "true") {
+
             b.classList.add("correct");
           }
         });
       }
 
       resultDiv.textContent = `Puntuación: ${score}/${quizData.length}`;
+
       nextBtn.style.display = "block";
     };
 
@@ -489,36 +589,26 @@ function showQuestion() {
   });
 
   div.appendChild(optionsDiv);
+
   container.appendChild(div);
 }
 
-
-/* ============================
-   BOTÓN SIGUIENTE
-============================ */
 nextBtn.onclick = () => {
+
   currentQuestion++;
+
   showQuestion();
 };
 
-
-/* ============================
-   BOTÓN REINICIAR PROGRESO
-============================ */
 resetBtn.onclick = () => {
-  const confirmReset = confirm("¿Seguro que quieres reiniciar el progreso? Volverán a salir todas las preguntas.");
 
-  if (confirmReset) {
-    localStorage.removeItem("answeredQuestions");
-    location.reload();
-  }
+  localStorage.removeItem("answeredQuestions");
+
+  location.reload();
 };
 
-
-/* ============================
-   INICIAR QUIZ
-============================ */
 prepareQuiz();
+
 </script>
 
 </body>
