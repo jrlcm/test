@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz IPO2</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0 5px 0;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .top-panel {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .top-panel p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    padding-top: 10px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .question p {
+    font-size: 34px;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 30px 0;
+  }
+
+  .options {
+    margin-top: 20px;
+  }
+
+  .options button {
+    display: block;
+    margin: 10px 0;
+    padding: 15px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+
+  .options button:hover {
+    background: #ddd;
+  }
+
+  .options button:disabled {
+    cursor: not-allowed;
+  }
+
+  .correct {
+    background-color: #c8e6c9 !important;
+    border-color: #388e3c !important;
+    color: #2e7d32 !important;
+  }
+
+  .wrong {
+    background-color: #ffcdd2 !important;
+    border-color: #d32f2f !important;
+    color: #c62828 !important;
+  }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 10px 0;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  button.main-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.main-btn:hover {
+    background: #1976D2;
+  }
+
+  button.reset-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #e53935;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.reset-btn:hover {
+    background: #c62828;
+  }
+
+  .small-text {
+    font-size: 15px !important;
+    font-weight: normal !important;
+    color: #555;
+  }
+
+  @media (max-width: 600px) {
+    .question p {
+      font-size: 28px;
+    }
+
+    .options button {
+      font-size: 20px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Quiz Gestion Administrativa</h1>
+<div class="subtitle">Preguntas aleatorias sin repetir hasta completar todo el temario</div>
+
+<div class="top-panel">
+  <p id="totalQuestionsText">Preguntas totales: 0</p>
+  <p id="pendingQuestionsText">Preguntas pendientes: 0</p>
+  <p id="completedQuestionsText">Preguntas realizadas: 0</p>
+</div>
+
+<div class="quiz-container" id="quiz-container"></div>
+
+<div class="result" id="result">Puntuación: 0</div>
+
+<div class="buttons">
+  <button id="nextBtn" class="main-btn" style="display:none;">Siguiente</button>
+  <button id="resetBtn" class="reset-btn">Reiniciar progreso</button>
+</div>
+
+<script>
+/* ============================
+   FUNCIÓN PARA MEZCLAR ARRAYS
+============================ */
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+
+/* ============================
+   AÑADE AQUÍ TUS PREGUNTAS
+   No tienes que indicar cuántas hay.
+   El código las cuenta automáticamente.
+============================ */
+const allQuestions = [
+  
+ 
+  
+  {
+    "question": "La gestió sanitària té una visió més àmplia que l’administració, perquè també considera l’entorn i la planificació futura.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’administració d’una empresa sanitària consisteix únicament en atendre pacients.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "Els recursos sanitaris es poden classificar en recursos humans, materials o tecnològics i financers.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La gestió de recursos humans inclou tasques com selecció, contractació, formació, nòmines i gestió de permisos.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El TDAS forma part del personal sanitari facultatiu especialista.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "El personal subaltern pot incloure figures com zeladors, conserges o porters.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Un metge especialista en digestiu forma part del personal sanitari facultatiu especialista.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Un cuiner d’un hospital es classifica habitualment com a personal d’ofici.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’organigrama és la representació gràfica de l’estructura d’una organització.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "En l’organització hospitalària tradicional, la divisió mèdica inclou serveis com medicina, cirurgia i documentació i arxiu.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La divisió d’infermeria inclou habitualment quiròfans, consultes externes, urgències i unitats especials.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La divisió de gestió i serveis generals inclou subministrament, hostaleria, manteniment i gestió econòmica.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’oferta pública d’ocupació sanitària es publica exclusivament en portals privats de treball.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "L’accés a la funció pública ha de respectar els principis d’igualtat, mèrit, capacitat i publicitat.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’oposició consisteix en la valoració de mèrits sense realitzar cap prova.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "El concurs consisteix en valorar mèrits com l’experiència, la formació o les titulacions.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El concurs-oposició combina una fase de proves i una fase de valoració de mèrits.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El personal funcionari interí té sempre la mateixa estabilitat que el funcionari de carrera.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "El personal eventual sol ocupar càrrecs de confiança o assessorament.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El personal estatutari és propi dels serveis de salut i pot ser fix o temporal.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "En el sector privat sanitari, el procés de selecció pot incloure reclutament, preselecció de currículums, proves i entrevistes.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Els contractes laborals del sector privat poden ser indefinits, temporals, de formació en alternança o formatius per a la pràctica professional.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El Sistema Nacional de Salut es caracteritza per la universalitat de l’atenció.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La descentralització sanitària implica que totes les decisions sanitàries es prenen únicament des del Ministeri de Sanitat.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "L’atenció primària és el primer nivell d’accés al sistema sanitari.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’atenció especialitzada s’encarrega de processos més complexos i sovint es presta en hospitals o centres d’especialitats.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Els serveis d’atenció primària es caracteritzen per tenir poca accessibilitat i alta complexitat tecnològica.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "La cartera de serveis comuns del SNS inclou atenció primària, atenció especialitzada, urgències i prestació farmacèutica.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La cartera de serveis d’un centre sanitari no s’ha d’actualitzar mai, ja que és fixa.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "En un centre privat, la rendibilitat econòmica pot ser un factor important per planificar la cartera de serveis.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "En un centre públic, la planificació de la cartera de serveis ha de tenir en compte les necessitats de salut de la població.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Les mutualitats poden oferir cobertura sanitària a determinats funcionaris.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Les mútues d’accidents de treball i malalties professionals cobreixen principalment contingències laborals.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Un centre sanitari és un conjunt organitzat de mitjans tècnics, instal·lacions i professionals que realitzen activitats sanitàries.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Un servei sanitari és sempre un edifici independent amb hospitalització obligatòria.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "Els hospitals generals ofereixen diverses especialitats mèdiques i atenen una àmplia varietat de patologies.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Els hospitals de mitja i llarga estada atenen pacients que requereixen períodes prolongats d’internament.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El procés d’aprovisionament busca garantir materials en quantitat, qualitat, temps i cost adequats.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’aprovisionament sanitari no té cap relació amb el control d’estocs.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "La comissió de compres pot valorar necessitats, proveïdors, qualitat i preu dels productes.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La comanda és el document pel qual se sol·licita formalment una compra al proveïdor.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’albarà acredita el lliurament de la mercaderia.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La factura és el document fiscal que justifica l’operació econòmica i el pagament.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’albarà és el document fiscal principal que acredita l’import a pagar i els impostos aplicables.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "La fitxa de magatzem permet registrar entrades, sortides i existències d’un producte.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El stock de seguretat serveix per evitar ruptures d’estoc davant retards o increments inesperats del consum.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El punt de comanda indica el moment en què cal fer una nova comanda per evitar quedar-se sense existències.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’inventari consisteix a fer el recompte i valoració de les existències del magatzem.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Els costos fixos varien directament segons el nombre de pacients atesos o serveis produïts.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "Els costos variables poden canviar segons l’activitat assistencial del centre.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Un cost directe es pot assignar a un servei o activitat concreta.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Un cost indirecte és fàcilment atribuïble a un pacient o servei concret sense criteris de repartiment.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "El pressupost d’un centre sanitari preveu ingressos i despeses per planificar la gestió econòmica.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’anàlisi cost-benefici ajuda a valorar si una actuació, compra o projecte és viable.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Les aplicacions de comptabilitat i facturació poden reduir errors humans i millorar la traçabilitat.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Les aplicacions informàtiques de facturació no necessiten cap mesura de seguretat perquè no tracten dades sensibles.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "La integració entre sistemes clínics, administratius i econòmics pot evitar duplicitats i errors.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Els contractes públics poden ser de subministrament, serveis, obres, concessió d’obres o concessió de serveis.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La solvència del contractista és irrellevant en la contractació pública sanitària.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "Les prohibicions de contractar poden impedir que determinades empreses contractin amb el sector públic.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "En contractació pública sanitària, la transparència i la justificació de la necessitat són aspectes importants.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La recerca biomèdica té com a objectiu generar coneixement sobre la salut humana, la prevenció, el diagnòstic i el tractament de malalties.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La recerca preclínica es realitza principalment directament en grans grups de pacients humans.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "La recerca clínica es basa en estudis realitzats en pacients o persones participants.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La recerca epidemiològica estudia la freqüència, distribució i determinants de les malalties en poblacions.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Un estudi descriptiu pretén estudiar la freqüència i distribució d’una malaltia o fenomen.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Un estudi analític pretén avaluar associacions o diferències entre situacions d’estudi.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Un estudi longitudinal implica seguiment temporal de la població d’estudi.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "En un estudi observacional, l’investigador manipula activament les condicions de l’estudi.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "En un estudi experimental o d’intervenció, l’investigador pot modificar o intervenir sobre les condicions de l’estudi.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Un assaig clínic és un estudi experimental en éssers humans per avaluar una intervenció sanitària.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "En un assaig clínic obert, ni el pacient ni l’investigador coneixen el tractament assignat.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "En un assaig simple cec, el pacient desconeix el tractament que rep.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "En un assaig doble cec, ni el pacient ni l’investigador coneixen el tractament assignat.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La fase I d’un assaig clínic se centra principalment en la seguretat, tolerància i forma d’administració.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La fase IV d’un assaig clínic es realitza abans de provar el medicament en humans.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "La fase III sol comparar l’eficàcia i seguretat del tractament en un nombre elevat de pacients.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El REec és el Registre Espanyol d’Estudis Clínics i és una base de dades pública.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Una CRO és una organització de recerca per contracte que pot donar suport en assajos clínics.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La CRO és sempre el pacient que rep el tractament experimental.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "El CEIC o CEIm avalua aspectes ètics, legals, científics i metodològics d’un estudi.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La funció del CEIC o CEIm és protegir els drets, la seguretat i el benestar dels participants.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El consentiment informat implica que el participant accepta voluntàriament participar després de rebre informació adequada.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El consentiment informat elimina tots els riscos d’un estudi clínic.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "La confidencialitat de les dades dels participants és un principi important en la investigació clínica.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La Bona Pràctica Clínica inclou la protecció dels participants, la validesa científica i el compliment del protocol.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Segons el PMBOK, un projecte és un esforç temporal per crear un producte, servei, document, millora o resultat únic.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Un projecte sanitari no necessita objectius definits ni calendari.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "Les fases habituals d’un projecte inclouen inici, planificació, execució, seguiment i tancament.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Les 5W d’un projecte ajuden a identificar què es farà, per a qui, per què, quan i on.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La matriu RACI ajuda a distribuir responsabilitats dins d’un projecte.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "En una matriu RACI, la persona informada és qui executa obligatòriament la tasca.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "L’efectivitat mesura el grau d’assoliment d’un objectiu.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’eficiència relaciona els resultats obtinguts amb els recursos utilitzats.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La productivitat pot expressar l’activitat realitzada per unitat de temps o recurs.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Una convocatòria de reunió informa de la data, hora, lloc, participants i objectiu de la reunió.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’ordre del dia o agenda recull els temes que es tractaran en una reunió.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’acta de reunió recull assistents, temes tractats, acords, tasques i responsables.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Una videoconferència és un exemple de comunicació interactiva.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "L’enviament d’un correu electrònic amb informació del projecte és un exemple de comunicació push.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La consulta d’informació en una intranet o repositori és un exemple de comunicació pull.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La comunicació pull consisteix en enviar informació directament al destinatari sense que aquest l’hagi de buscar.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "El model aristotèlic de comunicació inclou persona que parla, discurs i persona que escolta.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El model de Shannon i Weaver inclou elements com font, transmissor, canal, receptor, destinatari i soroll.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El model de Berlo també és conegut com a model SMCR.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Per representar l’evolució d’un indicador al llarg dels anys, és adequat utilitzar un gràfic de línies.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Per representar la distribució de població per edat i sexe, és adequat utilitzar una piràmide de població.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Per representar mortalitat segons territori, es pot utilitzar un mapa o cartograma.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Un sistema de gestió documental permet organitzar, classificar, emmagatzemar, recuperar i protegir documents.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Les metadades són dades sobre dades i ajuden a identificar i recuperar documents.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El repositori és el lloc físic o electrònic on es dipositen i gestionen documents.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Les metadades són el lloc on es guarden físicament els documents.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "El control de versions permet saber quina és la versió vigent d’un document.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "El control de versions evita treballar amb documents obsolets.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La digitalització documental pot reduir l’ús d’espai físic i facilitar la recuperació d’informació.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La digitalització elimina completament qualsevol risc de pèrdua d’informació.",
+    "options": ["V", "F"],
+    "answer": "F"
+  },
+  {
+    "question": "L’obsolescència tecnològica és una dificultat en la conservació de documents digitals a llarg termini.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "Les còpies de seguretat i la migració periòdica de formats poden ajudar a conservar documents digitals.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "La mala gestió documental pot provocar pèrdua de documents, duplicats, errors de versió i problemes de confidencialitat.",
+    "options": ["V", "F"],
+    "answer": "V"
+  },
+  {
+    "question": "En un projecte sanitari, els documents no necessiten cap codificació ni registre.",
+    "options": ["V", "F"],
+    "answer": "F"
+  }
+
+
+
+  /*
+  EJEMPLO PARA AÑADIR MÁS:
+
+  ,
+  {
+    "question": "Aquí va la pregunta nueva.",
+    "options": ["v", "f"],
+    "answer": "v"
+  }
+
+  */
+];
+
+
+/* ============================
+   VARIABLES PRINCIPALES
+============================ */
+let answeredQuestions = JSON.parse(localStorage.getItem("answeredQuestions")) || [];
+let currentQuestion = 0;
+let score = 0;
+let quizData = [];
+
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const totalQuestionsText = document.getElementById("totalQuestionsText");
+const pendingQuestionsText = document.getElementById("pendingQuestionsText");
+const completedQuestionsText = document.getElementById("completedQuestionsText");
+
+
+/* ============================
+   ACTUALIZAR PANEL SUPERIOR
+============================ */
+function updateProgressPanel() {
+  const total = allQuestions.length;
+  const completed = answeredQuestions.length;
+  const pending = total - completed;
+
+  totalQuestionsText.textContent = `Preguntas totales: ${total}`;
+  pendingQuestionsText.textContent = `Preguntas pendientes: ${pending}`;
+  completedQuestionsText.textContent = `Preguntas realizadas: ${completed}`;
+}
+
+
+/* ============================
+   PREPARAR TEST
+============================ */
+function prepareQuiz() {
+  if (allQuestions.length === 0) {
+    container.innerHTML = `
+      <div class="question">
+        <p>No hay preguntas todavía.</p>
+        <p class="small-text">Añade preguntas dentro de la variable allQuestions.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Si ya has hecho todas, se reinicia automáticamente
+  if (answeredQuestions.length >= allQuestions.length) {
+    answeredQuestions = [];
+    localStorage.removeItem("answeredQuestions");
+
+    alert("Has completado todas las preguntas. Se reinicia el ciclo.");
+  }
+
+  updateProgressPanel();
+
+  let availableQuestions = allQuestions
+    .map((question, index) => index)
+    .filter(index => !answeredQuestions.includes(index));
+
+  let numberOfQuestionsToday = parseInt(
+    prompt(`¿Cuántas preguntas quieres hacer hoy? Te quedan ${availableQuestions.length} pendientes.`)
+  );
+
+  if (
+    isNaN(numberOfQuestionsToday) ||
+    numberOfQuestionsToday <= 0 ||
+    numberOfQuestionsToday > availableQuestions.length
+  ) {
+    numberOfQuestionsToday = availableQuestions.length;
+  }
+
+  shuffle(availableQuestions);
+
+  let selectedIndexes = availableQuestions.slice(0, numberOfQuestionsToday);
+
+  quizData = selectedIndexes.map(index => {
+    return {
+      ...allQuestions[index],
+      originalIndex: index
+    };
+  });
+
+  showQuestion();
+}
+
+
+/* ============================
+   MOSTRAR PREGUNTA
+============================ */
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if (currentQuestion >= quizData.length) {
+    updateProgressPanel();
+
+    const pending = allQuestions.length - answeredQuestions.length;
+
+    container.innerHTML = `
+      <div class="question">
+        <p>Quiz terminado</p>
+        <p>Tu puntuación final es ${score} de ${quizData.length}</p>
+        <p class="small-text">
+          Preguntas pendientes para otro día: ${pending}
+        </p>
+        ${
+          pending === 0
+          ? `<p class="small-text">Has completado todas las preguntas. La próxima vez se reiniciará el ciclo.</p>`
+          : `<p class="small-text">La próxima vez saldrán preguntas que todavía no has hecho.</p>`
+        }
+      </div>
+    `;
+
+    resultDiv.textContent = `Puntuación final: ${score}/${quizData.length}`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+
+  const div = document.createElement("div");
+  div.className = "question";
+
+  const p = document.createElement("p");
+  p.textContent = `${currentQuestion + 1}. ${q.question}`;
+  div.appendChild(p);
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+
+  // Si quieres que siempre salga V primero y F segundo, comenta la línea siguiente:
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      // Guardamos esta pregunta como realizada justo al contestarla
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+
+      if (btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+
+        allBtns.forEach(b => {
+          if (b.dataset.correct === "true") {
+            b.classList.add("correct");
+          }
+        });
+      }
+
+      resultDiv.textContent = `Puntuación: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+
+/* ============================
+   BOTÓN SIGUIENTE
+============================ */
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+
+/* ============================
+   BOTÓN REINICIAR PROGRESO
+============================ */
+resetBtn.onclick = () => {
+  const confirmReset = confirm("¿Seguro que quieres reiniciar el progreso? Volverán a salir todas las preguntas.");
+
+  if (confirmReset) {
+    localStorage.removeItem("answeredQuestions");
+    location.reload();
+  }
+};
+
+
+/* ============================
+   INICIAR QUIZ
+============================ */
+prepareQuiz();
+</script>
+
+</body>
+</html>
