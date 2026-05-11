@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz IPO2</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0 5px 0;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .top-panel {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .top-panel p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    padding-top: 10px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .question p {
+    font-size: 32px;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 30px 0;
+  }
+
+  .options {
+    margin-top: 20px;
+  }
+
+  .options button {
+    display: block;
+    margin: 10px 0;
+    padding: 15px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+
+  .options button:hover {
+    background: #ddd;
+  }
+
+  .correct {
+    background-color: #c8e6c9 !important;
+    border-color: #388e3c !important;
+    color: #2e7d32 !important;
+  }
+
+  .wrong {
+    background-color: #ffcdd2 !important;
+    border-color: #d32f2f !important;
+    color: #c62828 !important;
+  }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 10px 0;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  button.main-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.main-btn:hover {
+    background: #1976D2;
+  }
+
+  button.reset-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #e53935;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.reset-btn:hover {
+    background: #c62828;
+  }
+
+  .short-answer {
+    margin-top: 25px;
+    padding: 20px;
+    background: #e3f2fd;
+    border-left: 6px solid #2196F3;
+    border-radius: 8px;
+    font-size: 24px;
+    line-height: 1.5;
+    color: #0d47a1;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Quiz IPO2</h1>
+<div class="subtitle">Preguntas aleatorias sin repetir</div>
+
+<div class="top-panel">
+  <p id="totalQuestionsText">Preguntas totales: 0</p>
+  <p id="pendingQuestionsText">Preguntas pendientes: 0</p>
+  <p id="completedQuestionsText">Preguntas realizadas: 0</p>
+</div>
+
+<div class="quiz-container" id="quiz-container"></div>
+
+<div class="result" id="result">Puntuación: 0</div>
+
+<div class="buttons">
+  <button id="nextBtn" class="main-btn" style="display:none;">Siguiente</button>
+  <button id="resetBtn" class="reset-btn">Reiniciar progreso</button>
+</div>
+
+<script>
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+const allQuestions =[
+  {
+    "question": "Què és la gestió sanitària?",
+    "options": ["Resposta curta"],
+    "answer": "És la planificació, organització, direcció i control dels recursos humans, materials, tecnològics i econòmics d’un centre sanitari per assolir objectius assistencials i administratius."
+  },
+  {
+    "question": "Quina diferència hi ha entre gestió i administració?",
+    "options": ["Resposta curta"],
+    "answer": "L’administració se centra en organitzar i coordinar recursos interns, mentre que la gestió té una visió més global, inclou l’entorn, la planificació futura i la millora dels serveis."
+  },
+  {
+    "question": "Quins són els principals recursos d’un centre sanitari?",
+    "options": ["Resposta curta"],
+    "answer": "Els recursos humans, els recursos materials i tecnològics, i els recursos financers o econòmics."
+  },
+  {
+    "question": "Què són els recursos humans en sanitat?",
+    "options": ["Resposta curta"],
+    "answer": "Són el conjunt de professionals i col·laboradors que treballen en un centre sanitari, com metges, infermeria, tècnics, administratius, zeladors i personal de serveis."
+  },
+  {
+    "question": "Quines tasques inclou la gestió de recursos humans?",
+    "options": ["Resposta curta"],
+    "answer": "Inclou selecció, contractació, formació, gestió de nòmines, permisos, torns, baixes, acomiadaments i estratègies de fidelització del personal."
+  },
+  {
+    "question": "Què és una OEP?",
+    "options": ["Resposta curta"],
+    "answer": "És l’Oferta Pública d’Ocupació, és a dir, la publicació de places públiques que una administració necessita cobrir mitjançant processos selectius."
+  },
+  {
+    "question": "On es publica l’oferta pública d’ocupació?",
+    "options": ["Resposta curta"],
+    "answer": "Es publica en butlletins oficials, com el BOE i, a Catalunya, el DOGC."
+  },
+  {
+    "question": "Quins principis ha de respectar l’accés a la funció pública?",
+    "options": ["Resposta curta"],
+    "answer": "Ha de respectar els principis d’igualtat, mèrit, capacitat i publicitat."
+  },
+  {
+    "question": "Què és una oposició?",
+    "options": ["Resposta curta"],
+    "answer": "És un procés selectiu basat en la superació de proves teòriques, pràctiques, orals o escrites."
+  },
+  {
+    "question": "Què és un concurs?",
+    "options": ["Resposta curta"],
+    "answer": "És un procés selectiu basat en la valoració de mèrits, com l’experiència, la formació o les titulacions."
+  },
+  {
+    "question": "Què és un concurs-oposició?",
+    "options": ["Resposta curta"],
+    "answer": "És un procés selectiu que combina una fase d’oposició amb proves i una fase de concurs amb valoració de mèrits."
+  },
+  {
+    "question": "Què és un funcionari de carrera?",
+    "options": ["Resposta curta"],
+    "answer": "És un empleat públic que ha superat un procés selectiu, ha estat nomenat oficialment i ocupa una plaça estable a l’administració."
+  },
+  {
+    "question": "Què és un funcionari interí?",
+    "options": ["Resposta curta"],
+    "answer": "És un empleat públic amb vinculació temporal que cobreix places vacants, substitucions, programes temporals o acumulació de tasques."
+  },
+  {
+    "question": "Què és el personal laboral?",
+    "options": ["Resposta curta"],
+    "answer": "És el personal que treballa per a l’administració mitjançant un contracte laboral regulat per l’Estatut dels Treballadors."
+  },
+  {
+    "question": "Què és el personal eventual?",
+    "options": ["Resposta curta"],
+    "answer": "És el personal designat temporalment per desenvolupar funcions de confiança o assessorament."
+  },
+  {
+    "question": "Què és el personal estatutari?",
+    "options": ["Resposta curta"],
+    "answer": "És el personal propi dels serveis de salut, regulat per un estatut específic, i pot ser fix o temporal."
+  },
+  {
+    "question": "Què és el personal directiu?",
+    "options": ["Resposta curta"],
+    "answer": "És el personal que exerceix funcions d’alta direcció dins d’una organització o administració sanitària."
+  },
+  {
+    "question": "Quins contractes laborals hi ha al sector privat?",
+    "options": ["Resposta curta"],
+    "answer": "Els principals són el contracte indefinit, temporal, de formació en alternança i formatiu per a l’obtenció de la pràctica professional."
+  },
+  {
+    "question": "Què és el reclutament de personal?",
+    "options": ["Resposta curta"],
+    "answer": "És el conjunt d’accions per atraure candidats qualificats per cobrir un lloc de treball."
+  },
+  {
+    "question": "Què és la selecció de personal?",
+    "options": ["Resposta curta"],
+    "answer": "És el procés per escollir el candidat més adequat per a un lloc de treball mitjançant currículums, proves i entrevistes."
+  },
+  {
+    "question": "Què és un organigrama?",
+    "options": ["Resposta curta"],
+    "answer": "És la representació gràfica de l’estructura d’una organització, amb les seves àrees, jerarquies i responsabilitats."
+  },
+  {
+    "question": "Quines divisions té l’organització hospitalària tradicional?",
+    "options": ["Resposta curta"],
+    "answer": "Gerència, divisió mèdica, divisió d’infermeria i divisió de gestió i serveis generals."
+  },
+  {
+    "question": "Quins serveis depenen habitualment de gerència?",
+    "options": ["Resposta curta"],
+    "answer": "Atenció al pacient, control de gestió, informàtica, assessoria jurídica, admissió, política de personal i planificació."
+  },
+  {
+    "question": "Quins serveis depenen habitualment de la divisió mèdica?",
+    "options": ["Resposta curta"],
+    "answer": "Medicina, cirurgia, ginecologia, pediatria, serveis centrals, documentació i arxiu, hospitalització de dia i altres funcions mèdiques."
+  },
+  {
+    "question": "Quins serveis depenen habitualment de la divisió d’infermeria?",
+    "options": ["Resposta curta"],
+    "answer": "Sales d’hospitalització, quiròfans, unitats especials, consultes externes, urgències i altres àrees d’atenció d’infermeria."
+  },
+  {
+    "question": "Quins serveis depenen de gestió i serveis generals?",
+    "options": ["Resposta curta"],
+    "answer": "Gestió econòmica, pressupostària i financera, gestió administrativa, personal, subministrament, hostaleria, seguretat, obres i manteniment."
+  },
+  {
+    "question": "Què és el Sistema Nacional de Salut?",
+    "options": ["Resposta curta"],
+    "answer": "És el sistema sanitari públic que garanteix l’assistència sanitària a la major part de la població, finançat principalment amb impostos."
+  },
+  {
+    "question": "Quines característiques té el Sistema Nacional de Salut?",
+    "options": ["Resposta curta"],
+    "answer": "Universalitat, igualtat, prioritat de la promoció i prevenció de la salut, i descentralització en les comunitats autònomes."
+  },
+  {
+    "question": "Què és la universalitat sanitària?",
+    "options": ["Resposta curta"],
+    "answer": "És el principi segons el qual tota la població té dret a rebre assistència sanitària."
+  },
+  {
+    "question": "Què és la igualtat en el Sistema Nacional de Salut?",
+    "options": ["Resposta curta"],
+    "answer": "És el principi que garanteix que totes les persones tinguin dret a les mateixes prestacions amb el mateix nivell de qualitat."
+  },
+  {
+    "question": "Què és la descentralització sanitària?",
+    "options": ["Resposta curta"],
+    "answer": "És l’organització en què les comunitats autònomes assumeixen competències en la gestió dels serveis sanitaris."
+  },
+  {
+    "question": "Què és l’atenció primària?",
+    "options": ["Resposta curta"],
+    "answer": "És el primer nivell d’accés al sistema sanitari, orientat a la promoció, prevenció, assistència, seguiment i resolució de problemes freqüents."
+  },
+  {
+    "question": "Què és l’atenció especialitzada?",
+    "options": ["Resposta curta"],
+    "answer": "És el segon nivell assistencial, destinat a problemes de salut més complexos que requereixen especialistes, hospitals o tecnologia avançada."
+  },
+  {
+    "question": "Què és una cartera de serveis?",
+    "options": ["Resposta curta"],
+    "answer": "És el conjunt de prestacions, tècniques, procediments i recursos que ofereix un centre sanitari o el SNS per garantir una atenció adequada."
+  },
+  {
+    "question": "Què inclou la cartera comuna del Sistema Nacional de Salut?",
+    "options": ["Resposta curta"],
+    "answer": "Inclou salut pública, atenció primària, atenció especialitzada, urgències, prestació farmacèutica, ortoprotèsica, productes dietètics i transport sanitari."
+  },
+  {
+    "question": "Què és una mutualitat?",
+    "options": ["Resposta curta"],
+    "answer": "És una entitat que dona cobertura sanitària i altres prestacions a determinats col·lectius, com funcionaris."
+  },
+  {
+    "question": "Què és una mútua d’accidents de treball?",
+    "options": ["Resposta curta"],
+    "answer": "És una entitat col·laboradora de la Seguretat Social que cobreix accidents laborals i malalties professionals."
+  },
+  {
+    "question": "Què és un centre sanitari?",
+    "options": ["Resposta curta"],
+    "answer": "És un conjunt organitzat d’instal·lacions, mitjans tècnics i professionals capacitats que realitzen activitats sanitàries."
+  },
+  {
+    "question": "Què és un servei sanitari?",
+    "options": ["Resposta curta"],
+    "answer": "És una unitat assistencial amb organització pròpia, recursos tècnics i professionals per realitzar activitats sanitàries específiques."
+  },
+  {
+    "question": "Què és un hospital general?",
+    "options": ["Resposta curta"],
+    "answer": "És un hospital que ofereix diverses especialitats mèdiques i atén una gran varietat de patologies."
+  },
+  {
+    "question": "Què és un hospital especialitzat?",
+    "options": ["Resposta curta"],
+    "answer": "És un hospital destinat al diagnòstic o tractament de patologies concretes o pacients amb característiques comunes."
+  },
+  {
+    "question": "Què és un hospital de mitja i llarga estada?",
+    "options": ["Resposta curta"],
+    "answer": "És un hospital per a pacients que requereixen períodes llargs d’internament i cures sanitàries continuades."
+  },
+  {
+    "question": "Què és l’aprovisionament sanitari?",
+    "options": ["Resposta curta"],
+    "answer": "És el procés que garanteix que el centre disposi dels materials i recursos necessaris en quantitat, qualitat, temps i cost adequats."
+  },
+  {
+    "question": "Quines són les etapes de l’aprovisionament?",
+    "options": ["Resposta curta"],
+    "answer": "Catàleg de productes, anàlisi de consum, prospecció de mercat, compra, recepció, ubicació, distribució, control d’estocs, regularització i inventari."
+  },
+  {
+    "question": "Què és la comissió de compres?",
+    "options": ["Resposta curta"],
+    "answer": "És l’òrgan que valora les necessitats de compra, la qualitat, el preu, els proveïdors i l’adequació dels productes sanitaris."
+  },
+  {
+    "question": "Què és una comanda?",
+    "options": ["Resposta curta"],
+    "answer": "És el document mitjançant el qual el centre sol·licita formalment productes o serveis a un proveïdor."
+  },
+  {
+    "question": "Què és un albarà?",
+    "options": ["Resposta curta"],
+    "answer": "És el document que acredita el lliurament de la mercaderia i permet comprovar que coincideix amb la comanda."
+  },
+  {
+    "question": "Què és una factura?",
+    "options": ["Resposta curta"],
+    "answer": "És el document legal i fiscal que justifica una operació econòmica, amb l’import, impostos i dades del comprador i proveïdor."
+  },
+  {
+    "question": "Què és una fitxa de magatzem?",
+    "options": ["Resposta curta"],
+    "answer": "És el document que registra les entrades, sortides i existències d’un producte, amb dades com lot, proveïdor, unitats, preu i ubicació."
+  },
+  {
+    "question": "Què és l’inventari?",
+    "options": ["Resposta curta"],
+    "answer": "És el recompte i valoració de les existències del magatzem per comprovar el stock real i detectar diferències, caducitats o pèrdues."
+  },
+  {
+    "question": "Què és el stock de seguretat?",
+    "options": ["Resposta curta"],
+    "answer": "És la quantitat mínima de reserva que es manté per evitar ruptures d’estoc davant retards o augments inesperats del consum."
+  },
+  {
+    "question": "Què és el punt de comanda?",
+    "options": ["Resposta curta"],
+    "answer": "És el nivell d’existències a partir del qual s’ha de fer una nova comanda per evitar quedar-se sense producte."
+  },
+  {
+    "question": "Com es calcula el consum diari?",
+    "options": ["Resposta curta"],
+    "answer": "Es calcula dividint el consum mensual entre 30 dies."
+  },
+  {
+    "question": "Com es calcula el punt de comanda?",
+    "options": ["Resposta curta"],
+    "answer": "Es calcula multiplicant el consum diari pel nombre de dies que triga el proveïdor a lliurar el producte."
+  },
+  {
+    "question": "Com es calcula el stock de seguretat?",
+    "options": ["Resposta curta"],
+    "answer": "Es calcula multiplicant el consum diari pels dies de reserva que el centre vol mantenir."
+  },
+  {
+    "question": "Què és la contractació pública?",
+    "options": ["Resposta curta"],
+    "answer": "És el procés mitjançant el qual una administració pública adquireix obres, serveis o subministraments seguint la normativa vigent."
+  },
+  {
+    "question": "Quins tipus de contractes públics hi ha segons l’objecte?",
+    "options": ["Resposta curta"],
+    "answer": "Contractes d’obres, concessió d’obres, concessió de serveis, subministrament, serveis, contractes mixtos i administratius especials."
+  },
+  {
+    "question": "Què és la solvència del contractista?",
+    "options": ["Resposta curta"],
+    "answer": "És la capacitat econòmica, tècnica i professional que ha de demostrar una empresa per poder executar correctament un contracte públic."
+  },
+  {
+    "question": "Què són les prohibicions de contractar?",
+    "options": ["Resposta curta"],
+    "answer": "Són situacions legals que impedeixen a una empresa contractar amb el sector públic, com condemnes, deutes o incompliments greus."
+  },
+  {
+    "question": "Què és el pressupost d’un centre sanitari?",
+    "options": ["Resposta curta"],
+    "answer": "És el document que preveu els ingressos i despeses del centre per planificar i controlar la gestió econòmica."
+  },
+  {
+    "question": "Quines són les principals partides de despesa sanitària?",
+    "options": ["Resposta curta"],
+    "answer": "Personal, despeses corrents, farmàcia, material sanitari, inversions, manteniment i serveis externs."
+  },
+  {
+    "question": "Què són els costos fixos?",
+    "options": ["Resposta curta"],
+    "answer": "Són costos que no varien directament amb el volum d’activitat, com sous estructurals, lloguers o manteniment."
+  },
+  {
+    "question": "Què són els costos variables?",
+    "options": ["Resposta curta"],
+    "answer": "Són costos que canvien segons l’activitat assistencial, com medicació, material fungible o proves diagnòstiques."
+  },
+  {
+    "question": "Què són els costos directes?",
+    "options": ["Resposta curta"],
+    "answer": "Són costos que es poden assignar directament a un servei, pacient o activitat concreta."
+  },
+  {
+    "question": "Què són els costos indirectes?",
+    "options": ["Resposta curta"],
+    "answer": "Són costos generals que no es poden atribuir fàcilment a un servei concret sense criteris de repartiment."
+  },
+  {
+    "question": "Què és l’anàlisi cost-benefici?",
+    "options": ["Resposta curta"],
+    "answer": "És una eina que compara els costos d’una actuació amb els beneficis esperats per valorar-ne la viabilitat."
+  },
+  {
+    "question": "Què és la facturació sanitària?",
+    "options": ["Resposta curta"],
+    "answer": "És el procés de registrar el servei prestat, calcular-ne l’import, emetre la factura i gestionar-ne el cobrament."
+  },
+  {
+    "question": "Quins avantatges tenen les aplicacions de comptabilitat i facturació?",
+    "options": ["Resposta curta"],
+    "answer": "Automatitzen processos, redueixen errors, milloren la traçabilitat, faciliten informes, integren sistemes i ajuden al compliment normatiu."
+  },
+  {
+    "question": "Quins inconvenients poden tenir les aplicacions de comptabilitat i facturació?",
+    "options": ["Resposta curta"],
+    "answer": "Poden generar dependència tecnològica, costos d’implantació, necessitat de formació, riscos de ciberseguretat i problemes si el sistema falla."
+  },
+  {
+    "question": "Què és la recerca biomèdica?",
+    "options": ["Resposta curta"],
+    "answer": "És el conjunt d’activitats destinades a generar coneixement sobre la salut humana, les malalties, la prevenció, el diagnòstic i el tractament."
+  },
+  {
+    "question": "Quin és l’objectiu de la recerca biomèdica?",
+    "options": ["Resposta curta"],
+    "answer": "Millorar el coneixement de les malalties i desenvolupar estratègies de prevenció, diagnòstic, tractament i millora de la salut."
+  },
+  {
+    "question": "Què és la recerca bàsica o preclínica?",
+    "options": ["Resposta curta"],
+    "answer": "És la recerca feta en laboratori, cultius cel·lulars o animals per estudiar mecanismes moleculars, cel·lulars o fisiopatològics."
+  },
+  {
+    "question": "Què és la recerca clínica?",
+    "options": ["Resposta curta"],
+    "answer": "És la recerca realitzada amb pacients o persones participants per estudiar prevenció, diagnòstic, tractament o evolució de malalties."
+  },
+  {
+    "question": "Què és la recerca epidemiològica?",
+    "options": ["Resposta curta"],
+    "answer": "És la recerca que estudia la freqüència, distribució i determinants de malalties o problemes de salut en poblacions."
+  },
+  {
+    "question": "Què és un estudi descriptiu?",
+    "options": ["Resposta curta"],
+    "answer": "És un estudi que descriu la freqüència i distribució d’una malaltia o fenomen en una població."
+  },
+  {
+    "question": "Què és un estudi analític?",
+    "options": ["Resposta curta"],
+    "answer": "És un estudi que busca associacions, diferències o causes entre variables o situacions d’estudi."
+  },
+  {
+    "question": "Què és un estudi longitudinal?",
+    "options": ["Resposta curta"],
+    "answer": "És un estudi que fa seguiment temporal d’una població o grup de participants."
+  },
+  {
+    "question": "Què és un estudi transversal?",
+    "options": ["Resposta curta"],
+    "answer": "És un estudi que observa una població en un moment concret, sense seguiment temporal."
+  },
+  {
+    "question": "Què és un estudi observacional?",
+    "options": ["Resposta curta"],
+    "answer": "És un estudi en què l’investigador observa els fets sense manipular les condicions de l’estudi."
+  },
+  {
+    "question": "Què és un estudi experimental?",
+    "options": ["Resposta curta"],
+    "answer": "És un estudi en què l’investigador intervé o modifica les condicions, per exemple administrant un tractament."
+  },
+  {
+    "question": "Què és un assaig clínic?",
+    "options": ["Resposta curta"],
+    "answer": "És un estudi experimental en éssers humans que avalua l’eficàcia, seguretat o efectes d’una intervenció sanitària."
+  },
+  {
+    "question": "Què és un assaig clínic obert?",
+    "options": ["Resposta curta"],
+    "answer": "És un assaig en què tant el participant com l’investigador coneixen el tractament assignat."
+  },
+  {
+    "question": "Què és un assaig simple cec?",
+    "options": ["Resposta curta"],
+    "answer": "És un assaig en què el participant desconeix quin tractament rep."
+  },
+  {
+    "question": "Què és un assaig doble cec?",
+    "options": ["Resposta curta"],
+    "answer": "És un assaig en què ni el participant ni l’investigador coneixen el tractament assignat."
+  },
+  {
+    "question": "Què és la fase I d’un assaig clínic?",
+    "options": ["Resposta curta"],
+    "answer": "És la fase que avalua principalment la seguretat, tolerància, farmacocinètica i forma d’administració, sovint en pocs voluntaris sans."
+  },
+  {
+    "question": "Què és la fase II d’un assaig clínic?",
+    "options": ["Resposta curta"],
+    "answer": "És la fase que avalua l’eficàcia inicial, la dosi adequada i la seguretat en pacients amb la malaltia."
+  },
+  {
+    "question": "Què és la fase III d’un assaig clínic?",
+    "options": ["Resposta curta"],
+    "answer": "És la fase que confirma l’eficàcia i seguretat en un nombre elevat de pacients, comparant amb placebo o tractament estàndard."
+  },
+  {
+    "question": "Què és la fase IV d’un assaig clínic?",
+    "options": ["Resposta curta"],
+    "answer": "És la fase posterior a la comercialització, destinada a detectar efectes adversos a llarg termini i nous usos o beneficis."
+  },
+  {
+    "question": "Què és el REec?",
+    "options": ["Resposta curta"],
+    "answer": "És el Registre Espanyol d’Estudis Clínics, una base de dades pública i gratuïta sobre assajos clínics amb medicaments a Espanya."
+  },
+  {
+    "question": "Què és una CRO?",
+    "options": ["Resposta curta"],
+    "answer": "És una organització de recerca per contracte que dona suport a empreses o institucions en la gestió i desenvolupament d’assajos clínics."
+  },
+  {
+    "question": "Què és el promotor d’un assaig clínic?",
+    "options": ["Resposta curta"],
+    "answer": "És la persona, empresa o institució que impulsa, organitza, finança o assumeix la responsabilitat de l’assaig clínic."
+  },
+  {
+    "question": "Què és l’investigador principal?",
+    "options": ["Resposta curta"],
+    "answer": "És el professional responsable de dirigir i executar l’assaig clínic en un centre concret."
+  },
+  {
+    "question": "Què és el monitor d’un assaig clínic?",
+    "options": ["Resposta curta"],
+    "answer": "És la persona que supervisa que l’assaig es desenvolupi segons el protocol, la normativa i la bona pràctica clínica."
+  },
+  {
+    "question": "Què és el CEIC o CEIm?",
+    "options": ["Resposta curta"],
+    "answer": "És un comitè independent que avalua els aspectes ètics, legals, científics i metodològics d’un estudi amb persones."
+  },
+  {
+    "question": "Quina funció té el CEIC o CEIm?",
+    "options": ["Resposta curta"],
+    "answer": "Protegir els drets, la seguretat i el benestar dels participants, revisant el protocol, el consentiment i els riscos de l’estudi."
+  },
+  {
+    "question": "Què és el consentiment informat?",
+    "options": ["Resposta curta"],
+    "answer": "És el document pel qual el participant accepta voluntàriament participar després de rebre informació clara sobre objectius, riscos, beneficis i drets."
+  },
+  {
+    "question": "Què és la Bona Pràctica Clínica?",
+    "options": ["Resposta curta"],
+    "answer": "És el conjunt de normes que garanteixen la qualitat científica de l’assaig i la protecció dels drets, seguretat i benestar dels participants."
+  },
+  {
+    "question": "Quina documentació es presenta en un projecte d’investigació?",
+    "options": ["Resposta curta"],
+    "answer": "Formulari de sol·licitud, memòria del projecte, CV de l’investigador, historial científic, memòria pressupostària, autoritzacions i informes."
+  },
+  {
+    "question": "Què és un projecte segons el PMBOK?",
+    "options": ["Resposta curta"],
+    "answer": "És un esforç temporal que es duu a terme per crear un producte, servei, document, millora o resultat únic."
+  },
+  {
+    "question": "Quines fases té un projecte?",
+    "options": ["Resposta curta"],
+    "answer": "Inici, planificació, execució, seguiment i control, i tancament."
+  },
+  {
+    "question": "Què són les 5W d’un projecte?",
+    "options": ["Resposta curta"],
+    "answer": "Són preguntes per planificar: què es farà, per a qui, per què, quan i on."
+  },
+  {
+    "question": "Què és un projecte sanitari?",
+    "options": ["Resposta curta"],
+    "answer": "És un projecte destinat a millorar serveis, processos, infraestructures, tecnologia, investigació o atenció sanitària."
+  },
+  {
+    "question": "Quins tipus de projectes sanitaris hi ha?",
+    "options": ["Resposta curta"],
+    "answer": "Construcció o ampliació d’hospitals, implementació de tecnologia sanitària, programes d’atenció mèdica i projectes de recerca mèdica."
+  },
+  {
+    "question": "Què és un pla de salut local?",
+    "options": ["Resposta curta"],
+    "answer": "És una eina que identifica problemes de salut d’un territori, prioritza necessitats, programa intervencions, executa accions i avalua resultats."
+  },
+  {
+    "question": "Què és la matriu RACI?",
+    "options": ["Resposta curta"],
+    "answer": "És una eina per assignar responsabilitats en un projecte: responsable d’executar, responsable final, consultat i informat."
+  },
+  {
+    "question": "Què és l’efectivitat?",
+    "options": ["Resposta curta"],
+    "answer": "És el grau en què s’assoleix l’efecte o objectiu previst."
+  },
+  {
+    "question": "Què és l’eficiència?",
+    "options": ["Resposta curta"],
+    "answer": "És la relació entre els resultats obtinguts i els recursos utilitzats per aconseguir-los."
+  },
+  {
+    "question": "Què és la productivitat?",
+    "options": ["Resposta curta"],
+    "answer": "És la quantitat d’activitat o resultats obtinguts per unitat de recurs, temps o personal."
+  },
+  {
+    "question": "Com es calcula l’efectivitat en un cas pràctic?",
+    "options": ["Resposta curta"],
+    "answer": "Habitualment es calcula comparant el resultat aconseguit amb l’objectiu previst o amb un valor inicial o de referència."
+  },
+  {
+    "question": "Com es calcula la productivitat?",
+    "options": ["Resposta curta"],
+    "answer": "Es calcula dividint l’activitat realitzada entre els recursos utilitzats, com hores, professionals o cost."
+  },
+  {
+    "question": "Què és una convocatòria de reunió?",
+    "options": ["Resposta curta"],
+    "answer": "És el document que informa de la data, hora, lloc, assistents, objectiu i motiu d’una reunió."
+  },
+  {
+    "question": "Què és l’ordre del dia?",
+    "options": ["Resposta curta"],
+    "answer": "És la llista ordenada dels temes que es tractaran en una reunió."
+  },
+  {
+    "question": "Què és una acta de reunió?",
+    "options": ["Resposta curta"],
+    "answer": "És el document que recull els assistents, temes tractats, acords, decisions, tasques, responsables i terminis d’una reunió."
+  },
+  {
+    "question": "Què és la comunicació interactiva?",
+    "options": ["Resposta curta"],
+    "answer": "És la comunicació bidireccional en temps real, com reunions, trucades o videoconferències."
+  },
+  {
+    "question": "Què és la comunicació push?",
+    "options": ["Resposta curta"],
+    "answer": "És la comunicació en què la informació s’envia directament al destinatari, com correus electrònics, cartes o memoràndums."
+  },
+  {
+    "question": "Què és la comunicació pull?",
+    "options": ["Resposta curta"],
+    "answer": "És la comunicació en què l’usuari accedeix a la informació quan la necessita, com intranets, repositoris o bases de dades."
+  },
+  {
+    "question": "Què és el model aristotèlic de comunicació?",
+    "options": ["Resposta curta"],
+    "answer": "És un model unidireccional basat en tres elements: persona que parla, discurs i persona que escolta."
+  },
+  {
+    "question": "Què és el model de Lasswell?",
+    "options": ["Resposta curta"],
+    "answer": "És un model que analitza qui diu què, per quin canal, a qui i amb quin efecte."
+  },
+  {
+    "question": "Què és el model de Shannon i Weaver?",
+    "options": ["Resposta curta"],
+    "answer": "És un model que inclou font, transmissor, canal, receptor, destinatari i soroll."
+  },
+  {
+    "question": "Què és el model de Berlo?",
+    "options": ["Resposta curta"],
+    "answer": "És el model SMCR, format per font, missatge, canal i receptor."
+  },
+  {
+    "question": "Quin gràfic és adequat per representar l’evolució d’un indicador al llarg del temps?",
+    "options": ["Resposta curta"],
+    "answer": "El gràfic de línies."
+  },
+  {
+    "question": "Quin gràfic és adequat per comparar categories?",
+    "options": ["Resposta curta"],
+    "answer": "El diagrama de barres."
+  },
+  {
+    "question": "Quin gràfic és adequat per representar població per edat i sexe?",
+    "options": ["Resposta curta"],
+    "answer": "La piràmide de població."
+  },
+  {
+    "question": "Quin gràfic és adequat per representar dades territorials?",
+    "options": ["Resposta curta"],
+    "answer": "Un mapa o cartograma."
+  },
+  {
+    "question": "Què és el document de tancament del projecte?",
+    "options": ["Resposta curta"],
+    "answer": "És el document final que recull resultats, objectius assolits, desviacions, pressupost final, conclusions, lliçons apreses i acceptació del tancament."
+  },
+  {
+    "question": "Què és un sistema de gestió documental?",
+    "options": ["Resposta curta"],
+    "answer": "És un sistema que permet organitzar, classificar, emmagatzemar, recuperar, controlar i protegir documents durant tot el seu cicle de vida."
+  },
+  {
+    "question": "Quins elements formen un sistema de gestió documental?",
+    "options": ["Resposta curta"],
+    "answer": "Document, metadades, repositori, polítiques i procediments, sistema de gestió documental i auditoria."
+  },
+  {
+    "question": "Què és un document en gestió documental?",
+    "options": ["Resposta curta"],
+    "answer": "És el suport físic o electrònic que conté informació rellevant per a una organització o projecte."
+  },
+  {
+    "question": "Què són les metadades?",
+    "options": ["Resposta curta"],
+    "answer": "Són dades sobre dades que descriuen, identifiquen i faciliten la localització i recuperació dels documents."
+  },
+  {
+    "question": "Quins tipus de metadades hi ha?",
+    "options": ["Resposta curta"],
+    "answer": "Metadades descriptives, estructurals i administratives."
+  },
+  {
+    "question": "Què són les metadades descriptives?",
+    "options": ["Resposta curta"],
+    "answer": "Són les que descriuen el contingut o característiques del document, com autor, títol o tema."
+  },
+  {
+    "question": "Què són les metadades estructurals?",
+    "options": ["Resposta curta"],
+    "answer": "Són les que indiquen l’estructura interna del document, com capítols, apartats o relació entre parts."
+  },
+  {
+    "question": "Què són les metadades administratives?",
+    "options": ["Resposta curta"],
+    "answer": "Són les que informen sobre propietats tècniques o de gestió, com data de creació, mida, versió o permisos."
+  },
+  {
+    "question": "Què és un repositori documental?",
+    "options": ["Resposta curta"],
+    "answer": "És l’espai físic o electrònic on es guarden, gestionen i conserven els documents."
+  },
+  {
+    "question": "Què és el control de versions?",
+    "options": ["Resposta curta"],
+    "answer": "És el procés que permet identificar la versió vigent d’un document i conservar l’historial de canvis."
+  },
+  {
+    "question": "Per què és important el control de versions?",
+    "options": ["Resposta curta"],
+    "answer": "Per evitar treballar amb documents obsolets, recuperar versions anteriors i garantir la traçabilitat dels canvis."
+  },
+  {
+    "question": "Què és la digitalització documental?",
+    "options": ["Resposta curta"],
+    "answer": "És el procés de convertir documents en paper a format digital per facilitar-ne la conservació, consulta, seguretat i recuperació."
+  },
+  {
+    "question": "Quins avantatges té la digitalització?",
+    "options": ["Resposta curta"],
+    "answer": "Redueix espai físic, facilita la cerca, millora la traçabilitat, evita duplicats, permet permisos d’accés i afavoreix la conservació."
+  },
+  {
+    "question": "Quines dificultats té la conservació digital?",
+    "options": ["Resposta curta"],
+    "answer": "Obsolescència tecnològica, formats incompatibles, degradació de suports, ciberatacs i pèrdua d’informació."
+  },
+  {
+    "question": "Com es pot protegir la documentació digital?",
+    "options": ["Resposta curta"],
+    "answer": "Amb permisos d’accés, contrasenyes, xifrat, còpies de seguretat, control de versions, registre d’accessos i polítiques documentals."
+  },
+  {
+    "question": "Què és una auditoria documental?",
+    "options": ["Resposta curta"],
+    "answer": "És la revisió del sistema documental per comprovar que es compleixen les polítiques, procediments, seguretat i traçabilitat establerts."
+  },
+  {
+    "question": "Què és la transferència de la informació?",
+    "options": ["Resposta curta"],
+    "answer": "És el procés de transmetre informació de manera clara, segura i eficient entre persones, equips o sistemes."
+  },
+  {
+    "question": "Què és la confidencialitat en documents sanitaris?",
+    "options": ["Resposta curta"],
+    "answer": "És l’obligació de protegir la informació personal i sanitària perquè només hi accedeixin persones autoritzades."
+  },
+  {
+    "question": "Què és la traçabilitat documental?",
+    "options": ["Resposta curta"],
+    "answer": "És la capacitat de seguir l’historial d’un document, incloent creació, modificacions, accessos, versions i responsables."
+  },
+  {
+    "question": "Què és la codificació documental?",
+    "options": ["Resposta curta"],
+    "answer": "És l’assignació d’un codi identificatiu als documents per facilitar-ne l’organització, classificació i recuperació."
+  },
+  {
+    "question": "Què pot passar si no hi ha una bona gestió documental?",
+    "options": ["Resposta curta"],
+    "answer": "Pot haver-hi pèrdua de documents, duplicats, versions incorrectes, errors, retards, manca de traçabilitat i riscos de confidencialitat."
+  }
+];
+
+let answeredQuestions = JSON.parse(localStorage.getItem("answeredQuestions")) || [];
+let currentQuestion = 0;
+let score = 0;
+let quizData = [];
+
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const totalQuestionsText = document.getElementById("totalQuestionsText");
+const pendingQuestionsText = document.getElementById("pendingQuestionsText");
+const completedQuestionsText = document.getElementById("completedQuestionsText");
+
+function updateProgressPanel() {
+  const total = allQuestions.length;
+  const completed = answeredQuestions.length;
+  const pending = total - completed;
+
+  totalQuestionsText.textContent = `Preguntas totales: ${total}`;
+  pendingQuestionsText.textContent = `Preguntas pendientes: ${pending}`;
+  completedQuestionsText.textContent = `Preguntas realizadas: ${completed}`;
+}
+
+function prepareQuiz() {
+
+  updateProgressPanel();
+
+  let availableQuestions = allQuestions
+    .map((question, index) => index)
+    .filter(index => !answeredQuestions.includes(index));
+
+  shuffle(availableQuestions);
+
+  quizData = availableQuestions.map(index => {
+    return {
+      ...allQuestions[index],
+      originalIndex: index
+    };
+  });
+
+  showQuestion();
+}
+
+function showQuestion() {
+
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if (currentQuestion >= quizData.length) {
+
+    container.innerHTML = `
+      <div class="question">
+        <p>Quiz terminado</p>
+        <p>Puntuación final: ${score}/${quizData.length}</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+
+  const div = document.createElement("div");
+  div.className = "question";
+
+  const p = document.createElement("p");
+  p.textContent = `${currentQuestion + 1}. ${q.question}`;
+
+  div.appendChild(p);
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+
+  // ============================
+  // RESPUESTA CORTA
+  // ============================
+  if (
+    filteredOptions.length === 1 &&
+    filteredOptions[0] === "Resposta curta"
+  ) {
+
+    const showBtn = document.createElement("button");
+
+    showBtn.textContent = "Mostrar resposta";
+
+    showBtn.className = "main-btn";
+
+    showBtn.onclick = () => {
+
+      if (!div.querySelector(".short-answer")) {
+
+        const answerDiv = document.createElement("div");
+
+        answerDiv.className = "short-answer";
+
+        answerDiv.innerHTML = `
+          <strong>Resposta:</strong><br><br>
+          ${q.answer}
+        `;
+
+        div.appendChild(answerDiv);
+      }
+
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+
+        answeredQuestions.push(originalIndex);
+
+        localStorage.setItem(
+          "answeredQuestions",
+          JSON.stringify(answeredQuestions)
+        );
+      }
+
+      updateProgressPanel();
+
+      nextBtn.style.display = "block";
+
+      showBtn.disabled = true;
+
+      showBtn.textContent = "Resposta mostrada";
+    };
+
+    optionsDiv.appendChild(showBtn);
+
+    div.appendChild(optionsDiv);
+
+    container.appendChild(div);
+
+    return;
+  }
+
+  // ============================
+  // V/F Y TEST NORMAL
+  // ============================
+
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+
+    const btn = document.createElement("button");
+
+    btn.textContent = option;
+
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+
+      const allBtns = optionsDiv.querySelectorAll("button");
+
+      allBtns.forEach(b => b.disabled = true);
+
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+
+        answeredQuestions.push(originalIndex);
+
+        localStorage.setItem(
+          "answeredQuestions",
+          JSON.stringify(answeredQuestions)
+        );
+      }
+
+      updateProgressPanel();
+
+      if (btn.dataset.correct === "true") {
+
+        btn.classList.add("correct");
+
+        score++;
+
+      } else {
+
+        btn.classList.add("wrong");
+
+        allBtns.forEach(b => {
+
+          if (b.dataset.correct === "true") {
+
+            b.classList.add("correct");
+          }
+        });
+      }
+
+      resultDiv.textContent = `Puntuación: ${score}/${quizData.length}`;
+
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+
+  container.appendChild(div);
+}
+
+nextBtn.onclick = () => {
+
+  currentQuestion++;
+
+  showQuestion();
+};
+
+resetBtn.onclick = () => {
+
+  localStorage.removeItem("answeredQuestions");
+
+  location.reload();
+};
+
+prepareQuiz();
+
+</script>
+
+</body>
+</html>
