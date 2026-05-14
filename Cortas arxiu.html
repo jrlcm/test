@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Arxiu</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0 5px 0;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .top-panel {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .top-panel p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    padding-top: 10px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .question p {
+    font-size: 32px;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 30px 0;
+  }
+
+  .options {
+    margin-top: 20px;
+  }
+
+  .options button {
+    display: block;
+    margin: 10px 0;
+    padding: 15px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+
+  .options button:hover {
+    background: #ddd;
+  }
+
+  .correct {
+    background-color: #c8e6c9 !important;
+    border-color: #388e3c !important;
+    color: #2e7d32 !important;
+  }
+
+  .wrong {
+    background-color: #ffcdd2 !important;
+    border-color: #d32f2f !important;
+    color: #c62828 !important;
+  }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 10px 0;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  button.main-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.main-btn:hover {
+    background: #1976D2;
+  }
+
+  button.reset-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #e53935;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.reset-btn:hover {
+    background: #c62828;
+  }
+
+  .short-answer {
+    margin-top: 25px;
+    padding: 20px;
+    background: #e3f2fd;
+    border-left: 6px solid #2196F3;
+    border-radius: 8px;
+    font-size: 24px;
+    line-height: 1.5;
+    color: #0d47a1;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Quiz Axiu</h1>
+<div class="subtitle">Preguntas aleatorias sin repetir</div>
+
+<div class="top-panel">
+  <p id="totalQuestionsText">Preguntas totales: 0</p>
+  <p id="pendingQuestionsText">Preguntas pendientes: 0</p>
+  <p id="completedQuestionsText">Preguntas realizadas: 0</p>
+</div>
+
+<div class="quiz-container" id="quiz-container"></div>
+
+<div class="result" id="result">Puntuación: 0</div>
+
+<div class="buttons">
+  <button id="nextBtn" class="main-btn" style="display:none;">Siguiente</button>
+  <button id="resetBtn" class="reset-btn">Reiniciar progreso</button>
+</div>
+
+<script>
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+const allQuestions =
+  [
+  {
+    "question": "Defineix document sanitari i diferencia document clínic i no clínic.",
+    "options": ["Resposta curta"],
+    "answer": "Un documento sanitario es cualquier documento relacionado con la actividad sanitaria. El clínico recoge información asistencial del paciente, como un informe de alta; el no clínico gestiona aspectos sanitarios administrativos, como la tarjeta sanitaria o una petición de transporte."
+  },
+  {
+    "question": "Explica la diferència entre dada, informació i coneixement.",
+    "options": ["Resposta curta"],
+    "answer": "El dato es un valor aislado, como una tensión arterial. La información es ese dato puesto en contexto clínico, y el conocimiento aparece cuando se interpreta con experiencia para tomar decisiones."
+  },
+  {
+    "question": "Què és un sistema d’informació sanitari?",
+    "options": ["Resposta curta"],
+    "answer": "Es el conjunto de personas, datos, documentos, procedimientos y herramientas informáticas que permiten recoger, tratar, conservar y recuperar información sanitaria para mejorar la asistencia y la gestión."
+  },
+  {
+    "question": "Quina diferència hi ha entre informació interna i externa d’un centre sanitari?",
+    "options": ["Resposta curta"],
+    "answer": "La información interna es la generada por el propio centro, como historias clínicas, informes o documentos administrativos. La externa procede de fuera, como legislación, artículos científicos o guías clínicas."
+  },
+  {
+    "question": "Què és el SADC i quines funcions té?",
+    "options": ["Resposta curta"],
+    "answer": "El Servicio de Admisión y Documentación Clínica gestiona la admisión, la historia clínica, el archivo y la información asistencial, garantizando que la documentación sea accesible, segura, completa y útil."
+  },
+  {
+    "question": "Què és la cadena documental?",
+    "options": ["Resposta curta"],
+    "answer": "Es el circuito que sigue la información desde que se produce hasta que se registra, conserva y recupera. Intervienen productores, gestores y usuarios de la información."
+  },
+  {
+    "question": "Per què el pacient pot ser productor i usuari d’informació?",
+    "options": ["Resposta curta"],
+    "answer": "Es productor porque aporta síntomas, antecedentes o documentos externos. Es usuario porque recibe información, consulta informes y puede acceder a servicios como La Meva Salut."
+  },
+  {
+    "question": "Diferencia full de derivació i full d’interconsulta.",
+    "options": ["Resposta curta"],
+    "answer": "La derivación envía al paciente a otro centro o servicio para recibir asistencia. La interconsulta solicita la valoración de otro especialista dentro del proceso asistencial."
+  },
+  {
+    "question": "Cita quatre documents sanitaris habituals i classifica’ls.",
+    "options": ["Resposta curta"],
+    "answer": "Informe de alta: clínico. Consentimiento informado: clínico. Receta médica: sanitario no clínico. Tarjeta sanitaria: sanitario no clínico."
+  },
+  {
+    "question": "Què és el contínuum assistencial?",
+    "options": ["Resposta curta"],
+    "answer": "Es la continuidad de la atención entre profesionales o niveles asistenciales. Necesita documentos e información compartida para que el paciente no quede sin seguimiento."
+  },
+  {
+    "question": "Què és la normalització documental?",
+    "options": ["Resposta curta"],
+    "answer": "Es aplicar criterios comunes de formato, contenido, lenguaje, identificación y registro a los documentos sanitarios. Mejora la calidad, la seguridad, la comprensión y la interoperabilidad."
+  },
+  {
+    "question": "Quins elements bàsics ha de tenir un document clínic normalitzat?",
+    "options": ["Resposta curta"],
+    "answer": "Debe identificar el centro, paciente, profesional, fecha, episodio y tipo documental. También debe tener contenido estructurado y, si corresponde, firma o validación."
+  },
+  {
+    "question": "Diferencia format intern i format extern d’un document clínic.",
+    "options": ["Resposta curta"],
+    "answer": "El formato externo se refiere a tamaño, soporte, logo, márgenes y estructura visual. El formato interno es el contenido: campos, apartados, orden y datos que deben rellenarse."
+  },
+  {
+    "question": "Què és el catàleg documental d’un centre sanitari?",
+    "options": ["Resposta curta"],
+    "answer": "Es el registro de los documentos normalizados y aprobados por el centro. Incluye nombre, código, versión, uso, responsable y ubicación dentro del circuito documental."
+  },
+  {
+    "question": "Què són els documents vius?",
+    "options": ["Resposta curta"],
+    "answer": "Son documentos que están en uso y pueden revisarse o modificarse si presentan deficiencias. Su actualización permite mejorar su funcionalidad y adaptarlos a la normativa."
+  },
+  {
+    "question": "Per què un bon disseny documental pot estalviar temps i diners?",
+    "options": ["Resposta curta"],
+    "answer": "Porque facilita rellenar datos, evita errores, reduce duplicidades y permite recuperar mejor la información. También disminuye correcciones y repetición de pruebas o trámites."
+  },
+  {
+    "question": "Què és la interoperabilitat documental?",
+    "options": ["Resposta curta"],
+    "answer": "Es la capacidad de diferentes sistemas para compartir y entender información. Requiere formatos, lenguajes, códigos y estructuras normalizadas."
+  },
+  {
+    "question": "Què és la translació de la informació?",
+    "options": ["Resposta curta"],
+    "answer": "Es el paso de información de un soporte o sistema a otro. Puede ser digitalización, cuando pasa de papel a digital, o migración, cuando pasa de un sistema informático a otro."
+  },
+  {
+    "question": "Diferencia digitalització i migració.",
+    "options": ["Resposta curta"],
+    "answer": "La digitalización convierte documentos en papel a formato digital. La migración traslada datos o documentos de un sistema informático a otro."
+  },
+  {
+    "question": "Per què és important la indexació d’un document digitalitzat?",
+    "options": ["Resposta curta"],
+    "answer": "Porque asocia el documento al paciente, episodio, fecha y tipo documental correcto. Una mala indexación puede provocar pérdida de información o errores asistenciales."
+  },
+  {
+    "question": "Què és la qualitat documental?",
+    "options": ["Resposta curta"],
+    "answer": "Es el grado en que la documentación es completa, correcta, clara, normalizada, segura y útil. Una buena calidad documental mejora la asistencia y reduce riesgos."
+  },
+  {
+    "question": "Què és una auditoria documental?",
+    "options": ["Resposta curta"],
+    "answer": "Es una revisión sistemática de documentos clínicos para comprobar su calidad, cumplimiento normativo y funcionalidad. Sirve para detectar errores y proponer mejoras."
+  },
+  {
+    "question": "Què és un indicador de qualitat documental?",
+    "options": ["Resposta curta"],
+    "answer": "Es una medida objetiva que permite valorar un aspecto de la documentación. Ejemplos: porcentaje de informes de alta firmados o consentimientos correctamente cumplimentados."
+  },
+  {
+    "question": "Cita quatre aspectes que es poden revisar en una auditoria d’HC.",
+    "options": ["Resposta curta"],
+    "answer": "Se pueden revisar la identificación del paciente, fecha, firma, legibilidad, diagnóstico, evolución, consentimiento informado, orden documental y cumplimiento de campos obligatorios."
+  },
+  {
+    "question": "Què fa la Comissió de Documentació?",
+    "options": ["Resposta curta"],
+    "answer": "Revisa y normaliza documentos, aprueba modelos, controla circuitos documentales y propone mejoras. Es clave para garantizar calidad y coherencia documental."
+  },
+  {
+    "question": "Diferencia criteri i indicador.",
+    "options": ["Resposta curta"],
+    "answer": "El criterio es el aspecto que se quiere valorar, como que el informe esté firmado. El indicador es la medida numérica, como el porcentaje de informes firmados."
+  },
+  {
+    "question": "Per què una HC incompleta pot afectar la seguretat del pacient?",
+    "options": ["Resposta curta"],
+    "answer": "Porque puede faltar información clave para diagnosticar, tratar o hacer seguimiento. Esto puede provocar errores, duplicidad de pruebas o decisiones clínicas incorrectas."
+  },
+  {
+    "question": "Quines mesures correctores aplicaries si molts informes d’alta no estan signats?",
+    "options": ["Resposta curta"],
+    "answer": "Aplicaría formación a profesionales, campos obligatorios, revisión antes del cierre del episodio y auditorías periódicas. También se puede avisar al servicio responsable."
+  },
+  {
+    "question": "Què és un document deficient?",
+    "options": ["Resposta curta"],
+    "answer": "Es un documento que no cumple los requisitos mínimos de calidad, normalización o contenido. Puede faltar identificación, fecha, firma, datos clínicos o estructura correcta."
+  },
+  {
+    "question": "Per què les auditories no han de ser només sancionadores?",
+    "options": ["Resposta curta"],
+    "answer": "Porque su finalidad principal es detectar problemas y mejorar la documentación. Deben ayudar a corregir errores y aumentar la seguridad del paciente."
+  },
+  {
+    "question": "Defineix història clínica.",
+    "options": ["Resposta curta"],
+    "answer": "La historia clínica es el conjunto de documentos que recogen datos, valoraciones y actuaciones sanitarias de un paciente. Es el documento básico de la asistencia sanitaria."
+  },
+  {
+    "question": "Cita quatre funcions de la història clínica.",
+    "options": ["Resposta curta"],
+    "answer": "Tiene función asistencial, legal, docente, investigadora, administrativa y de calidad. La asistencial permite seguir al paciente y la legal sirve como prueba de la atención prestada."
+  },
+  {
+    "question": "Cita quatre característiques documentals de la HC.",
+    "options": ["Resposta curta"],
+    "answer": "Debe ser única, integrada, acumulativa, recuperable, segura, confidencial, veraz y comprensible. Estas características garantizan utilidad asistencial y valor legal."
+  },
+  {
+    "question": "Diferencia HC hospitalària i HC d’atenció primària.",
+    "options": ["Resposta curta"],
+    "answer": "La hospitalaria se centra en episodios concretos, como ingresos o cirugías. La de atención primaria es longitudinal y da más importancia al entorno social y familiar."
+  },
+  {
+    "question": "Què és la HC orientada per problemes?",
+    "options": ["Resposta curta"],
+    "answer": "Es un modelo que organiza la información según los problemas de salud del paciente. Facilita el seguimiento de cada problema y es habitual en atención primaria."
+  },
+  {
+    "question": "Quins documents pot contenir una HC hospitalària quirúrgica?",
+    "options": ["Resposta curta"],
+    "answer": "Puede contener informe de alta, informe quirúrgico, informe de anestesia, consentimiento informado, hojas de evolución, órdenes médicas, gráfica de constantes y registros de enfermería."
+  },
+  {
+    "question": "Per què és greu duplicar històries clíniques?",
+    "options": ["Resposta curta"],
+    "answer": "Porque fragmenta la información del paciente y puede hacer perder antecedentes o pruebas. Esto aumenta el riesgo de errores asistenciales y repetición de procedimientos."
+  },
+  {
+    "question": "Què és el consentiment informat?",
+    "options": ["Resposta curta"],
+    "answer": "Es el proceso por el cual el paciente recibe información comprensible y acepta una actuación sanitaria. En intervenciones quirúrgicas o invasivas debe quedar por escrito y formar parte de la HC."
+  },
+  {
+    "question": "Què és el document de voluntats anticipades?",
+    "options": ["Resposta curta"],
+    "answer": "Es el documento donde el paciente expresa instrucciones sobre actuaciones sanitarias futuras si no puede decidir. Debe incorporarse o hacerse accesible desde la historia clínica."
+  },
+  {
+    "question": "Quines dades bàsiques ha de contenir un informe d’alta?",
+    "options": ["Resposta curta"],
+    "answer": "Debe contener identificación del paciente y centro, motivo de ingreso, antecedentes, pruebas, diagnóstico, evolución, tratamiento, recomendaciones, fecha y profesional responsable."
+  },
+  {
+    "question": "Quina és la funció principal de l’arxiu clínic?",
+    "options": ["Resposta curta"],
+    "answer": "Custodiar, conservar, organizar y recuperar las historias clínicas y documentos sanitarios. Debe garantizar acceso, seguridad, confidencialidad y disponibilidad de la información."
+  },
+  {
+    "question": "Diferencia arxiu centralitzat i descentralitzat.",
+    "options": ["Resposta curta"],
+    "answer": "El centralizado conserva las historias clínicas en un único depósito o servicio. El descentralizado reparte la documentación por servicios, lo que puede aumentar el riesgo de pérdida o duplicidad."
+  },
+  {
+    "question": "Diferencia arxiu actiu, passiu i històric.",
+    "options": ["Resposta curta"],
+    "answer": "El activo conserva historias clínicas de uso reciente o frecuente; el pasivo, historias con poca actividad; el histórico, documentación con valor legal, administrativo, científico o histórico."
+  },
+  {
+    "question": "Què és la unitat arxivística de l’arxiu clínic?",
+    "options": ["Resposta curta"],
+    "answer": "La unidad archivística es la historia clínica. Agrupa los documentos de un paciente y permite gestionarlos, conservarlos y recuperarlos como conjunto."
+  },
+  {
+    "question": "Què és una unitat d’instal·lació?",
+    "options": ["Resposta curta"],
+    "answer": "Es el soporte físico donde se guarda la documentación, como carpeta, sobre, caja o legajo. Permite ubicar físicamente la historia clínica dentro del archivo."
+  },
+  {
+    "question": "Què és el préstec d’una història clínica?",
+    "options": ["Resposta curta"],
+    "answer": "Es la salida temporal de la historia clínica del archivo para una finalidad justificada. Debe registrar solicitante, servicio, fecha, motivo, destino y retorno."
+  },
+  {
+    "question": "Què és una HC no subministrada?",
+    "options": ["Resposta curta"],
+    "answer": "Es una historia clínica solicitada que no se puede entregar. Puede indicar pérdida, mala ubicación, préstamo no controlado o errores de clasificación."
+  },
+  {
+    "question": "Explica el sistema de dígit terminal.",
+    "options": ["Resposta curta"],
+    "answer": "Es un sistema numérico que ordena las historias clínicas por los últimos dígitos del número de historia. Reparte mejor el crecimiento y evita llenar siempre el final del archivo."
+  },
+  {
+    "question": "Quines condicions ha de tenir un arxiu físic?",
+    "options": ["Resposta curta"],
+    "answer": "Debe controlar temperatura, humedad, ventilación, luz, plagas, incendios, inundaciones y accesos. También necesita mobiliario adecuado y sistemas de seguridad."
+  },
+  {
+    "question": "Diferencia conservació i preservació.",
+    "options": ["Resposta curta"],
+    "answer": "La preservación son medidas preventivas para proteger la documentación a largo plazo. La conservación son acciones concretas para evitar o frenar el deterioro."
+  },
+  {
+    "question": "Per què es pot externalitzar un arxiu clínic?",
+    "options": ["Resposta curta"],
+    "answer": "Principalmente por falta de espacio o necesidad de mejorar la gestión documental. Aun así, el centro sigue siendo responsable de confidencialidad, acceso y seguridad."
+  },
+  {
+    "question": "Què és la qualitat en un arxiu clínic?",
+    "options": ["Resposta curta"],
+    "answer": "Es la capacidad de localizar, conservar, prestar y recuperar la documentación sin errores. Se puede medir con indicadores como historias no suministradas o tiempo de respuesta."
+  }
+]
+  ;
+
+let answeredQuestions = JSON.parse(localStorage.getItem("answeredQuestions")) || [];
+let currentQuestion = 0;
+let score = 0;
+let quizData = [];
+
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const totalQuestionsText = document.getElementById("totalQuestionsText");
+const pendingQuestionsText = document.getElementById("pendingQuestionsText");
+const completedQuestionsText = document.getElementById("completedQuestionsText");
+
+function updateProgressPanel() {
+  const total = allQuestions.length;
+  const completed = answeredQuestions.length;
+  const pending = total - completed;
+
+  totalQuestionsText.textContent = `Preguntas totales: ${total}`;
+  pendingQuestionsText.textContent = `Preguntas pendientes: ${pending}`;
+  completedQuestionsText.textContent = `Preguntas realizadas: ${completed}`;
+}
+
+function prepareQuiz() {
+
+  updateProgressPanel();
+
+  let availableQuestions = allQuestions
+    .map((question, index) => index)
+    .filter(index => !answeredQuestions.includes(index));
+
+  shuffle(availableQuestions);
+
+  quizData = availableQuestions.map(index => {
+    return {
+      ...allQuestions[index],
+      originalIndex: index
+    };
+  });
+
+  showQuestion();
+}
+
+function showQuestion() {
+
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if (currentQuestion >= quizData.length) {
+
+    container.innerHTML = `
+      <div class="question">
+        <p>Quiz terminado</p>
+        <p>Puntuación final: ${score}/${quizData.length}</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+
+  const div = document.createElement("div");
+  div.className = "question";
+
+  const p = document.createElement("p");
+  p.textContent = `${currentQuestion + 1}. ${q.question}`;
+
+  div.appendChild(p);
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+
+  // ============================
+  // RESPUESTA CORTA
+  // ============================
+  if (
+    filteredOptions.length === 1 &&
+    filteredOptions[0] === "Resposta curta"
+  ) {
+
+    const showBtn = document.createElement("button");
+
+    showBtn.textContent = "Mostrar resposta";
+
+    showBtn.className = "main-btn";
+
+    showBtn.onclick = () => {
+
+      if (!div.querySelector(".short-answer")) {
+
+        const answerDiv = document.createElement("div");
+
+        answerDiv.className = "short-answer";
+
+        answerDiv.innerHTML = `
+          <strong>Resposta:</strong><br><br>
+          ${q.answer}
+        `;
+
+        div.appendChild(answerDiv);
+      }
+
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+
+        answeredQuestions.push(originalIndex);
+
+        localStorage.setItem(
+          "answeredQuestions",
+          JSON.stringify(answeredQuestions)
+        );
+      }
+
+      updateProgressPanel();
+
+      nextBtn.style.display = "block";
+
+      showBtn.disabled = true;
+
+      showBtn.textContent = "Resposta mostrada";
+    };
+
+    optionsDiv.appendChild(showBtn);
+
+    div.appendChild(optionsDiv);
+
+    container.appendChild(div);
+
+    return;
+  }
+
+  // ============================
+  // V/F Y TEST NORMAL
+  // ============================
+
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+
+    const btn = document.createElement("button");
+
+    btn.textContent = option;
+
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+
+      const allBtns = optionsDiv.querySelectorAll("button");
+
+      allBtns.forEach(b => b.disabled = true);
+
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+
+        answeredQuestions.push(originalIndex);
+
+        localStorage.setItem(
+          "answeredQuestions",
+          JSON.stringify(answeredQuestions)
+        );
+      }
+
+      updateProgressPanel();
+
+      if (btn.dataset.correct === "true") {
+
+        btn.classList.add("correct");
+
+        score++;
+
+      } else {
+
+        btn.classList.add("wrong");
+
+        allBtns.forEach(b => {
+
+          if (b.dataset.correct === "true") {
+
+            b.classList.add("correct");
+          }
+        });
+      }
+
+      resultDiv.textContent = `Puntuación: ${score}/${quizData.length}`;
+
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+
+  container.appendChild(div);
+}
+
+nextBtn.onclick = () => {
+
+  currentQuestion++;
+
+  showQuestion();
+};
+
+resetBtn.onclick = () => {
+
+  localStorage.removeItem("answeredQuestions");
+
+  location.reload();
+};
+
+prepareQuiz();
+
+</script>
+
+</body>
+</html>
