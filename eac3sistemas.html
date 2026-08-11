@@ -166,7 +166,7 @@
 
 <body>
 
-<h1>Quiz Gestion Administrativa</h1>
+<h1>Eac3 sistemas</h1>
 <div class="subtitle">Preguntas aleatorias sin repetir hasta completar todo el temario</div>
 
 <div class="top-panel">
@@ -203,6 +203,7 @@ function shuffle(array) {
    El código las cuenta automáticamente.
 ============================ */
 const allQuestions = [
+
   
  {
     "question": "Els codis de procediments de la CIM-10-SCP tenen sempre set caràcters alfanumèrics.",
@@ -842,6 +843,32 @@ function showQuestion() {
   optionsDiv.className = "options";
 
   const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+
+  // Preguntas cortas: mostramos la solución al pulsar el botón.
+  if (filteredOptions.length === 0) {
+    const showAnswerBtn = document.createElement("button");
+    showAnswerBtn.textContent = "Mostrar respuesta";
+
+    showAnswerBtn.onclick = () => {
+      showAnswerBtn.disabled = true;
+      showAnswerBtn.textContent = q.answer;
+      showAnswerBtn.classList.add("correct");
+
+      const originalIndex = q.originalIndex;
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(showAnswerBtn);
+    div.appendChild(optionsDiv);
+    container.appendChild(div);
+    return;
+  }
 
   // Si quieres que siempre salga V primero y F segundo, comenta la línea siguiente:
   shuffle(filteredOptions);
