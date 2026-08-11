@@ -843,6 +843,32 @@ function showQuestion() {
 
   const filteredOptions = q.options.filter(opt => opt.trim() !== "");
 
+  // Preguntas cortas: mostramos la solución al pulsar el botón.
+  if (filteredOptions.length === 0) {
+    const showAnswerBtn = document.createElement("button");
+    showAnswerBtn.textContent = "Mostrar respuesta";
+
+    showAnswerBtn.onclick = () => {
+      showAnswerBtn.disabled = true;
+      showAnswerBtn.textContent = q.answer;
+      showAnswerBtn.classList.add("correct");
+
+      const originalIndex = q.originalIndex;
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(showAnswerBtn);
+    div.appendChild(optionsDiv);
+    container.appendChild(div);
+    return;
+  }
+
   // Si quieres que siempre salga V primero y F segundo, comenta la línea siguiente:
   shuffle(filteredOptions);
 
@@ -920,3 +946,4 @@ prepareQuiz();
 
 </body>
 </html>
+
