@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz IPO2</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0 5px 0;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .top-panel {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .top-panel p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    padding-top: 10px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .question p {
+    font-size: 34px;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 30px 0;
+  }
+
+  .options {
+    margin-top: 20px;
+  }
+
+  .options button {
+    display: block;
+    margin: 10px 0;
+    padding: 15px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+
+  .options button:hover {
+    background: #ddd;
+  }
+
+  .options button:disabled {
+    cursor: not-allowed;
+  }
+
+  .correct {
+    background-color: #c8e6c9 !important;
+    border-color: #388e3c !important;
+    color: #2e7d32 !important;
+  }
+
+  .wrong {
+    background-color: #ffcdd2 !important;
+    border-color: #d32f2f !important;
+    color: #c62828 !important;
+  }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 10px 0;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  button.main-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.main-btn:hover {
+    background: #1976D2;
+  }
+
+  button.reset-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #e53935;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.reset-btn:hover {
+    background: #c62828;
+  }
+
+  .small-text {
+    font-size: 15px !important;
+    font-weight: normal !important;
+    color: #555;
+  }
+
+  @media (max-width: 600px) {
+    .question p {
+      font-size: 28px;
+    }
+
+    .options button {
+      font-size: 20px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Quiz Gestion Administrativa</h1>
+<div class="subtitle">Preguntas aleatorias sin repetir hasta completar todo el temario</div>
+
+<div class="top-panel">
+  <p id="totalQuestionsText">Preguntas totales: 0</p>
+  <p id="pendingQuestionsText">Preguntas pendientes: 0</p>
+  <p id="completedQuestionsText">Preguntas realizadas: 0</p>
+</div>
+
+<div class="quiz-container" id="quiz-container"></div>
+
+<div class="result" id="result">Puntuación: 0</div>
+
+<div class="buttons">
+  <button id="nextBtn" class="main-btn" style="display:none;">Siguiente</button>
+  <button id="resetBtn" class="reset-btn">Reiniciar progreso</button>
+</div>
+
+<script>
+/* ============================
+   FUNCIÓN PARA MEZCLAR ARRAYS
+============================ */
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+
+/* ============================
+   AÑADE AQUÍ TUS PREGUNTAS
+   No tienes que indicar cuántas hay.
+   El código las cuenta automáticamente.
+============================ */
+const allQuestions = [
+  
+{
+    "question": "El principal benefici de l’ecodisseny és...",
+    "options": [
+      "Reduir l’eficiència energètica.",
+      "Augmentar el pes del producte per millorar la resistència.",
+      "Reduir els costos ambientals i de recursos al llarg de tot el cicle de vida del producte.",
+      "Utilitzar més recursos escassos per millorar l’eficiència i reduir residus."
+    ],
+    "answer": "Reduir els costos ambientals i de recursos al llarg de tot el cicle de vida del producte."
+  },
+  {
+    "question": "La definició de sostenibilitat més acceptada implica satisfer les necessitats del present, però això no ha de comprometre...",
+    "options": [
+      "L’eliminació total de l’impacte ambiental a curt termini.",
+      "El màxim creixement econòmic a escala globalitzada.",
+      "La gestió de la seguretat en els processos globals.",
+      "La capacitat de les generacions futures per satisfer les seves pròpies necessitats."
+    ],
+    "answer": "La capacitat de les generacions futures per satisfer les seves pròpies necessitats."
+  },
+  {
+    "question": "Què és el greenwashing?",
+    "options": [
+      "Reciclatge industrial.",
+      "Economia circular.",
+      "Certificació ambiental.",
+      "Comunicació enganyosa sobre sostenibilitat."
+    ],
+    "answer": "Comunicació enganyosa sobre sostenibilitat."
+  },
+  {
+    "question": "Quina estratègia d’ISR consisteix a dialogar amb les empreses per millorar?",
+    "options": [
+      "Derivats verds.",
+      "Engagement i vot actiu.",
+      "Exclusió negativa.",
+      "Arbitratge."
+    ],
+    "answer": "Engagement i vot actiu."
+  },
+  {
+    "question": "Quin indicador mesura la circularitat dels materials?",
+    "options": [
+      "Percentatge de contingut reciclat i percentatge de reutilització.",
+      "Percentatge de material reciclat.",
+      "Índex de circularitat material.",
+      "Taxa de reutilització global."
+    ],
+    "answer": "Percentatge de contingut reciclat i percentatge de reutilització."
+  },
+  {
+    "question": "Un límit organitzatiu en un inventari de GEH pot ser el criteri per incloure...",
+    "options": [
+      "Partides del pressupost.",
+      "Límits d’emissions en l’inventari.",
+      "Previsions del projecte anual.",
+      "Activitats o empreses en l’inventari."
+    ],
+    "answer": "Activitats o empreses en l’inventari."
+  },
+  {
+    "question": "Quina acció redueix el risc d’incendis forestals que afecten infraestructures?",
+    "options": [
+      "Reforestació intensiva en zones periurbanes.",
+      "Instal·lació de sensors de temperatura urbana.",
+      "Gestió de combustible vegetal i franges de protecció.",
+      "Increment del reg en àrees forestals seques."
+    ],
+    "answer": "Gestió de combustible vegetal i franges de protecció."
+  },
+  {
+    "question": "Quina diferència hi ha entre el reciclatge mecànic i el químic de plàstics?",
+    "options": [
+      "El mecànic requereix reaccions químiques complexes.",
+      "No hi ha cap diferència.",
+      "El mecànic reprocessa físicament el material.",
+      "El químic sempre és més barat i no produeix residus."
+    ],
+    "answer": "El mecànic reprocessa físicament el material."
+  },
+  {
+    "question": "Quin sistema certificat ajuda a estructurar les pràctiques de responsabilitat social d’una empresa?",
+    "options": [
+      "SA8000.",
+      "ISO 14001.",
+      "ODS 12.",
+      "Certificació LEED."
+    ],
+    "answer": "SA8000."
+  },
+  {
+    "question": "Segons el model de col·laboració sectorial, quin és l’objectiu dels fulls de ruta relacionats amb els ODS?",
+    "options": [
+      "Fomentar la competència interna divulgant estratègies empresarials.",
+      "Concentrar tot el finançament verd en grans corporacions.",
+      "Definir objectius comuns i accions coordinades per compartir una visió de transformació sostenible.",
+      "Implantar regulacions públiques sense consultar el sector."
+    ],
+    "answer": "Definir objectius comuns i accions coordinades per compartir una visió de transformació sostenible."
+  },
+  {
+    "question": "La materialitat en els informes de sostenibilitat fa referència a...",
+    "options": [
+      "Els assumptes més significatius per a l’empresa i els seus grups d’interès.",
+      "Temes rellevants només per a la decoració d’oficines.",
+      "Exclusivament els riscos financers.",
+      "Només els temes ambientals."
+    ],
+    "answer": "Els assumptes més significatius per a l’empresa i els seus grups d’interès."
+  },
+  {
+    "question": "Per què l’Anàlisi de Cicle de Vida és una eina clau?",
+    "options": [
+      "Perquè se centra només en la fase d’ús.",
+      "Perquè mesura únicament els riscos financers.",
+      "Perquè avalua exclusivament la rendibilitat.",
+      "Perquè identifica els impactes ambientals en totes les fases, des de l’extracció fins al final de vida."
+    ],
+    "answer": "Perquè identifica els impactes ambientals en totes les fases, des de l’extracció fins al final de vida."
+  },
+  {
+    "question": "Els articles 6, 8 i 9 de l’SFDR es diferencien principalment pel...",
+    "options": [
+      "Límit d’emissions.",
+      "Tipus de client.",
+      "Grau d’integració i objectiu de sostenibilitat del producte.",
+      "Àmbit territorial."
+    ],
+    "answer": "Grau d’integració i objectiu de sostenibilitat del producte."
+  },
+  {
+    "question": "Els green bonds són instruments financers destinats a finançar...",
+    "options": [
+      "Despeses generals sense restringir-ne l’ús.",
+      "Projectes amb impacte positiu sobre el medi ambient.",
+      "Exclusivament infraestructures digitals.",
+      "Activitats relacionades amb combustibles fòssils."
+    ],
+    "answer": "Projectes amb impacte positiu sobre el medi ambient."
+  },
+  {
+    "question": "Quin mètode s’utilitza a l’ACV per quantificar impactes?",
+    "options": [
+      "Proves beta.",
+      "Auditoria legal.",
+      "Caracterització segons mètodes com ReCiPe.",
+      "Totes les respostes anteriors."
+    ],
+    "answer": "Caracterització segons mètodes com ReCiPe."
+  },
+  {
+    "question": "Quin indicador d’aigua reflecteix l’estrès hídric?",
+    "options": [
+      "Metres cúbics consumits per nombre de persones.",
+      "ROE.",
+      "Percentatge d’operacions en zones d’estrès alt.",
+      "kWh per metre cúbic consumit."
+    ],
+    "answer": "Percentatge d’operacions en zones d’estrès alt."
+  },
+  {
+    "question": "Quin indicador ajuda a monitorar l’exposició a fenòmens extrems?",
+    "options": [
+      "Mapa d’actius crítics per regió de risc físic.",
+      "Registre d’emissions indirectes per abast.",
+      "Informe anual d’inversions en infraestructures.",
+      "Índex d’intensitat energètica corporativa."
+    ],
+    "answer": "Mapa d’actius crítics per regió de risc físic."
+  },
+  {
+    "question": "Quin incentiu alinea els proveïdors amb la circularitat?",
+    "options": [
+      "Descomptes per volum de material subministrat.",
+      "Pagaments anticipats per matèries primeres noves.",
+      "Bonificacions per reduir els terminis de lliurament.",
+      "Contractes que remuneren el rendiment i la durabilitat."
+    ],
+    "answer": "Contractes que remuneren el rendiment i la durabilitat."
+  },
+  {
+    "question": "Quin factor és essencial per avaluar el progrés d’un full de ruta sectorial?",
+    "options": [
+      "Descriure exhaustivament totes les tecnologies de cada empresa.",
+      "Establir mesures a curt, mitjà i llarg termini amb indicadors clars i quantificables.",
+      "Publicar immediatament tots els secrets industrials.",
+      "Definir només objectius qualitatius sense mètriques."
+    ],
+    "answer": "Establir mesures a curt, mitjà i llarg termini amb indicadors clars i quantificables."
+  },
+  {
+    "question": "Quins aspectes comprèn la governança dins dels criteris ASG?",
+    "options": [
+      "La reducció del consum d’aigua i l’ús exclusiu d’energia hidràulica.",
+      "La seguretat laboral i la diversitat dels equips.",
+      "L’ètica empresarial, la transparència i les polítiques anticorrupció.",
+      "La implementació de microcrèdits per a la comunitat local."
+    ],
+    "answer": "L’ètica empresarial, la transparència i les polítiques anticorrupció."
+  },
+  {
+    "question": "Quin dels següents no és un pilar clàssic de la sostenibilitat?",
+    "options": [
+      "Cultura.",
+      "Societat.",
+      "Medi ambient.",
+      "Economia."
+    ],
+    "answer": "Cultura."
+  },
+  {
+    "question": "Quin instrument de mercat posa preu a les emissions de CO2?",
+    "options": [
+      "Cap and trade o mercat d’emissions.",
+      "Subsidi als combustibles fòssils.",
+      "Quotes d’importació.",
+      "Aranzels verds."
+    ],
+    "answer": "Cap and trade o mercat d’emissions."
+  },
+  {
+    "question": "La governança multinivell en sostenibilitat implica...",
+    "options": [
+      "La participació exclusiva d’ONG.",
+      "La coordinació entre els nivells local, regional, nacional i internacional.",
+      "La intervenció exclusiva d’organismes privats.",
+      "L’actuació única dels governs nacionals."
+    ],
+    "answer": "La coordinació entre els nivells local, regional, nacional i internacional."
+  },
+  {
+    "question": "Quina eina permet mesurar la petjada de carboni corporativa?",
+    "options": [
+      "GHG Protocol.",
+      "ABC Cost.",
+      "DAFO.",
+      "PESTEL."
+    ],
+    "answer": "GHG Protocol."
+  },
+  {
+    "question": "Quin indicador analitza la quantitat d’aigua utilitzada i els impactes associats?",
+    "options": [
+      "Percentatge de beneficis sostenibles.",
+      "Nombre de treballadors.",
+      "Cost anual de l’aigua.",
+      "Petjada hídrica."
+    ],
+    "answer": "Petjada hídrica."
+  },
+  {
+    "question": "Quina norma avala la gestió ambiental d’una empresa?",
+    "options": [
+      "OHSAS 18001.",
+      "ISO 9001.",
+      "ISO 14001.",
+      "ISO 45001."
+    ],
+    "answer": "ISO 14001."
+  },
+  {
+    "question": "Integrar criteris ASG en les compres significa...",
+    "options": [
+      "Considerar només el preu.",
+      "Exigir únicament un lliurament ràpid.",
+      "Prioritzar sempre proveïdors llunyans.",
+      "Incorporar criteris ambientals i socials en la selecció de proveïdors."
+    ],
+    "answer": "Incorporar criteris ambientals i socials en la selecció de proveïdors."
+  },
+  {
+    "question": "Com poden influir els criteris ASG en la competitivitat?",
+    "options": [
+      "Sempre la redueixen perquè només generen costos.",
+      "No tenen cap impacte real.",
+      "Poden millorar-la fomentant eficiència, innovació i confiança.",
+      "Només beneficien les empreses públiques."
+    ],
+    "answer": "Poden millorar-la fomentant eficiència, innovació i confiança."
+  },
+  {
+    "question": "Quin risc presenten les puntuacions ASG?",
+    "options": [
+      "Biaixos metodològics i divergències entre agències.",
+      "Cost nul de l’anàlisi.",
+      "Estabilitat absoluta.",
+      "Correlació perfecta entre totes les agències."
+    ],
+    "answer": "Biaixos metodològics i divergències entre agències."
+  },
+  {
+    "question": "Quina regulació europea classifica productes financers segons el grau d’integració de la sostenibilitat?",
+    "options": [
+      "PSD2.",
+      "SFDR.",
+      "Solvència II.",
+      "MiFID I."
+    ],
+    "answer": "SFDR."
+  },
+  {
+    "question": "La preferència ASG del client en MiFID II implica...",
+    "options": [
+      "Avaluar i adequar els productes als valors i al risc del client.",
+      "Vendre qualsevol producte disponible.",
+      "Ignorar les preferències del client.",
+      "No introduir cap canvi en l’avaluació d’idoneïtat."
+    ],
+    "answer": "Avaluar i adequar els productes als valors i al risc del client."
+  },
+  {
+    "question": "Quin indicador mesura el risc climàtic d’una cartera d’inversió?",
+    "options": [
+      "Nombre de correus electrònics interns.",
+      "Mitjana salarial de la plantilla.",
+      "Nombre d’oficines.",
+      "Intensitat de carboni per milió d’euros invertits."
+    ],
+    "answer": "Intensitat de carboni per milió d’euros invertits."
+  },
+  {
+    "question": "Quins són els tres abasts del GHG Protocol?",
+    "options": [
+      "Materials, aigua i energia.",
+      "Emissions indirectes, directes i residus.",
+      "Producció, logística i venda.",
+      "Emissions directes, energia adquirida i cadena de valor."
+    ],
+    "answer": "Emissions directes, energia adquirida i cadena de valor."
+  },
+  {
+    "question": "Quin és un indicador de biodiversitat?",
+    "options": [
+      "Percentatge de superfície restaurada o protegida.",
+      "Cost anual de l’energia.",
+      "Nombre d’hores treballades.",
+      "Rendibilitat financera."
+    ],
+    "answer": "Percentatge de superfície restaurada o protegida."
+  },
+  {
+    "question": "Què indica l’EUI en un edifici?",
+    "options": [
+      "El consum d’energia per unitat de superfície.",
+      "La satisfacció dels usuaris.",
+      "El cost de construcció per metre quadrat.",
+      "La intensitat d’ús dels espais comuns."
+    ],
+    "answer": "El consum d’energia per unitat de superfície."
+  },
+  {
+    "question": "Quin és un risc de transició per a una empresa intensiva en emissions?",
+    "options": [
+      "Un episodi puntual de pluja.",
+      "Una avaria informàtica.",
+      "Un augment temporal de plantilla.",
+      "Restriccions reguladores i un cost del carboni més alt."
+    ],
+    "answer": "Restriccions reguladores i un cost del carboni més alt."
+  },
+  {
+    "question": "Quin concepte descriu un llindar a partir del qual els canvis climàtics poden accelerar-se o esdevenir irreversibles?",
+    "options": [
+      "Punt d’inflexió.",
+      "Eficàcia marginal.",
+      "Efecte rebot.",
+      "Cost d’oportunitat."
+    ],
+    "answer": "Punt d’inflexió."
+  },
+  {
+    "question": "Quina mesura empresarial és coherent amb la resiliència?",
+    "options": [
+      "Eliminar totes les existències de seguretat.",
+      "Elaborar plans de continuïtat amb escenaris climàtics.",
+      "Concentrar tots els proveïdors en una única zona.",
+      "Ignorar els riscos físics de baixa probabilitat."
+    ],
+    "answer": "Elaborar plans de continuïtat amb escenaris climàtics."
+  },
+  {
+    "question": "Què descriu millor una transició justa?",
+    "options": [
+      "Adaptar voluntàriament els horaris.",
+      "Substituir parcialment la logística.",
+      "Augmentar els objectius fiscals.",
+      "Oferir requalificació, protecció social i diàleg social."
+    ],
+    "answer": "Oferir requalificació, protecció social i diàleg social."
+  },
+  {
+    "question": "Quin indicador mesura la circularitat d’un producte?",
+    "options": [
+      "Taxa interna de reciclatge empresarial.",
+      "Material Circularity Indicator.",
+      "Coeficient de reutilització operativa.",
+      "Índex d’eficiència de recursos globals."
+    ],
+    "answer": "Material Circularity Indicator."
+  },
+  {
+    "question": "Quina mètrica mesura la circularitat a escala macro?",
+    "options": [
+      "Taxa d’ús circular de materials.",
+      "Percentatge d’inversió en innovació ambiental.",
+      "Ràtio de productivitat energètica nacional.",
+      "Índex de creixement verd sostenible."
+    ],
+    "answer": "Taxa d’ús circular de materials."
+  },
+  {
+    "question": "Quin risc pot comprometre la reutilització de plàstics alimentaris?",
+    "options": [
+      "Contaminació química i incompliment de la normativa de contacte alimentari.",
+      "Variació del color de l’envàs.",
+      "Reducció del temps de lliurament.",
+      "Augment de la satisfacció del client."
+    ],
+    "answer": "Contaminació química i incompliment de la normativa de contacte alimentari."
+  },
+  {
+    "question": "Quin risc presenta un sistema producte-servei mal dissenyat?",
+    "options": [
+      "Major reparabilitat.",
+      "Menor ús de recursos.",
+      "Dependència contractual i incentius febles per a la durabilitat.",
+      "Més manteniment preventiu."
+    ],
+    "answer": "Dependència contractual i incentius febles per a la durabilitat."
+  },
+  {
+    "question": "Quin és el principal benefici de col·laborar amb universitats i centres de recerca?",
+    "options": [
+      "Impulsar la innovació i desenvolupar solucions per a la transició ecològica.",
+      "Limitar la formació a les grans empreses.",
+      "Substituir llocs qualificats per treball no remunerat.",
+      "Transferir els residus industrials a les universitats."
+    ],
+    "answer": "Impulsar la innovació i desenvolupar solucions per a la transició ecològica."
+  },
+  {
+    "question": "Quin impacte tenen els green bonds i els fons ASG?",
+    "options": [
+      "Finançar activitats d’alt carboni.",
+      "Reservar la inversió verda als governs.",
+      "Canalitzar recursos cap a projectes i empreses sostenibles.",
+      "Reduir la transparència de les inversions."
+    ],
+    "answer": "Canalitzar recursos cap a projectes i empreses sostenibles."
+  },
+  {
+    "question": "Quina eina reforça la transparència i la traçabilitat en la cadena de subministrament?",
+    "options": [
+      "Eliminar l’etiquetatge.",
+      "Publicar informes i utilitzar blockchain per verificar l’origen dels materials.",
+      "Restringir totes les dades a la comunicació interna.",
+      "Eliminar les auditories externes."
+    ],
+    "answer": "Publicar informes i utilitzar blockchain per verificar l’origen dels materials."
+  },
+  {
+    "question": "Quins grups d’interès cal considerar en una estratègia de sostenibilitat?",
+    "options": [
+      "Només els accionistes.",
+      "Només la direcció i l’Administració.",
+      "Només els competidors.",
+      "Clients, proveïdors, empleats, comunitat local i inversors."
+    ],
+    "answer": "Clients, proveïdors, empleats, comunitat local i inversors."
+  },
+  {
+    "question": "Quin avantatge aporta una visió integrada de la sostenibilitat?",
+    "options": [
+      "Millora la resiliència i la relació amb els clients sensibilitzats.",
+      "Garanteix immunitat davant qualsevol risc.",
+      "Redueix l’estratègia al benefici immediat.",
+      "Elimina l’obligació de rendir comptes."
+    ],
+    "answer": "Millora la resiliència i la relació amb els clients sensibilitzats."
+  },
+  {
+    "question": "Quins elements pertanyen a l’àmbit ambiental ASG?",
+    "options": [
+      "Ètica i polítiques anticorrupció.",
+      "Petjada de carboni, residus, eficiència energètica i biodiversitat.",
+      "Qualitat de vida i ciberseguretat.",
+      "Condicions laborals i diversitat."
+    ],
+    "answer": "Petjada de carboni, residus, eficiència energètica i biodiversitat."
+  },
+  {
+    "question": "Quin document de 1987 va popularitzar la definició moderna de desenvolupament sostenible?",
+    "options": [
+      "L’Informe Brundtland.",
+      "El Protocol de Kyoto.",
+      "L’Acord de París.",
+      "L’Agenda 21 local."
+    ],
+    "answer": "L’Informe Brundtland."
+  },
+  {
+    "question": "Quina publicació va donar notorietat al Club de Roma el 1972?",
+    "options": [
+      "El futur que volem.",
+      "Els límits del creixement.",
+      "La nostra diversitat creativa.",
+      "L’informe Stern."
+    ],
+    "answer": "Els límits del creixement."
+  },
+  {
+    "question": "Quants Objectius de Desenvolupament Sostenible conté l’Agenda 2030?",
+    "options": [
+      "8.",
+      "10.",
+      "17.",
+      "20."
+    ],
+    "answer": "17."
+  },
+  {
+    "question": "Quines quatre àrees cobreixen els principis del Pacte Mundial de l’ONU?",
+    "options": [
+      "Drets humans, estàndards laborals, medi ambient i anticorrupció.",
+      "Energia, agricultura, transport i turisme.",
+      "Finances, fiscalitat, comerç i ocupació.",
+      "Aigua, biodiversitat, clima i residus."
+    ],
+    "answer": "Drets humans, estàndards laborals, medi ambient i anticorrupció."
+  },
+  {
+    "question": "Quin element correspon al pilar social ASG?",
+    "options": [
+      "Consum energètic.",
+      "Condicions laborals i igualtat d’oportunitats.",
+      "Composició del consell d’administració.",
+      "Emissions de l’abast 1."
+    ],
+    "answer": "Condicions laborals i igualtat d’oportunitats."
+  },
+  {
+    "question": "Quin element correspon al pilar de governança?",
+    "options": [
+      "Biodiversitat.",
+      "Petjada hídrica.",
+      "Polítiques anticorrupció i transparència.",
+      "Seguretat i salut laboral."
+    ],
+    "answer": "Polítiques anticorrupció i transparència."
+  },
+  {
+    "question": "Quina norma se centra en la gestió de l’energia?",
+    "options": [
+      "ISO 50001.",
+      "ISO 14001.",
+      "ISO 45001.",
+      "SA8000."
+    ],
+    "answer": "ISO 50001."
+  },
+  {
+    "question": "Quin sistema europeu combina gestió i auditoria ambiental?",
+    "options": [
+      "LEED.",
+      "EMAS.",
+      "MiFID II.",
+      "SFDR."
+    ],
+    "answer": "EMAS."
+  },
+  {
+    "question": "Quina norma internacional se centra en la seguretat i salut en el treball?",
+    "options": [
+      "ISO 9001.",
+      "ISO 14001.",
+      "ISO 45001.",
+      "ISO 50001."
+    ],
+    "answer": "ISO 45001."
+  },
+  {
+    "question": "En una estratègia ISR, què és la selecció positiva?",
+    "options": [
+      "Prioritzar empreses amb millor comportament ASG.",
+      "Excluir totes les empreses cotitzades.",
+      "Invertir només en deute públic.",
+      "Ignorar l’anàlisi financera."
+    ],
+    "answer": "Prioritzar empreses amb millor comportament ASG."
+  },
+  {
+    "question": "Quines emissions pertanyen a l’abast 2?",
+    "options": [
+      "Les emissions directes dels vehicles propis.",
+      "Les associades a l’electricitat i energia adquirides.",
+      "Totes les emissions de proveïdors i clients.",
+      "Només les emissions dels residus."
+    ],
+    "answer": "Les associades a l’electricitat i energia adquirides."
+  },
+  {
+    "question": "Què representa l’aigua grisa en la petjada hídrica?",
+    "options": [
+      "L’aigua de pluja utilitzada pels cultius.",
+      "L’aigua superficial consumida.",
+      "El volum necessari per assimilar contaminants.",
+      "L’aigua reutilitzada dins de la fàbrica."
+    ],
+    "answer": "El volum necessari per assimilar contaminants."
+  },
+  {
+    "question": "Quina eina tradueix els objectius estratègics en indicadors i accions mesurables?",
+    "options": [
+      "Balanced Scorecard.",
+      "PESTEL.",
+      "Diagrama de Gantt.",
+      "Compte de resultats."
+    ],
+    "answer": "Balanced Scorecard."
+  },
+  {
+    "question": "Quin model descriu millor l’economia lineal?",
+    "options": [
+      "Compartir, reparar i reutilitzar.",
+      "Extreure, produir, utilitzar i llençar.",
+      "Reduir, reutilitzar i reciclar.",
+      "Servititzar i remanufacturar."
+    ],
+    "answer": "Extreure, produir, utilitzar i llençar."
+  },
+  {
+    "question": "Quina acció ocupa una posició preferent en la jerarquia de residus?",
+    "options": [
+      "Eliminació.",
+      "Abocament.",
+      "Prevenció.",
+      "Incineració sense recuperació."
+    ],
+    "answer": "Prevenció."
+  },
+  {
+    "question": "Què és la simbiosi industrial?",
+    "options": [
+      "Fer que subproductes d’una empresa siguin recursos d’una altra.",
+      "Fusionar empreses competidores.",
+      "Traslladar tota la producció a un polígon.",
+      "Eliminar els proveïdors locals."
+    ],
+    "answer": "Fer que subproductes d’una empresa siguin recursos d’una altra."
+  },
+  {
+    "question": "Quina característica facilita la circularitat d’un producte?",
+    "options": [
+      "La unió irreversible de tots els components.",
+      "La facilitat de desmuntatge i reparació.",
+      "L’ús obligatori de materials verges.",
+      "Una vida útil curta."
+    ],
+    "answer": "La facilitat de desmuntatge i reparació."
+  },
+  {
+    "question": "Què diferencia principalment el reciclatge químic del mecànic?",
+    "options": [
+      "El químic transforma els polímers mitjançant processos químics.",
+      "El mecànic sempre produeix materials verges.",
+      "El químic no consumeix energia.",
+      "No existeix cap diferència."
+    ],
+    "answer": "El químic transforma els polímers mitjançant processos químics."
+  },
+  {
+    "question": "Què busca un sistema producte-servei?",
+    "options": [
+      "Vendre el màxim nombre d’unitats d’un sol ús.",
+      "Proporcionar la funció o servei associat al producte.",
+      "Eliminar el manteniment.",
+      "Transferir sempre la propietat al client."
+    ],
+    "answer": "Proporcionar la funció o servei associat al producte."
+  },
+  {
+    "question": "Quin fenomen pot incrementar la pressió sobre aigua, aliments i energia?",
+    "options": [
+      "La superpoblació.",
+      "La desmaterialització.",
+      "La remanufactura.",
+      "L’etiquetatge ambiental."
+    ],
+    "answer": "La superpoblació."
+  },
+  {
+    "question": "Quin concepte defensa una distribució equitativa dels costos de la transició climàtica?",
+    "options": [
+      "Justícia climàtica.",
+      "Arbitratge verd.",
+      "Efecte rebot.",
+      "Ecoeficiència."
+    ],
+    "answer": "Justícia climàtica."
+  },
+  {
+    "question": "Quin és un risc físic associat al canvi climàtic?",
+    "options": [
+      "Una nova taxa de carboni.",
+      "Una inundació que interromp les operacions.",
+      "Un canvi en les preferències del consumidor.",
+      "Una norma més estricta sobre emissions."
+    ],
+    "answer": "Una inundació que interromp les operacions."
+  },
+  {
+    "question": "Quina és la primera tasca d’una diagnosi de sostenibilitat orientada als grups d’interès?",
+    "options": [
+      "Identificar qui pot afectar o veure’s afectat per l’organització.",
+      "Publicar l’informe final.",
+      "Escollir una certificació sense analitzar necessitats.",
+      "Fixar objectius sense dades inicials."
+    ],
+    "answer": "Identificar qui pot afectar o veure’s afectat per l’organització."
+  },
+  {
+    "question": "Què permet una matriu de materialitat?",
+    "options": [
+      "Prioritzar aspectes ASG segons la seva rellevància.",
+      "Calcular exclusivament el benefici net.",
+      "Eliminar la participació dels grups d’interès.",
+      "Substituir tots els indicadors quantitatius."
+    ],
+    "answer": "Prioritzar aspectes ASG segons la seva rellevància."
+  },
+  {
+    "question": "Quin element ha d’incloure un objectiu ben definit d’un pla de sostenibilitat?",
+    "options": [
+      "Una formulació ambigua.",
+      "Un indicador, un termini i un responsable.",
+      "Només una declaració de principis.",
+      "Una promesa sense valor inicial."
+    ],
+    "answer": "Un indicador, un termini i un responsable."
+  },
+  {
+    "question": "Per què cal monitorar periòdicament un pla de sostenibilitat?",
+    "options": [
+      "Per detectar desviacions i aplicar correccions.",
+      "Per evitar actualitzar els objectius.",
+      "Per comunicar només els èxits.",
+      "Per substituir totes les auditories."
+    ],
+    "answer": "Per detectar desviacions i aplicar correccions."
+  },
+  {
+    "question": "Quina pràctica és coherent amb la transparència?",
+    "options": [
+      "Ocultar els impactes negatius.",
+      "Presentar informació clara, verificable i equilibrada.",
+      "Publicar només dades sense context.",
+      "Modificar els indicadors cada any per evitar comparacions."
+    ],
+    "answer": "Presentar informació clara, verificable i equilibrada."
+  },
+  {
+    "question": "Quin criteri pot incorporar una compra responsable?",
+    "options": [
+      "Només el preu inicial.",
+      "Durabilitat, traçabilitat i impactes socials i ambientals.",
+      "Únicament la rapidesa de lliurament.",
+      "Només la mida del proveïdor."
+    ],
+    "answer": "Durabilitat, traçabilitat i impactes socials i ambientals."
+  },
+  {
+    "question": "Quin indicador permet comparar el consum d’aigua entre períodes amb nivells de producció diferents?",
+    "options": [
+      "Consum d’aigua per unitat produïda.",
+      "Consum absolut sense context.",
+      "Nombre d’empleats.",
+      "Facturació total."
+    ],
+    "answer": "Consum d’aigua per unitat produïda."
+  },
+  {
+    "question": "Quin benefici pot aportar un pla de sostenibilitat ben implementat?",
+    "options": [
+      "Més resiliència, eficiència i confiança dels grups d’interès.",
+      "Immunitat davant qualsevol crisi.",
+      "Eliminació de totes les obligacions legals.",
+      "Beneficis econòmics garantits a curt termini."
+    ],
+    "answer": "Més resiliència, eficiència i confiança dels grups d’interès."
+  },
+  {
+    "question": "Quin ODS està dedicat a la salut i el benestar?",
+    "options": [
+      "ODS 3.",
+      "ODS 5.",
+      "ODS 9.",
+      "ODS 15."
+    ],
+    "answer": "ODS 3."
+  },
+  {
+    "question": "Quin ODS promou el treball decent i el creixement econòmic?",
+    "options": [
+      "ODS 4.",
+      "ODS 6.",
+      "ODS 8.",
+      "ODS 14."
+    ],
+    "answer": "ODS 8."
+  },
+  {
+    "question": "Quin ODS està relacionat amb la producció i el consum responsables?",
+    "options": [
+      "ODS 7.",
+      "ODS 10.",
+      "ODS 12.",
+      "ODS 16."
+    ],
+    "answer": "ODS 12."
+  },
+  {
+    "question": "Quin ODS se centra en l’acció pel clima?",
+    "options": [
+      "ODS 9.",
+      "ODS 11.",
+      "ODS 13.",
+      "ODS 17."
+    ],
+    "answer": "ODS 13."
+  },
+  {
+    "question": "Quin ODS promou la pau, la justícia i les institucions sòlides?",
+    "options": [
+      "ODS 5.",
+      "ODS 10.",
+      "ODS 15.",
+      "ODS 16."
+    ],
+    "answer": "ODS 16."
+  },
+  {
+    "question": "Quin ODS destaca la importància de les aliances per assolir els objectius?",
+    "options": [
+      "ODS 2.",
+      "ODS 8.",
+      "ODS 12.",
+      "ODS 17."
+    ],
+    "answer": "ODS 17."
+  },
+  {
+    "question": "Quina actuació sanitària contribueix directament a reduir la petjada de carboni?",
+    "options": [
+      "Mantenir equips encesos sense necessitat.",
+      "Optimitzar la climatització i contractar electricitat renovable.",
+      "Augmentar els desplaçaments evitables.",
+      "Substituir dispositius reutilitzables per altres d’un sol ús sense avaluació."
+    ],
+    "answer": "Optimitzar la climatització i contractar electricitat renovable."
+  },
+  {
+    "question": "Quina actuació millora la circularitat en la gestió de material sanitari?",
+    "options": [
+      "Comprar només segons el preu inicial.",
+      "Rebutjar qualsevol reparació.",
+      "Aplicar manteniment, reparació i reutilització segura quan sigui possible.",
+      "Eliminar la traçabilitat dels productes."
+    ],
+    "answer": "Aplicar manteniment, reparació i reutilització segura quan sigui possible."
+  },
+  {
+    "question": "Quin grup d’interès es beneficia directament d’una millora de l’accessibilitat d’un centre sanitari?",
+    "options": [
+      "Pacients i famílies.",
+      "Només els accionistes.",
+      "Exclusivament els competidors.",
+      "Únicament els auditors financers."
+    ],
+    "answer": "Pacients i famílies."
+  },
+  {
+    "question": "Quina mesura reforça la governança d’una organització sanitària?",
+    "options": [
+      "Ocultar els criteris de decisió.",
+      "Publicar informació clara sobre resultats, riscos i ús dels recursos.",
+      "Eliminar els canals de denúncia.",
+      "Evitar la participació dels grups d’interès."
+    ],
+    "answer": "Publicar informació clara sobre resultats, riscos i ús dels recursos."
+  },
+  {
+    "question": "Quina dada és adequada per mesurar la sinistralitat laboral?",
+    "options": [
+      "Nombre d’accidents amb baixa en relació amb les hores treballades.",
+      "Consum d’aigua anual.",
+      "Emissions de l’abast 2.",
+      "Percentatge de material reciclat."
+    ],
+    "answer": "Nombre d’accidents amb baixa en relació amb les hores treballades."
+  },
+  {
+    "question": "Quin indicador pot mesurar la diversitat de la plantilla?",
+    "options": [
+      "Consum energètic per empleat.",
+      "Percentatge de representació de diferents col·lectius i nivells de responsabilitat.",
+      "Tones de residus per producte.",
+      "Metres cúbics d’aigua reutilitzada."
+    ],
+    "answer": "Percentatge de representació de diferents col·lectius i nivells de responsabilitat."
+  },
+  {
+    "question": "Quina característica ha de tenir una afirmació ambiental verificable?",
+    "options": [
+      "Ha de ser genèrica i sense dades.",
+      "Ha de basar-se en evidències, criteris clars i informació comprovable.",
+      "Ha d’ometre els límits de l’anàlisi.",
+      "Ha d’utilitzar sempre termes absoluts."
+    ],
+    "answer": "Ha de basar-se en evidències, criteris clars i informació comprovable."
+  },
+  {
+    "question": "Què és l’ecoeficiència?",
+    "options": [
+      "Produir més valor utilitzant menys recursos i generant menys impactes.",
+      "Augmentar la producció sense considerar els recursos.",
+      "Substituir tots els indicadors per opinions.",
+      "Reduir exclusivament el cost laboral."
+    ],
+    "answer": "Produir més valor utilitzant menys recursos i generant menys impactes."
+  },
+  {
+    "question": "Què és l’efecte rebot?",
+    "options": [
+      "La desaparició automàtica del consum després d’una millora.",
+      "L’augment del consum que pot compensar part dels estalvis obtinguts amb més eficiència.",
+      "La reutilització d’un residu industrial.",
+      "La recuperació d’energia en una incineradora."
+    ],
+    "answer": "L’augment del consum que pot compensar part dels estalvis obtinguts amb més eficiència."
+  },
+  {
+    "question": "Quina pràctica redueix el risc de dependència d’un recurs escàs?",
+    "options": [
+      "Concentrar tot el consum en una única matèria primera.",
+      "Diversificar materials i incorporar alternatives reciclades o renovables.",
+      "Eliminar l’ecodisseny.",
+      "Reduir la informació dels proveïdors."
+    ],
+    "answer": "Diversificar materials i incorporar alternatives reciclades o renovables."
+  },
+  {
+    "question": "Quin element ajuda a verificar el compliment ASG dels proveïdors?",
+    "options": [
+      "Auditories i clàusules contractuals amb indicadors.",
+      "Una declaració verbal sense evidències.",
+      "La selecció basada només en el preu.",
+      "L’absència de traçabilitat."
+    ],
+    "answer": "Auditories i clàusules contractuals amb indicadors."
+  },
+  {
+    "question": "Quina és una acció d’adaptació al canvi climàtic?",
+    "options": [
+      "Instal·lar proteccions davant inundacions en una infraestructura vulnerable.",
+      "Augmentar les emissions directes.",
+      "Eliminar els plans d’emergència.",
+      "Ignorar els escenaris climàtics."
+    ],
+    "answer": "Instal·lar proteccions davant inundacions en una infraestructura vulnerable."
+  },
+  {
+    "question": "Quina és una acció de mitigació del canvi climàtic?",
+    "options": [
+      "Reduir el consum de combustibles fòssils i les emissions de GEH.",
+      "Traslladar equips a una planta superior davant inundacions.",
+      "Contractar una assegurança climàtica.",
+      "Elaborar un protocol per a onades de calor sense reduir emissions."
+    ],
+    "answer": "Reduir el consum de combustibles fòssils i les emissions de GEH."
+  },
+  {
+    "question": "Què diferencia l’adaptació de la mitigació climàtica?",
+    "options": [
+      "L’adaptació redueix la vulnerabilitat als impactes i la mitigació redueix les causes del canvi climàtic.",
+      "L’adaptació només s’aplica a governs i la mitigació només a empreses.",
+      "La mitigació gestiona exclusivament residus.",
+      "No hi ha cap diferència."
+    ],
+    "answer": "L’adaptació redueix la vulnerabilitat als impactes i la mitigació redueix les causes del canvi climàtic."
+  },
+  {
+    "question": "Quin element facilita comparar el rendiment ambiental al llarg del temps?",
+    "options": [
+      "Mantenir indicadors i criteris de càlcul coherents.",
+      "Canviar la metodologia cada període sense explicar-ho.",
+      "Publicar només dades qualitatives.",
+      "Eliminar l’any base."
+    ],
+    "answer": "Mantenir indicadors i criteris de càlcul coherents."
+  },
+  {
+    "question": "Què és l’any base en un objectiu de reducció d’emissions?",
+    "options": [
+      "El període de referència amb què es comparen les emissions futures.",
+      "L’any en què sempre s’assoleix l’objectiu.",
+      "El període en què no es mesuren emissions.",
+      "La data de publicació de l’informe, sense relació amb les dades."
+    ],
+    "answer": "El període de referència amb què es comparen les emissions futures."
+  }
+
+
+  
+];
+
+
+/* ============================
+   VARIABLES PRINCIPALES
+============================ */
+let answeredQuestions = JSON.parse(localStorage.getItem("answeredQuestions")) || [];
+let currentQuestion = 0;
+let score = 0;
+let quizData = [];
+
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const totalQuestionsText = document.getElementById("totalQuestionsText");
+const pendingQuestionsText = document.getElementById("pendingQuestionsText");
+const completedQuestionsText = document.getElementById("completedQuestionsText");
+
+
+/* ============================
+   ACTUALIZAR PANEL SUPERIOR
+============================ */
+function updateProgressPanel() {
+  const total = allQuestions.length;
+  const completed = answeredQuestions.length;
+  const pending = total - completed;
+
+  totalQuestionsText.textContent = `Preguntas totales: ${total}`;
+  pendingQuestionsText.textContent = `Preguntas pendientes: ${pending}`;
+  completedQuestionsText.textContent = `Preguntas realizadas: ${completed}`;
+}
+
+
+/* ============================
+   PREPARAR TEST
+============================ */
+function prepareQuiz() {
+  if (allQuestions.length === 0) {
+    container.innerHTML = `
+      <div class="question">
+        <p>No hay preguntas todavía.</p>
+        <p class="small-text">Añade preguntas dentro de la variable allQuestions.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Si ya has hecho todas, se reinicia automáticamente
+  if (answeredQuestions.length >= allQuestions.length) {
+    answeredQuestions = [];
+    localStorage.removeItem("answeredQuestions");
+
+    alert("Has completado todas las preguntas. Se reinicia el ciclo.");
+  }
+
+  updateProgressPanel();
+
+  let availableQuestions = allQuestions
+    .map((question, index) => index)
+    .filter(index => !answeredQuestions.includes(index));
+
+  let numberOfQuestionsToday = parseInt(
+    prompt(`¿Cuántas preguntas quieres hacer hoy? Te quedan ${availableQuestions.length} pendientes.`)
+  );
+
+  if (
+    isNaN(numberOfQuestionsToday) ||
+    numberOfQuestionsToday <= 0 ||
+    numberOfQuestionsToday > availableQuestions.length
+  ) {
+    numberOfQuestionsToday = availableQuestions.length;
+  }
+
+  shuffle(availableQuestions);
+
+  let selectedIndexes = availableQuestions.slice(0, numberOfQuestionsToday);
+
+  quizData = selectedIndexes.map(index => {
+    return {
+      ...allQuestions[index],
+      originalIndex: index
+    };
+  });
+
+  showQuestion();
+}
+
+
+/* ============================
+   MOSTRAR PREGUNTA
+============================ */
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if (currentQuestion >= quizData.length) {
+    updateProgressPanel();
+
+    const pending = allQuestions.length - answeredQuestions.length;
+
+    container.innerHTML = `
+      <div class="question">
+        <p>Quiz terminado</p>
+        <p>Tu puntuación final es ${score} de ${quizData.length}</p>
+        <p class="small-text">
+          Preguntas pendientes para otro día: ${pending}
+        </p>
+        ${
+          pending === 0
+          ? `<p class="small-text">Has completado todas las preguntas. La próxima vez se reiniciará el ciclo.</p>`
+          : `<p class="small-text">La próxima vez saldrán preguntas que todavía no has hecho.</p>`
+        }
+      </div>
+    `;
+
+    resultDiv.textContent = `Puntuación final: ${score}/${quizData.length}`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+
+  const div = document.createElement("div");
+  div.className = "question";
+
+  const p = document.createElement("p");
+  p.textContent = `${currentQuestion + 1}. ${q.question}`;
+  div.appendChild(p);
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+
+  // Preguntas cortas: mostramos la solución al pulsar el botón.
+  if (filteredOptions.length === 0) {
+    const showAnswerBtn = document.createElement("button");
+    showAnswerBtn.textContent = "Mostrar respuesta";
+
+    showAnswerBtn.onclick = () => {
+      showAnswerBtn.disabled = true;
+      showAnswerBtn.textContent = q.answer;
+      showAnswerBtn.classList.add("correct");
+
+      const originalIndex = q.originalIndex;
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(showAnswerBtn);
+    div.appendChild(optionsDiv);
+    container.appendChild(div);
+    return;
+  }
+
+  // Si quieres que siempre salga V primero y F segundo, comenta la línea siguiente:
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      // Guardamos esta pregunta como realizada justo al contestarla
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+
+      if (btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+
+        allBtns.forEach(b => {
+          if (b.dataset.correct === "true") {
+            b.classList.add("correct");
+          }
+        });
+      }
+
+      resultDiv.textContent = `Puntuación: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+
+/* ============================
+   BOTÓN SIGUIENTE
+============================ */
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+
+/* ============================
+   BOTÓN REINICIAR PROGRESO
+============================ */
+resetBtn.onclick = () => {
+  const confirmReset = confirm("¿Seguro que quieres reiniciar el progreso? Volverán a salir todas las preguntas.");
+
+  if (confirmReset) {
+    localStorage.removeItem("answeredQuestions");
+    location.reload();
+  }
+};
+
+
+/* ============================
+   INICIAR QUIZ
+============================ */
+prepareQuiz();
+</script>
+
+</body>
+</html>
