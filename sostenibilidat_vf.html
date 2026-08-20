@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz IPO2</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0 5px 0;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .top-panel {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .top-panel p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    padding-top: 10px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .question p {
+    font-size: 34px;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 30px 0;
+  }
+
+  .options {
+    margin-top: 20px;
+  }
+
+  .options button {
+    display: block;
+    margin: 10px 0;
+    padding: 15px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+
+  .options button:hover {
+    background: #ddd;
+  }
+
+  .options button:disabled {
+    cursor: not-allowed;
+  }
+
+  .correct {
+    background-color: #c8e6c9 !important;
+    border-color: #388e3c !important;
+    color: #2e7d32 !important;
+  }
+
+  .wrong {
+    background-color: #ffcdd2 !important;
+    border-color: #d32f2f !important;
+    color: #c62828 !important;
+  }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 10px 0;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  button.main-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.main-btn:hover {
+    background: #1976D2;
+  }
+
+  button.reset-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #e53935;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.reset-btn:hover {
+    background: #c62828;
+  }
+
+  .small-text {
+    font-size: 15px !important;
+    font-weight: normal !important;
+    color: #555;
+  }
+
+  @media (max-width: 600px) {
+    .question p {
+      font-size: 28px;
+    }
+
+    .options button {
+      font-size: 20px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Quiz Gestion Administrativa</h1>
+<div class="subtitle">Preguntas aleatorias sin repetir hasta completar todo el temario</div>
+
+<div class="top-panel">
+  <p id="totalQuestionsText">Preguntas totales: 0</p>
+  <p id="pendingQuestionsText">Preguntas pendientes: 0</p>
+  <p id="completedQuestionsText">Preguntas realizadas: 0</p>
+</div>
+
+<div class="quiz-container" id="quiz-container"></div>
+
+<div class="result" id="result">Puntuación: 0</div>
+
+<div class="buttons">
+  <button id="nextBtn" class="main-btn" style="display:none;">Siguiente</button>
+  <button id="resetBtn" class="reset-btn">Reiniciar progreso</button>
+</div>
+
+<script>
+/* ============================
+   FUNCIÓN PARA MEZCLAR ARRAYS
+============================ */
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+
+/* ============================
+   AÑADE AQUÍ TUS PREGUNTAS
+   No tienes que indicar cuántas hay.
+   El código las cuenta automáticamente.
+============================ */
+const allQuestions = [
+  
+{
+    "question": "L’Informe Brundtland (1987) defineix el desenvolupament sostenible com aquell que satisfà les necessitats del present sense comprometre la capacitat de les futures generacions per satisfer les seves pròpies necessitats.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’Acord de París té com a objectiu mantenir l’augment de la temperatura global per sota dels 2 graus centígrads respecte als nivells preindustrials i intentar limitar-lo a 1,5 graus.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’Agenda 2030 està articulada al voltant de 17 Objectius de Desenvolupament Sostenible.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La desforestació redueix la capacitat del planeta per absorbir gasos amb efecte d’hivernacle.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’Anàlisi de Cicle de Vida permet avaluar l’impacte ambiental d’un producte exclusivament en la fase d’extracció de matèries primeres.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "L’ecodisseny prioritza l’ús de materials d’un sol ús i barats per sobre de la durabilitat del producte.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "La petjada de carboni mesura la totalitat de gasos amb efecte d’hivernacle emesos directament o indirectament per una activitat, producte o organització.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La inversió socialment responsable garanteix que les inversions tinguin un impacte positiu i considera valors socials i ambientals juntament amb criteris financers.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La petjada hídrica mesura la quantitat total d’aigua dolça utilitzada i pot incloure l’aigua verda, blava i grisa.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’anàlisi de materialitat permet identificar quins aspectes ASG són realment rellevants per a l’activitat de l’empresa i per als seus grups d’interès.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’economia verda prioritza l’equilibri entre el creixement econòmic i la conservació dels recursos naturals.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El pilar social de la sostenibilitat inclou la igualtat de gènere, la salut i la seguretat laboral dels treballadors.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El canvi climàtic és un repte ambiental que només requereix accions a escala local i no necessita coordinació global.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "La inversió socialment responsable és un model d’inversió que només té en compte la rendibilitat financera.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "L’economia circular i l’ocupació verda redueixen la pressió sobre els recursos naturals i fomenten una ocupació beneficiosa per a les persones i el medi ambient.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’etiquetatge ecològic informa sobre l’impacte ambiental dels productes.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La digitalització de processos i la innovació tecnològica no influeixen en l’optimització de recursos ni en la reducció de residus.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "Les auditories ambientals i els sistemes de gestió com ISO 14001 o EMAS ajuden a controlar i reduir els impactes d’una empresa.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "En una estratègia de sostenibilitat, un grup d’interès és exclusivament la persona que posseeix accions de l’empresa.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "La governança dels criteris ASG fa referència, entre altres aspectes, a la transparència, l’ètica i el bon govern de l’empresa.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El principal benefici de l’ecodisseny és reduir els costos ambientals i l’ús de recursos al llarg de tot el cicle de vida del producte.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La definició de sostenibilitat més acceptada implica que les generacions futures han de conservar la capacitat de satisfer les seves pròpies necessitats.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El greenwashing és una forma de comunicació enganyosa sobre la sostenibilitat d’una organització o producte.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’engagement i el vot actiu són estratègies d’inversió responsable basades en el diàleg amb les empreses per promoure millores.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El percentatge de contingut reciclat i el percentatge de reutilització poden emprar-se per mesurar la circularitat dels materials.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Definir un límit organitzatiu en un inventari de gasos amb efecte d’hivernacle serveix per decidir quines activitats o empreses s’hi inclouen.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Instal·lar sensors de temperatura urbana pot ajudar a reduir el risc d’incendis forestals que afecten infraestructures.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "En el reciclatge mecànic dels plàstics, el material es reprocessa físicament sense transformar-lo mitjançant reaccions químiques complexes.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La norma ISO 14001 és la certificació específica de referència per estructurar la responsabilitat social d’una empresa.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "Els fulls de ruta sectorials relacionats amb els ODS defineixen objectius comuns i accions coordinades perquè les empreses d’un mateix àmbit comparteixin una visió de transformació sostenible.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "En els informes de sostenibilitat, la materialitat identifica els assumptes més significatius per a l’empresa i els seus grups d’interès.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’Anàlisi de Cicle de Vida permet identificar impactes ambientals des de l’extracció de matèries primeres fins al final de la vida útil.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Els articles 6, 8 i 9 de l’SFDR es diferencien principalment pel grau d’integració i l’objectiu de sostenibilitat dels productes financers.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Els green bonds són instruments financers destinats a finançar projectes amb un impacte positiu sobre el medi ambient.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La caracterització segons mètodes com ReCiPe és una fase emprada en l’ACV per quantificar impactes.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El percentatge d’operacions situades en zones d’estrès hídric alt pot actuar com a indicador del risc relacionat amb l’aigua.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Un mapa d’actius crítics per regió de risc físic ajuda a monitorar l’exposició a fenòmens climàtics extrems.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Els contractes que remuneren el rendiment i la durabilitat poden alinear els proveïdors amb els principis de circularitat.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Un full de ruta sectorial eficaç ha d’establir mesures a curt, mitjà i llarg termini amb indicadors clars i quantificables.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La reducció del consum d’aigua i l’ús exclusiu d’energia hidràulica són els dos components principals de la governança ASG.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "Les emissions derivades de la combustió de combustibles a les instal·lacions pròpies de l’empresa corresponen a l’abast 1 del GHG Protocol.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Potenciar l’ús d’energies renovables forma part de l’àrea de medi ambient del Pacte Mundial de l’ONU.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Promoure l’eficiència energètica a les llars, les indústries i el transport es relaciona amb l’ODS 7, energia assequible i no contaminant.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La lluita contra la corrupció es relaciona amb l’ODS 16, pau, justícia i institucions sòlides.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Les aliances per l’hidrogen verd són una iniciativa pròpia del sector energètic.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El Fashion Pact i la Sustainable Apparel Coalition són iniciatives relacionades amb el sector de la moda i el tèxtil.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El model d’economia verda i circular pot contribuir als ODS 12, 13 i 14.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La inversió socialment responsable pretén generar un impacte positiu que beneficiï exclusivament els inversors.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "Respectar els drets humans pot formar part de l’objectiu d’impacte social positiu de la inversió socialment responsable.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’augment de l’ús de l’energia solar pot formar part d’una transició energètica equitativa.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Protegir amb compensacions econòmiques les comunitats més afectades pel canvi climàtic és una mesura de justícia climàtica.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Impulsar sistemes de retorn d’envasos és una pràctica d’economia circular.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Els programes que ofereixen oportunitats de creixement professional poden millorar les condicions laborals de la cadena de valor.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Valorar negativament o descartar empreses productores de combustibles fòssils és una metodologia d’exclusió en la inversió ASG.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El Consell Econòmic i Social de l’ONU coordina esforços internacionals en qüestions econòmiques, socials i ambientals.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La resiliència energètica és una dimensió pròpia de l’índex de benestar social, al mateix nivell que les condicions laborals dignes.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "L’economia circular és una política que pertany directament al pilar social de la sostenibilitat.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "La incineració de residus amb recuperació d’energia és un exemple de valorització energètica.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La sobrecàrrega turística és un repte que afecta directament l’agricultura i la ramaderia de la mateixa manera que la degradació del sòl.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "L’economia verda impulsa, entre altres mesures, el desenvolupament i l’ús de tecnologies netes.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’ecodisseny pot prioritzar materials amb una petjada de carboni baixa.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Les sequeres prolongades poden provocar una menor generació d’energia hidràulica.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "ISO 14001 és una de les normes de gestió ambiental més reconegudes internacionalment.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "ISO 45001 és la norma internacional de seguretat i salut en el treball que va substituir OHSAS 18001.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El manteniment inalterat dels patrons estacionals és una conseqüència característica del canvi climàtic.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "La biomassa, l’energia solar i l’energia eòlica són fonts d’energia renovable.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Crear programes educatius per a la comunitat és un exemple de criteri social ASG.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Una cadena de subministrament sostenible pot exigir als proveïdors normes ISO, auditories i certificacions de comerç just.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La governança multinivell implica coordinar actuacions locals, regionals, nacionals i internacionals.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El GHG Protocol és una eina utilitzada per mesurar i gestionar la petjada de carboni corporativa.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Integrar criteris ASG en les compres significa seleccionar els proveïdors només segons el preu i la rapidesa de lliurament.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "Les puntuacions ASG de diferents agències poden divergir a causa de biaixos i diferències metodològiques.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La preferència ASG del client en MiFID II obliga a considerar els seus valors i perfil de risc en l’adequació dels productes.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La intensitat de carboni d’una cartera es pot expressar en tones de CO2 equivalent per milió d’euros invertits.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Els tres abasts del GHG Protocol són les emissions directes, les associades a l’electricitat comprada i les de la cadena de valor.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El consum d’energia per unitat de superfície és l’objecte de l’indicador EUI dels edificis.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Un augment del preu del carboni i unes restriccions normatives més estrictes són riscos de transició per a empreses intensives en emissions.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Un punt d’inflexió climàtic és un llindar a partir del qual alguns canvis poden accelerar-se o esdevenir irreversibles.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Els plans de continuïtat operativa que incorporen escenaris climàtics reforcen la resiliència empresarial.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Una transició justa inclou requalificació professional, protecció social i diàleg amb les persones treballadores afectades.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El Club de Roma es va crear el 1968 per promoure el debat global sobre els límits del creixement i la sobreexplotació dels recursos.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’informe Els límits del creixement es va publicar el 1972 i va analitzar les conseqüències d’un creixement indefinit en un planeta amb recursos finits.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La Conferència d’Estocolm de 1972 va contribuir a situar el medi ambient en l’agenda política internacional.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La sostenibilitat només combina dues dimensions: la protecció ambiental i el creixement econòmic.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "La dimensió econòmica de la sostenibilitat exclou la viabilitat a llarg termini de les empreses.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "Els ODS van ser adoptats el 2015 i formen part de l’Agenda 2030.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Els Objectius de Desenvolupament Sostenible només s’adrecen als governs i no impliquen les empreses ni la ciutadania.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "El Pacte Mundial de l’ONU promou principis relacionats amb els drets humans, els estàndards laborals, el medi ambient i l’anticorrupció.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La transparència, la composició del consell d’administració i les polítiques anticorrupció són aspectes de governança.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La diversitat, la inclusió, els drets laborals i la relació amb la comunitat són aspectes socials ASG.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’eficiència energètica, la gestió de residus i la biodiversitat són aspectes ambientals ASG.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La integració dels criteris ASG pot millorar la reputació, l’accés al finançament i la capacitat de gestionar riscos.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Adoptar criteris ASG garanteix que una empresa quedi completament immune davant qualsevol risc futur.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "La certificació EMAS és un sistema europeu de gestió i auditoria ambiental.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "ISO 50001 se centra en els sistemes de gestió de l’energia.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "ISO 9001 és una norma específica per calcular la petjada hídrica d’una organització.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "SA8000 és un estàndard relacionat amb la responsabilitat social i les condicions laborals.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La certificació LEED avalua principalment la sostenibilitat dels edificis.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La ISR combina l’anàlisi financera amb criteris ambientals, socials i de governança.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La selecció positiva consisteix a prioritzar empreses amb un millor comportament ASG dins del seu sector.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’exclusió consisteix a intensificar el diàleg amb totes les empreses sense descartar cap activitat.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "L’engagement permet a l’inversor influir en la conducta empresarial mitjançant el diàleg i l’exercici dels drets de vot.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Els analistes, les agències de qualificació i els índexs de sostenibilitat poden influir en les decisions d’inversió responsable.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El greenwashing pot aparèixer quan una empresa exagera o presenta de manera enganyosa els beneficis ambientals de la seva activitat.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’abast 2 del GHG Protocol inclou les emissions indirectes associades a l’energia adquirida.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’abast 3 del GHG Protocol només inclou emissions produïdes físicament dins de les instal·lacions pròpies.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "La petjada hídrica blava es relaciona amb l’aigua superficial o subterrània consumida.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La petjada hídrica verda es relaciona amb l’aigua de pluja incorporada al sòl i utilitzada pels cultius.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La petjada hídrica grisa representa el volum d’aigua necessari per assimilar contaminants fins a complir uns estàndards de qualitat.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’índex de benestar social pot considerar les condicions laborals, la igualtat d’oportunitats i l’impacte en la comunitat.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El Balanced Scorecard sostenible ajuda a convertir objectius estratègics en indicadors i accions mesurables.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Un indicador útil per al seguiment d’un pla ha de ser clar, mesurable i relacionat amb l’objectiu que es vol assolir.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El canvi climàtic pot augmentar la freqüència i intensitat d’episodis meteorològics extrems.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’augment del nivell del mar no té cap relació amb el canvi climàtic.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "La superpoblació pot augmentar la pressió sobre l’aigua, els aliments, l’energia i altres recursos naturals.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La pèrdua de biodiversitat pot afectar serveis ecosistèmics dels quals depenen les activitats productives.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Els ecosistemes terrestres i marins funcionen de forma completament independent de l’activitat econòmica.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "Els impactes ambientals poden agreujar desigualtats socials perquè els col·lectius vulnerables solen tenir menys capacitat d’adaptació.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La justícia climàtica defensa que els costos i beneficis de la transició es distribueixin de manera equitativa.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’economia lineal segueix principalment el model d’extreure, produir, utilitzar i llençar.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’economia circular busca mantenir els productes, components i materials en ús durant el màxim temps possible.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La prevenció i la reutilització ocupen una posició menys favorable que l’eliminació en la jerarquia de residus.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "Reparar, remanufacturar i reutilitzar poden allargar la vida útil dels productes i reduir la necessitat de matèries primeres noves.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "L’ecodisseny només actua sobre l’aparença externa del producte.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "L’ecodisseny considera decisions sobre materials, fabricació, distribució, ús i final de vida.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Dissenyar un producte fàcil de desmuntar pot afavorir-ne la reparació i el reciclatge.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El reciclatge químic transforma els polímers mitjançant processos químics, a diferència del reciclatge mecànic.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Un sistema producte-servei pot substituir la venda del producte per la prestació del servei que aquest proporciona.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "En un sistema producte-servei, el proveïdor no té mai incentius per augmentar la durabilitat del producte.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "El Material Circularity Indicator pot avaluar el grau de circularitat d’un producte.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La taxa d’ús circular de materials és una mètrica que pot emprar-se a escala macroeconòmica.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La simbiosi industrial facilita que els residus o subproductes d’una empresa esdevinguin recursos per a una altra.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La col·laboració sectorial pot ajudar a compartir coneixement, infraestructures i objectius comuns de sostenibilitat.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La tecnologia blockchain pot reforçar la traçabilitat de l’origen dels materials en una cadena de subministrament.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La digitalització sempre redueix l’impacte ambiental, independentment del consum energètic i dels equips que requereixi.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "La formació professional pot contribuir a la transició ecològica incorporant competències sostenibles adaptades a cada sector.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La sostenibilitat en el sector sanitari pot incloure la gestió segura dels residus, l’eficiència energètica i la compra responsable.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "En una organització sanitària, digitalitzar processos pot reduir paper, però també s’han de considerar el consum energètic i el cicle de vida dels equips digitals.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La identificació de grups d’interès ha de limitar-se als clients i accionistes.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "Els treballadors, proveïdors, clients, inversors, administracions i comunitats locals poden ser grups d’interès.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La materialitat serveix per prioritzar els aspectes ASG segons la seva rellevància per a l’empresa i els grups d’interès.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Una matriu de materialitat situa tots els assumptes ASG al mateix nivell, sense prioritzar-los.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "Avaluar impactes i oportunitats ajuda a decidir quins aspectes ha de gestionar primer un pla de sostenibilitat.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Un pla de sostenibilitat eficaç ha de definir objectius, accions, responsables, terminis i indicadors.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Els objectius d’un pla de sostenibilitat han de ser exclusivament qualitatius per evitar comparacions.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "El monitoratge periòdic permet detectar desviacions i aplicar mesures correctores.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La millora contínua implica revisar els resultats i ajustar les accions del pla quan sigui necessari.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Comunicar només els resultats favorables, ocultant els impactes negatius, és una pràctica coherent amb la transparència.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "Un informe de sostenibilitat ha de facilitar la rendició de comptes davant dels grups d’interès.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La transparència exigeix que la informació comunicada sigui clara, verificable i equilibrada.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Reduir residus pot disminuir l’impacte ambiental i, alhora, generar estalvis de materials i tractament.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La compra responsable pot incorporar criteris ambientals, socials, de proximitat, durabilitat i traçabilitat.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "El cost inicial més baix és sempre el criteri més sostenible per seleccionar un producte o proveïdor.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "La resiliència empresarial inclou la capacitat de preparar-se, adaptar-se i recuperar-se davant impactes climàtics o socials.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Els riscos físics climàtics poden incloure inundacions, sequeres, onades de calor i tempestes.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Els riscos de transició es relacionen amb canvis normatius, tecnològics, de mercat o reputacionals en el pas cap a una economia baixa en carboni.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La responsabilitat d’executar un pla de sostenibilitat correspon només al departament ambiental, sense implicació de la direcció ni de la resta de l’organització.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "La participació dels grups d’interès pot millorar la qualitat del diagnòstic i la legitimitat de les accions proposades.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Un indicador de consum d’aigua pot expressar-se per unitat produïda per facilitar la comparació al llarg del temps.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "Mesurar únicament dades absolutes sempre permet comparar correctament organitzacions de mides diferents.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F"
+  },
+  {
+    "question": "Les auditories poden verificar el compliment dels procediments i detectar oportunitats de millora.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  },
+  {
+    "question": "La innovació sostenible pot reduir impactes i obrir noves oportunitats de negoci.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V"
+  }
+
+
+  
+];
+
+
+/* ============================
+   VARIABLES PRINCIPALES
+============================ */
+let answeredQuestions = JSON.parse(localStorage.getItem("answeredQuestions")) || [];
+let currentQuestion = 0;
+let score = 0;
+let quizData = [];
+
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const totalQuestionsText = document.getElementById("totalQuestionsText");
+const pendingQuestionsText = document.getElementById("pendingQuestionsText");
+const completedQuestionsText = document.getElementById("completedQuestionsText");
+
+
+/* ============================
+   ACTUALIZAR PANEL SUPERIOR
+============================ */
+function updateProgressPanel() {
+  const total = allQuestions.length;
+  const completed = answeredQuestions.length;
+  const pending = total - completed;
+
+  totalQuestionsText.textContent = `Preguntas totales: ${total}`;
+  pendingQuestionsText.textContent = `Preguntas pendientes: ${pending}`;
+  completedQuestionsText.textContent = `Preguntas realizadas: ${completed}`;
+}
+
+
+/* ============================
+   PREPARAR TEST
+============================ */
+function prepareQuiz() {
+  if (allQuestions.length === 0) {
+    container.innerHTML = `
+      <div class="question">
+        <p>No hay preguntas todavía.</p>
+        <p class="small-text">Añade preguntas dentro de la variable allQuestions.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Si ya has hecho todas, se reinicia automáticamente
+  if (answeredQuestions.length >= allQuestions.length) {
+    answeredQuestions = [];
+    localStorage.removeItem("answeredQuestions");
+
+    alert("Has completado todas las preguntas. Se reinicia el ciclo.");
+  }
+
+  updateProgressPanel();
+
+  let availableQuestions = allQuestions
+    .map((question, index) => index)
+    .filter(index => !answeredQuestions.includes(index));
+
+  let numberOfQuestionsToday = parseInt(
+    prompt(`¿Cuántas preguntas quieres hacer hoy? Te quedan ${availableQuestions.length} pendientes.`)
+  );
+
+  if (
+    isNaN(numberOfQuestionsToday) ||
+    numberOfQuestionsToday <= 0 ||
+    numberOfQuestionsToday > availableQuestions.length
+  ) {
+    numberOfQuestionsToday = availableQuestions.length;
+  }
+
+  shuffle(availableQuestions);
+
+  let selectedIndexes = availableQuestions.slice(0, numberOfQuestionsToday);
+
+  quizData = selectedIndexes.map(index => {
+    return {
+      ...allQuestions[index],
+      originalIndex: index
+    };
+  });
+
+  showQuestion();
+}
+
+
+/* ============================
+   MOSTRAR PREGUNTA
+============================ */
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if (currentQuestion >= quizData.length) {
+    updateProgressPanel();
+
+    const pending = allQuestions.length - answeredQuestions.length;
+
+    container.innerHTML = `
+      <div class="question">
+        <p>Quiz terminado</p>
+        <p>Tu puntuación final es ${score} de ${quizData.length}</p>
+        <p class="small-text">
+          Preguntas pendientes para otro día: ${pending}
+        </p>
+        ${
+          pending === 0
+          ? `<p class="small-text">Has completado todas las preguntas. La próxima vez se reiniciará el ciclo.</p>`
+          : `<p class="small-text">La próxima vez saldrán preguntas que todavía no has hecho.</p>`
+        }
+      </div>
+    `;
+
+    resultDiv.textContent = `Puntuación final: ${score}/${quizData.length}`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+
+  const div = document.createElement("div");
+  div.className = "question";
+
+  const p = document.createElement("p");
+  p.textContent = `${currentQuestion + 1}. ${q.question}`;
+  div.appendChild(p);
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+
+  // Preguntas cortas: mostramos la solución al pulsar el botón.
+  if (filteredOptions.length === 0) {
+    const showAnswerBtn = document.createElement("button");
+    showAnswerBtn.textContent = "Mostrar respuesta";
+
+    showAnswerBtn.onclick = () => {
+      showAnswerBtn.disabled = true;
+      showAnswerBtn.textContent = q.answer;
+      showAnswerBtn.classList.add("correct");
+
+      const originalIndex = q.originalIndex;
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(showAnswerBtn);
+    div.appendChild(optionsDiv);
+    container.appendChild(div);
+    return;
+  }
+
+  // Si quieres que siempre salga V primero y F segundo, comenta la línea siguiente:
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      // Guardamos esta pregunta como realizada justo al contestarla
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+
+      if (btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+
+        allBtns.forEach(b => {
+          if (b.dataset.correct === "true") {
+            b.classList.add("correct");
+          }
+        });
+      }
+
+      resultDiv.textContent = `Puntuación: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+
+/* ============================
+   BOTÓN SIGUIENTE
+============================ */
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+
+/* ============================
+   BOTÓN REINICIAR PROGRESO
+============================ */
+resetBtn.onclick = () => {
+  const confirmReset = confirm("¿Seguro que quieres reiniciar el progreso? Volverán a salir todas las preguntas.");
+
+  if (confirmReset) {
+    localStorage.removeItem("answeredQuestions");
+    location.reload();
+  }
+};
+
+
+/* ============================
+   INICIAR QUIZ
+============================ */
+prepareQuiz();
+</script>
+
+</body>
+</html>
