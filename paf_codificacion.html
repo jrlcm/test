@@ -216,7 +216,709 @@ function shuffle(array) {
 const allQuestions = [
 
 {
-   "question": "Una angioplàstia coronària amb stent té com a tipus de procediment arrel inserció.",
+    "question": "Pacient que ingressa amb el diagnòstic d’uretritis per Escherichia coli. El codi del diagnòstic principal en aquest cas és N34.2",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "La uretritis és el procés que motiva l'ingrés i es codifica amb N34.2; el microorganisme es pot identificar amb un codi addicional quan correspongui."
+  },
+  {
+    "question": "Pacient que ingressa per quadre de dolor abdominal i diarrea de diversos dies d’evolució. El diagnòstic a l’alta és d’enteritis per Campylobacter resistent a les fluoroquinolones. Per codificar correctament aquest cas es necessiten únicament 2 codis.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "L'enteritis per Campylobacter ja identifica l'agent causal (A04.5); la resistència a les fluoroquinolones requereix un codi de la categoria Z16. No cal un tercer codi de bacteri."
+  },
+  {
+    "question": "Pacient de 40 anys amb epilèpsia (conseqüència d’una poliomielitis patida a la infància) ingressa per quadre de convulsions. La codificació correcta d’aquest cas és: DP: G40.909 / DS: B91 / DS: Z86.12",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "No s'ha d'afegir el codi d'història personal Z86.12 quan ja es codifica la seqüela de poliomielitis amb B91; seria redundant."
+  },
+  {
+    "question": "Pacient de 84 anys que acudeix a urgències per quadre de dolor lumbar, febre i malestar general de diversos dies d’evolució. A l’arribada a urgències presenta també una insuficiència renal aguda. L’exploració física i les proves complementàries indiquen l’existència d’una pielonefritis aguda per Enterobacter i sèpsia secundària. El diagnòstic principal en aquest cas és la pielonefritis aguda.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Quan la sèpsia ja existeix a l'ingrés i és conseqüència de la infecció, la sèpsia té prioritat com a diagnòstic principal; la pielonefritis és secundària."
+  },
+  {
+    "question": "Pacient que ingressa amb el diagnòstic de pneumònia aguda per estreptococs, sèpsia secundària i insuficiència respiratòria aguda. La codificació correcta per aquest cas és: DP: A40.9 / DS: R65.20 / DS: J15.4 / DS: J96.00",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "La sèpsia estreptocòccica es codifica primer; la fallida orgànica atribuïda a la sèpsia justifica R65.20 i el codi de fallida respiratòria, a més del focus pneumònic."
+  },
+  {
+    "question": "Pacient VIH positiu des de fa 5 anys (ha estat sempre asimptomàtic) acudeix a urgències després de l’aparició de diverses lesions a la cavitat oral, d’aspecte blanquinós i que sagnen amb facilitat. Es queixa també de disfàgia i dolor al pit. Ingressa amb el diagnòstic de candidiasi oral i esofàgica. El codi correcte per registrar la infecció pel VIH en aquest pacient és Z21",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "La candidiasi esofàgica és una malaltia definitòria de sida: correspon B20, no Z21, encara que anteriorment el pacient fos asimptomàtic."
+  },
+  {
+    "question": "Pacient VIH positiu des de fa 10 anys (ha estat sempre asimptomàtic) ingressa per pneumònia per Pneumocystis jirovecci. El codi del diagnòstic principal en aquest cas és B20",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "La pneumònia per Pneumocystis jirovecii és una malaltia definitòria de sida. El codi B20 és principal quan motiva l'ingrés."
+  },
+  {
+    "question": "Pacient que acudeix al seu CAP per quadre de febre, cefalea i mal de gola de diversos dies d’evolució. El diagnòstic és de “possible COVID-19”. El codi del diagnòstic principal és U07.1",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Una sospita de COVID-19 sense confirmació no permet assignar U07.1: la COVID-19 és una de les excepcions a codificar diagnòstics sospitosos com si fossin confirmats."
+  },
+  {
+    "question": "Gestant de 25 setmanes, VIH+ (ha estat sempre asimptomàtica), ingressa per una fractura del canell dret. Per registrar correctament la infecció pel VIH d’aquesta pacient són necessaris dos codis: O98.712 i Z21",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "En la codificació d'una infecció per VIH durant l'embaràs s'utilitza el codi obstètric corresponent i, addicionalment, Z21 si la infecció ha estat sempre asimptomàtica."
+  },
+  {
+    "question": "Si a l’informe d’alta no s’especifica si una neoplàsia és primària o secundària, s’ha de codificar com a neoplàsia de comportament incert.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "No especificar si una neoplàsia maligna és primària o secundària no la transforma en neoplàsia de comportament incert; s'apliquen les normes de malignitat i localització."
+  },
+  {
+    "question": "Dues neoplàsies de diferent morfologia (un adenocarcinoma i un carcinoma de cèl·lules escamoses, per exemple), si es troben en un mateix òrgan (l’esòfag, per exemple), pot ser que tinguin el mateix codi CIM-10-MC.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "La CIM-10-MC classifica principalment segons localització i comportament; dues morfologies diferents poden compartir el mateix codi diagnòstic."
+  },
+  {
+    "question": "Pacient amb càncer de mama metastàtic ingressa per tractament quirúrgic. En absència de més informació, hem de considerar aquesta neoplàsia de mama com a primària.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Una neoplàsia maligna de mama, sense indicació que sigui secundària, es considera primària en aquesta localització."
+  },
+  {
+    "question": "Diem que un càncer està en fase de recidiva quan han desaparegut els símptomes i signes, normalment gràcies al tractament, tot i que el càncer pugui estar encara present en el cos.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "La desaparició dels signes sota tractament correspon a remissió; la recidiva significa reaparició de la malaltia després d'una resposta o remissió."
+  },
+  {
+    "question": "Pacient que es va sotmetre a una prostatectomia total fa un mes per un càncer de pròstata, acudeix a l’hospital per rebre una sessió de braquiteràpia. El codi del diagnòstic principal en aquest cas és C61",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Segons la solució de l'EAC, la braquiteràpia en aquest supòsit manté la neoplàsia com a diagnòstic principal; no s'ha d'equiparar automàticament a una sessió externa de radioteràpia."
+  },
+  {
+    "question": "Pacient a qui es va practicar una nefrectomia total dreta fa un mes per un càncer de ronyó dret, acudeix a l’hospital de dia d’oncologia per rebre una sessió de quimioteràpia. El codi del diagnòstic principal és C64.1",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Si el contacte és exclusivament per administrar quimioteràpia, el diagnòstic principal és el codi de contacte per a quimioteràpia (Z51.11), no C64.1."
+  },
+  {
+    "question": "Pacient que fa un mes va ser diagnosticat de càncer de còlon i metàstasis a nivell de les vèrtebres lumbars, ingressa per fractura patològica de la vèrtebra L4, conseqüència de la metàstasi. El codi del diagnòstic principal és S32.049A",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "La fractura és patològica, deguda a una metàstasi, i s'ha de classificar a M84.5-, no com una fractura traumàtica del capítol 19."
+  },
+  {
+    "question": "Pacient amb càncer de pàncrees i metàstasis vertebrals, ingressa per tractament del dolor causat per les metàstasis. El codi del diagnòstic principal en aquest cas és G89.3",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Quan el motiu d'ingrés és el control del dolor relacionat amb la neoplàsia, G89.3 pot ser diagnòstic principal."
+  },
+  {
+    "question": "Pacient hipertens que ingressa per una insuficiència cardíaca. El codi del diagnòstic principal en aquest cas és I50.9",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Amb HTA i insuficiència cardíaca es presumeix la relació hipertensiva, llevat que es documenti una altra causa: cal considerar I11 i codis addicionals segons el cas."
+  },
+  {
+    "question": "Pacient amb HTA, insuficiència renal crònica en fase 2 i insuficiència cardíaca. El codi correcte per registrar la hipertensió d’aquest pacient està inclòs dins de la categoria I12.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Si coexisteixen HTA, insuficiència cardíaca i ERC sense una altra etiologia documentada, la família indicada és I13, no I12."
+  },
+  {
+    "question": "Pacient amb insuficiència mitral i aòrtica. Per registrar correctament aquesta circumstància es requereix un únic codi.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "La classificació conté un codi de combinació per a determinades afectacions simultànies de les vàlvules mitral i aòrtica."
+  },
+  {
+    "question": "Pacient amb mieloma múltiple en tractament amb quimioteràpia acudeix a urgències per aparició de llagues doloroses a la boca que s’estenen fins a l’esòfag. Es diagnostica una mucositis secundària al tractament quimioteràpic. El codi del diagnòstic principal és T45.1X5A.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "En un efecte advers correctament administrat, primer s'identifica la manifestació (mucositis) i després el fàrmac responsable; T45.1X5A no és el DP."
+  },
+  {
+    "question": "Pacient que acudeix a urgències per hematèmesi important d’inici brusc. Les proves diagnòstiques indiquen que la causa de l’hematèmesi és una úlcera gàstrica. El codi del diagnòstic principal és K92.0.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "L'hematèmesi és la manifestació d'una úlcera gàstrica diagnosticada amb hemorràgia; el diagnòstic principal ha de reflectir l'úlcera hemorràgica, no només el símptoma."
+  },
+  {
+    "question": "Pacient que ingressa per tractament quirúrgic d’una hèrnia umbilical estrangulada. El codi del diagnòstic principal és K42.0.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Una hèrnia estrangulada es considera obstructiva; sense gangrena documentada, K42.0 recull la situació descrita."
+  },
+  {
+    "question": "El codi correcte per una hèrnia inguinal, en absència de més informació és K40.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "K40 és una categoria no un codi final complet; cal seleccionar la subcategoria adequada segons lateralitat, obstrucció, gangrena i recidiva."
+  },
+  {
+    "question": "El codi correcte per registrar una esofagogastroduodenoscòpia és 0DJ08ZZ.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "En una esofagogastroduodenoscòpia es codifica la inspecció de l'estructura més distal inspeccionada, el duodè, amb l'abordatge endoscòpic per orifici natural."
+  },
+  {
+    "question": "Per construir el codi del procediment de creació d’una duodenostomia d’alimentació s’ha de seleccionar el tipus de procediment “derivació”.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "La creació d'una comunicació del duodè amb l'exterior correspon a una derivació en el sistema PCS."
+  },
+  {
+    "question": "La col·locació d’una banda gàstrica al voltant de l’estómac per reduir-ne el volum es codifica amb el tipus de procediment “oclusió”.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Una banda gàstrica redueix el calibre de l'estómac: correspon restricció, no oclusió."
+  },
+  {
+    "question": "Pacient amb DM1 (tractat amb insulina) i insuficiència renal crònica en fase terminal (requereix sessions de diàlisi 3 dies per setmana) acudeix a l’hospital per rebre una sessió de diàlisi. Per registrar correctament aquesta situació es requereixen únicament 3 codis de diagnòstics.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Segons l'EAC, la sessió de diàlisi es representa amb el diagnòstic renal diabètic, la insuficiència renal terminal i la dependència de diàlisi; la insulina és pròpia del tractament de DM1."
+  },
+  {
+    "question": "Gestant de 12 setmanes amb DM1 diagnosticada als 7 anys (controlada amb insulina) acudeix a visita rutinària de control de l’embaràs. El codi del diagnòstic principal en aquest cas és O24.414.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "O24.414 és diabetis gestacional controlada amb fàrmacs; la pacient presenta diabetis tipus 1 preexistent, que requereix codificació obstètrica de DM1."
+  },
+  {
+    "question": "Pacient amb polimiàlgia reumàtica en tractament amb comprimits de prednisona, consulta per quadre de poliúria de diverses setmanes d’evolució. Presenta una glucèmia en dejú de 215 mg/dL. Es diagnostica una diabetis mellitus secundària al tractament amb prednisona. El codi del diagnòstic principal en aquest cas és T38.0X5A.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "La diabetis secundària a l'ús correcte de prednisona es codifica primer com a diabetis induïda per fàrmacs; el codi d'efecte advers es dóna addicionalment."
+  },
+  {
+    "question": "Pacient amb DM2 i cataracta a l’ull dret. En absència de més informació, hem de considerar aquesta cataracta com una conseqüència de la diabetis i donar, per tant, un codi de combinació.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "La relació entre DM2 i cataracta és presumpta en l'índex alfabètic si el facultatiu no n'indica una etiologia diferent."
+  },
+  {
+    "question": "Pacient amb DM2 (en tractament amb comprimits de metformina), retinopatia proliferativa a l’ull dret i insuficiència renal crònica (fase 2) ingressa per tractament d’una úlcera diabètica crònica al dit gros del peu dret. Per registrar correctament aquest cas es requereixen 6 codis de diagnòstics.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Cal reflectir diverses complicacions de DM2 (úlcera del peu, retinopatia i ERC), la localització de la lesió, el grau de malaltia renal i l'ús prolongat de metformina; l'EAC en compta sis."
+  },
+  {
+    "question": "Pacient que acudeix a l’hospital per quadre de febre, disúria i pol·laciúria de dos dies d’evolució. Es diagnostica una infecció urinària per Escherichia coli. En aquest cas, a part de codificar la infecció urinària i el microorganisme causant, també cal codificar la febre, la disúria i la pol·laciúria.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "La febre, la disúria i la pol·laciúria són símptomes habituals de la infecció urinària i no es codifiquen separadament si són integrals."
+  },
+  {
+    "question": "Pacient que acudeix a urgències amb dolor lumbar i síndrome miccional. El cultiu d’orina mostra la presència de Proteus mirabilis. Es diagnostica una pielonefritis aguda. La codificació correcta per aquest cas és. DP: N10 DS: N39.0 DS: B96.20",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "No s'afegeix N39.0 a una pielonefritis aguda ja codificada amb N10; a més, B96.20 identifica E. coli, no Proteus mirabilis."
+  },
+  {
+    "question": "Pacient que ingressa per tractament quirúrgic d’un càncer de pròstata. Després de l’operació es col·loca una sonda vesical. Al tercer dia del postoperatori, es produeix una infecció urinària per Klebsiella. A l’informe d’alta es fa constar la relació causal entre el sondatge urinari i aquesta infecció. El codi correcte per registrar aquesta relació és T83.511S",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Una infecció relacionada amb sonda durant l'hospitalització requereix el codi de complicació amb el caràcter de contacte que pertoqui; S identifica seqüela, no infecció activa."
+  },
+  {
+    "question": "La paraula clau adequada per trobar el codi d’una insuficiència renal aguda a partir de l’índex alfabètic no és “insuficiència” sinó “fallida” (“fallo”).",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Per localitzar aquest tipus de diagnòstic a l'índex alfabètic s'utilitza la ruta 'fallida renal aguda'."
+  },
+  {
+    "question": "Pacient amb HTA, insuficiència cardíaca congestiva i insuficiència renal crònica en estadi terminal, acudeix a l’hospital per rebre una sessió de diàlisi. El codi del diagnòstic principal és I12.0.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Si coexisteixen HTA, insuficiència cardíaca i malaltia renal crònica, s'ha de considerar I13. A més, el motiu d'ingrés és una sessió de diàlisi, no automàticament I12.0."
+  },
+  {
+    "question": "La creació d’una fístula arteriovenosa interna en pacients que s’hauran de sotmetre a diàlisi, es codifica amb el tipus de procediment “derivació”.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "La fístula arteriovenosa connecta dos vasos i crea un nou recorregut per a la sang: és una derivació."
+  },
+  {
+    "question": "Pacient amb diagnòstic d’epilèpsia des de fa 3 anys, és portat a urgències per quadre de convulsions. El codi del diagnòstic principal en aquest cas és R56.9.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Les convulsions són manifestacions de l'epilèpsia ja diagnosticada; es codifica el trastorn epilèptic, no el símptoma R56.9."
+  },
+  {
+    "question": "Pacient alcohòlic és portat a urgències per quadre d’al·lucinacions visuals. El codi del diagnòstic principal en aquest cas és R44.1.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Les al·lucinacions vinculades a un trastorn per consum d'alcohol es codifiquen amb la categoria diagnòstica apropiada, no només com a símptoma R44.1."
+  },
+  {
+    "question": "Gestant de 13 setmanes ingressa per una apendicitis aguda. El codi del diagnòstic principal en aquest cas és O99.611.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "L'apendicitis complica l'embaràs i s'aplica la prioritat del capítol 15; a les 13 setmanes correspon el primer trimestre per a aquesta codificació."
+  },
+  {
+    "question": "Gestant de 26 setmanes diagnosticada de pneumònia per COVID 19. Per registrar correctament aquest cas es requereixen 4 codis.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Per a pneumònia per COVID-19 en gestant es combinen el codi obstètric de la infecció, U07.1, el codi de pneumònia i les setmanes de gestació."
+  },
+  {
+    "question": "Gestant de 15 setmanes acudeix a urgències amb una ferida al dit polze esquerre. La ferida s’ha produït accidentalment amb un ganivet mentre cuinava a la cuina de casa seva. S’apliquen punts de sutura i la pacient és enviada a casa seva al cap de poques hores sense més complicacions. La codificació correcta dels diagnòstics i les causes externes d’aquest cas és: DP: O9A.212 / DS: S61.002A / DS: Z3A.25 / CE: W26.0XXA / CE: Y92.000 / Y93.G3",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "El plantejament barreja codis i dades incompatibles: per una lesió incidental menor es pot utilitzar Z33.1, i 15 setmanes no són Z3A.25."
+  },
+  {
+    "question": "Gestant de 12+2 setmanes amb embaràs tubàric dret ingressa per sotmetre’s a una salpingectomia parcial dreta. En un cas com aquest, no és necessari codificar les setmanes de gestació.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "L'embaràs tubàric és un embaràs amb resultat abortiu; la categoria Z3A no s'hi assigna."
+  },
+  {
+    "question": "Gestant de 36 setmanes acudeix a urgències amb dinàmica de part. Al cap de 2h es produeix un part vaginal normal que és assistit manualment sense complicacions. Neix un nadó sa. El codi del diagnòstic principal en aquest cas és O80.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Un part a 36 setmanes és prematur, de manera que no compleix els requisits d'O80, reservat al part a terme no complicat."
+  },
+  {
+    "question": "Gestant fumadora de 39+2 setmanes acudeix a urgències en treball de part. Al cap de 6h es produeix un part vaginal normal que és assistit manualment sense complicacions. Neix un nadó sa. El codi del diagnòstic principal en aquest cas és O99.334.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "El tabaquisme que complica el part requereix un codi del capítol 15, O99.334, que exclou utilitzar O80 conjuntament."
+  },
+  {
+    "question": "Gestant de bessons de 38+6 setmanes acudeix a urgències en treball de part. Al cap de 6h es produeix un part vaginal normal que és assistit manualment sense complicacions. Neixen dos nadons sans. El codi del diagnòstic principal en aquest cas és O80.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "O80 exigeix un únic nadó viu: el part de bessons, encara que sigui vaginal i sense complicacions, no hi encaixa."
+  },
+  {
+    "question": "Gestant de 39+4 setmanes acudeix a urgències amb dinàmica uterina. Al cap de 5 hores es produeix un part vaginal normal (prèvia amniotomia i episiotomia) que és assistit manualment sense complicacions, naixent un nadó sa. El codi del diagnòstic principal en aquest cas és O80.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "L'amniotomia i l'episiotomia són maniobres compatibles amb la consideració de part normal en absència d'altres complicacions."
+  },
+  {
+    "question": "Gestant de bessons de 39+5 setmanes acudeix a urgències amb dinàmica uterina. Al cap de 6 hores es produeix un part vaginal normal que és assistit manualment sense complicacions, naixent dos nadons sans. El codi correcte per registrar el resultat del part en aquest cas és Z38.30.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "El resultat del part de bessons vius es codifica amb Z37.2 en l'episodi matern; Z38 correspon a una altra categoria i no és l'opció correcta."
+  },
+  {
+    "question": "Gestant de 42+2 setmanes ingressa de forma programada per inducció del part. El codi del diagnòstic principal en aquest cas és O48.0.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "A les 42+2 setmanes cal considerar l'embaràs prolongat (O48.1), no el postterme O48.0."
+  },
+  {
+    "question": "Gestant de 41 anys i 38+2 setmanes acudeix a urgències amb dinàmica de part. Al cap de 3 hores es produeix un part vaginal normal que és assistit manualment sense complicacions. Neix un nadó sa. El codi del diagnòstic principal en aquest cas és O80.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "L'edat materna superior a 35 anys, sense complicacions ni altres codis obstètrics durant el part, no obliga a utilitzar O09 i pot mantenir-se O80."
+  },
+  {
+    "question": "Primigesta de 39 anys i 10 setmanes acudeix a visita rutinària de control de l’embaràs. El codi del diagnòstic principal en aquest cas és Z34.01.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "La supervisió d'una primigesta de 39 anys és supervisió d'embaràs d'alt risc (O09), no supervisió d'embaràs normal Z34."
+  },
+  {
+    "question": "Gestant de 37+1s acudeix a urgències per RPM. Es decideix ingressar la pacient per observació i al cap de 6h s’inicia espontàniament el treball de part. El codi del diagnòstic principal en aquest cas és O42.013.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "La ruptura prematura de membranes amb inici de treball de part al cap de sis hores requereix el codi O42 segons el temps i la situació; O42.013 no representa adequadament aquest episodi."
+  },
+  {
+    "question": "Gestant de 15 setmanes (és el seu tercer embaràs) amb DM1 diagnosticada als 9 anys (porta una bomba d’insulina), acudeix a consultes externes per visita rutinària de control de l’embaràs. El codi del diagnòstic principal en aquest cas és O24.414.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "La diabetis tipus 1 prèvia a l'embaràs no és diabetis gestacional: O24.414 no correspon, encara que la pacient utilitzi insulina."
+  },
+  {
+    "question": "Gestant de 19+4 setmanes que acudeix a l’hospital per biòpsia d’una massa sospitosa a la mama dreta, situada al quadrant superior extern. Es diagnostica un adenocarcinoma ductal. El codi CIM-10-MC del diagnòstic principal en aquest cas és C50.411.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Una neoplàsia maligna que complica l'embaràs exigeix primer un codi del capítol 15, seguit del codi específic del tumor."
+  },
+  {
+    "question": "Gestant de 39+3 setmanes amb diagnòstic d’epilèpsia des dels 12 anys acudeix a l’hospital per inici del treball de part. Al cap de 2 hores es produeix un part vaginal normal que és assistit manualment sense complicacions. Neix un nadó sa. El codi del diagnòstic principal en aquest cas és O99.354.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "L'epilèpsia preexistent és una malaltia del sistema nerviós que complica el part, per la qual cosa correspon el codi obstètric O99.354."
+  },
+  {
+    "question": "Tots els procediments que es practiquen durant l’embaràs o el part es registren amb codis de la secció d’obstetrícia.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "No tots els procediments de gestants són de la secció Obstetrícia; molts corresponen a la secció Mèdica i Quirúrgica o a altres seccions."
+  },
+  {
+    "question": "En els parts que requereixen una episiotomia, no és necessari codificar el procediment d’episiorràfia.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "L'episiorràfia és el tancament integral de l'episiotomia i no es codifica com a procediment addicional separat."
+  },
+  {
+    "question": "Gestant de 13 setmanes que ingressa per interrupció voluntària de l’embaràs. S’administra misoprostol per via intravaginal. En aquest cas, el codi correcte per registrar aquest procediment és 3E0P7VZ.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "La via intravaginal d'administració de misoprostol s'ha de reflectir segons el valor de via de la taula d'administració; el codi proposat no correspon a aquest cas."
+  },
+  {
+    "question": "Gestant de 37 setmanes acudeix a l’hospital per part en curs. Tot i que el fetus ve de natges, es produeix un part vaginal que és assistit manualment sense complicacions. El codi del diagnòstic principal en aquest cas és O64.1XX0.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "La presentació de natges no és part normal O80; però O64.1XX0 implica una obstrucció de part no descrita en aquest enunciat."
+  },
+  {
+    "question": "En un pacient que ja ingressa amb sèpsia secundària a una pielonefritis, la sèpsia serà normalment el diagnòstic principal.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Si la sèpsia ja existeix a l'ingrés, té prioritat sobre la infecció local que l'ha originada."
+  },
+  {
+    "question": "Quan la sèpsia apareix després de l'ingrés per una infecció urinària, la sèpsia passa automàticament a ser el diagnòstic principal.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "La sepsis que es desenvolupa després d'un ingrés per ITU és diagnòstic secundari; la infecció que va motivar l'ingrés continua com a DP."
+  },
+  {
+    "question": "Una bacterièmia documentada permet codificar una sèpsia encara que el facultatiu no l'hagi diagnosticada.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "La bacterièmia només indica bacteris a la sang; no equival a un diagnòstic de sèpsia."
+  },
+  {
+    "question": "Una infecció urinària per E. coli pot requerir un codi per a la localització i un altre per al microorganisme.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "N39.0 pot indicar la infecció urinària i B96.20 l'E. coli causant quan no hi ha un codi de combinació."
+  },
+  {
+    "question": "La febre habitual d'una infecció correctament diagnosticada sempre exigeix un codi addicional R50.9.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Els símptomes integrals, com la febre habitual, no es codifiquen per separat quan la infecció està establerta."
+  },
+  {
+    "question": "Una resistència antibiòtica documentada pot requerir un codi addicional de la categoria Z16.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Quan es documenta resistència a antibiòtics i no queda inclosa en un codi de combinació, es pot requerir un codi Z16."
+  },
+  {
+    "question": "Per codificar una sèpsia greu amb fallida respiratòria, cal que estigui documentada la relació de la fallida orgànica amb la sèpsia.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "La fallida orgànica ha d'estar relacionada amb la sèpsia per codificar-la com a sèpsia greu; la coexistència sola no és suficient."
+  },
+  {
+    "question": "Un pacient VIH positiu amb antecedents d'una malaltia definitòria de sida s'ha de codificar amb Z21 si actualment està asimptomàtic.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Una vegada existeix una malaltia definidora de sida, es codifica B20 també en episodis posteriors encara que el pacient sigui asimptomàtic."
+  },
+  {
+    "question": "En una pneumònia confirmada per COVID-19 poden ser necessaris els codis U07.1 i J12.82.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "La pneumònia per COVID-19 confirmada pot codificar-se amb U07.1 i J12.82, que identifica la pneumònia deguda a coronavirus."
+  },
+  {
+    "question": "Una neoplàsia maligna sense especificació d'origen primari o secundari es classifica sempre com de comportament incert.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "No és 'comportament incert': una neoplàsia ja documentada com a maligna es codifica segons la localització i les regles de primària/secundària."
+  },
+  {
+    "question": "Un càncer extirpat prèviament que continua rebent tractament antineoplàstic s'ha de considerar actiu.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "El càncer es manté actiu quan continua en tractament antineoplàstic dirigit a aquella neoplàsia."
+  },
+  {
+    "question": "Si un pacient acudeix exclusivament a una sessió de quimioteràpia, el codi de contacte per a tractament pot ser el diagnòstic principal.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "En una visita exclusivament per quimioteràpia, Z51.11 és el codi de contacte i va primer."
+  },
+  {
+    "question": "En un ingrés per tractar el dolor causat per metàstasis, el dolor neoplàstic pot ser el diagnòstic principal.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Si l'objecte de l'ingrés és controlar el dolor degut al càncer, G89.3 pot ser el DP."
+  },
+  {
+    "question": "En una fractura patològica causada per metàstasis sempre es codifica com a diagnòstic principal una fractura traumàtica de la categoria S.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Una fractura patològica per metàstasi pertany a M84.5-, no als codis traumàtics S."
+  },
+  {
+    "question": "Un IAM de fa 18 dies s'ha de classificar automàticament com a infart antic I25.2.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "F",
+    "explanation": "Als 18 dies, un IAM continua dins del període agut; I25.2 correspon a antecedent d'infart antic quan escau."
+  },
+  {
+    "question": "El període en què un IAM es considera agut comprèn els primers 28 dies.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Els primers 28 dies són el període de codificació d'infart agut segons el material docent."
+  },
+  {
+    "question": "Quan coexisteixen HTA i insuficiència cardíaca sense una altra causa documentada, pot correspondre un codi de la categoria I11.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Quan no hi ha etiologia alternativa documentada, la HTA amb IC es relaciona segons les convencions de la classificació (I11)."
+  },
+  {
+    "question": "L'HTA, la insuficiència cardíaca i la malaltia renal crònica, sense una etiologia alternativa documentada, orienten a la categoria I13.",
+    "options": [
+      "V",
+      "F"
+    ],
+    "answer": "V",
+    "explanation": "Si HTA, IC i ERC coexisteixen sense una altra causa documentada, cal valorar I13, amb els codis addicionals corresponents."
+  },
+  {
+    "question": "Una angioplàstia coronària amb stent té com a tipus de procediment arrel inserció.",
     "options": [
       "V",
       "F"
