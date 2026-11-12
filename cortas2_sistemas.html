@@ -152,6 +152,19 @@
     color: #555;
   }
 
+  .explanation {
+    display: none;
+    margin-top: 18px;
+    padding: 15px;
+    background: #f0f4f8;
+    border-left: 4px solid #2196F3;
+    border-radius: 5px;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #263238;
+    overflow-wrap: anywhere;
+  }
+
   @media (max-width: 600px) {
     .question p {
       font-size: 28px;
@@ -617,8 +630,6 @@ const allQuestions = [
 
   
 ];
-
-
 /* ============================
    VARIABLES PRINCIPALES
 ============================ */
@@ -749,6 +760,20 @@ function showQuestion() {
   const optionsDiv = document.createElement("div");
   optionsDiv.className = "options";
 
+  // Explicación de la pregunta: se muestra después de responder.
+  const explanationDiv = document.createElement("div");
+  explanationDiv.className = "explanation";
+  if (q.explanation) {
+    const explanationTitle = document.createElement("strong");
+    explanationTitle.textContent = "Explicación: ";
+    explanationDiv.appendChild(explanationTitle);
+    explanationDiv.appendChild(document.createTextNode(q.explanation));
+  }
+
+  const showExplanation = () => {
+    if (q.explanation) explanationDiv.style.display = "block";
+  };
+
   const filteredOptions = q.options.filter(opt => opt.trim() !== "");
 
   // Preguntas cortas: mostramos la solución al pulsar el botón.
@@ -760,6 +785,7 @@ function showQuestion() {
       showAnswerBtn.disabled = true;
       showAnswerBtn.textContent = q.answer;
       showAnswerBtn.classList.add("correct");
+      showExplanation();
 
       const originalIndex = q.originalIndex;
       if (!answeredQuestions.includes(originalIndex)) {
@@ -773,6 +799,7 @@ function showQuestion() {
 
     optionsDiv.appendChild(showAnswerBtn);
     div.appendChild(optionsDiv);
+    div.appendChild(explanationDiv);
     container.appendChild(div);
     return;
   }
@@ -813,6 +840,7 @@ function showQuestion() {
       }
 
       resultDiv.textContent = `Puntuación: ${score}/${quizData.length}`;
+      showExplanation();
       nextBtn.style.display = "block";
     };
 
@@ -820,6 +848,7 @@ function showQuestion() {
   });
 
   div.appendChild(optionsDiv);
+  div.appendChild(explanationDiv);
   container.appendChild(div);
 }
 
@@ -854,3 +883,4 @@ prepareQuiz();
 
 </body>
 </html>
+
