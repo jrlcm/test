@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz IPO2</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0 5px 0;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .top-panel {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .top-panel p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    padding-top: 10px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .question p {
+    font-size: 34px;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 30px 0;
+  }
+
+  .options {
+    margin-top: 20px;
+  }
+
+  .options button {
+    display: block;
+    margin: 10px 0;
+    padding: 15px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+
+  .options button:hover {
+    background: #ddd;
+  }
+
+  .options button:disabled {
+    cursor: not-allowed;
+  }
+
+  .correct {
+    background-color: #c8e6c9 !important;
+    border-color: #388e3c !important;
+    color: #2e7d32 !important;
+  }
+
+  .wrong {
+    background-color: #ffcdd2 !important;
+    border-color: #d32f2f !important;
+    color: #c62828 !important;
+  }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 10px 0;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  button.main-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.main-btn:hover {
+    background: #1976D2;
+  }
+
+  button.reset-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #e53935;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.reset-btn:hover {
+    background: #c62828;
+  }
+
+  .small-text {
+    font-size: 15px !important;
+    font-weight: normal !important;
+    color: #555;
+  }
+
+  @media (max-width: 600px) {
+    .question p {
+      font-size: 28px;
+    }
+
+    .options button {
+      font-size: 20px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Quiz Gestion Administrativa</h1>
+<div class="subtitle">Preguntas aleatorias sin repetir hasta completar todo el temario</div>
+
+<div class="top-panel">
+  <p id="totalQuestionsText">Preguntas totales: 0</p>
+  <p id="pendingQuestionsText">Preguntas pendientes: 0</p>
+  <p id="completedQuestionsText">Preguntas realizadas: 0</p>
+</div>
+
+<div class="quiz-container" id="quiz-container"></div>
+
+<div class="result" id="result">Puntuación: 0</div>
+
+<div class="buttons">
+  <button id="nextBtn" class="main-btn" style="display:none;">Siguiente</button>
+  <button id="resetBtn" class="reset-btn">Reiniciar progreso</button>
+</div>
+
+<script>
+/* ============================
+   FUNCIÓN PARA MEZCLAR ARRAYS
+============================ */
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+
+/* ============================
+   AÑADE AQUÍ TUS PREGUNTAS
+   No tienes que indicar cuántas hay.
+   El código las cuenta automáticamente.
+============================ */
+const allQuestions = [
+  
+ {
+    "question": "B.1 - En quin grup del CMBD d’hospitals d’aguts es registra el CIP?",
+    "options": [],
+    "answer": "IP — Identificativa personal",
+    "explanation": "El código identifica al paciente."
+  },
+  {
+    "question": "B.1 - En quin grup es registra el número d’història clínica del pacient?",
+    "options": [],
+    "answer": "IP — Identificativa personal",
+    "explanation": "El manual incluye el número de historia clínica entre las variables identificativas personales."
+  },
+  {
+    "question": "B.1 - En quin grup es registra la data de naixement?",
+    "options": [],
+    "answer": "IP — Identificativa personal",
+    "explanation": "Es un dato de identificación personal."
+  },
+  {
+    "question": "B.1 - En quin grup es registra el municipi de residència?",
+    "options": [],
+    "answer": "IP — Identificativa personal",
+    "explanation": "El municipio es un dato personal de residencia."
+  },
+  {
+    "question": "B.1 - En quin grup es registra el sexe del pacient?",
+    "options": [],
+    "answer": "IP — Identificativa personal",
+    "explanation": "El sexo consta en el bloque de identificación personal."
+  },
+  {
+    "question": "B.1 - Quina resposta donaries si la dada que et demanen classificar és el nom i els cognoms del pacient?",
+    "options": [],
+    "answer": "NO — No forma parte del CMBD",
+    "explanation": "El CMBD de agudos utiliza identificadores como el CIP y el número de historia clínica."
+  },
+  {
+    "question": "B.1 - En quin grup es registra que l’ingrés va ser programat?",
+    "options": [],
+    "answer": "P — Proceso",
+    "explanation": "El carácter programado o urgente describe las circunstancias de admisión."
+  },
+  {
+    "question": "B.1 - En quin grup es registra que el pacient va ingressar a hospitalització convencional?",
+    "options": [],
+    "answer": "P — Proceso",
+    "explanation": "La hospitalización convencional describe el tipo de actividad."
+  },
+  {
+    "question": "B.1 - En quin grup es registra la data d’ingrés?",
+    "options": [],
+    "answer": "P — Proceso",
+    "explanation": "Forma parte de los datos de inicio de la asistencia."
+  },
+  {
+    "question": "B.1 - En quin grup es registra la data d’alta?",
+    "options": [],
+    "answer": "P — Proceso",
+    "explanation": "Forma parte de los datos de finalización de la asistencia."
+  },
+  {
+    "question": "B.1 - En quin grup es registra una alta a domicili?",
+    "options": [],
+    "answer": "P — Proceso",
+    "explanation": "El domicilio se registra como circunstancia o destino del alta."
+  },
+  {
+    "question": "B.1 - En quin grup es registra el règim econòmic de l’episodi?",
+    "options": [],
+    "answer": "P — Proceso",
+    "explanation": "El campo Finan pertenece a las variables de proceso."
+  },
+  {
+    "question": "B.1 - En quin grup es registra una diabetis tipus 2 que ha estat atesa durant l’ingrés?",
+    "options": [],
+    "answer": "CA — Clínico-asistencial",
+    "explanation": "Es un diagnóstico del episodio."
+  },
+  {
+    "question": "B.1 - En quin grup es registra una causa externa, com ara una caiguda en una escala mecànica?",
+    "options": [],
+    "answer": "CA — Clínico-asistencial",
+    "explanation": "Las causas externas tienen campos propios en el bloque clínico-asistencial."
+  },
+  {
+    "question": "B.1 - En quin grup es registra la implantació d’un marcapassos durant l’episodi?",
+    "options": [],
+    "answer": "CA — Clínico-asistencial",
+    "explanation": "Es un procedimiento practicado durante la asistencia."
+  },
+  {
+    "question": "B.1 - En quin grup es registra la ventilació mecànica practicada durant quatre dies?",
+    "options": [],
+    "answer": "CA — Clínico-asistencial",
+    "explanation": "La ventilación mecánica es un procedimiento."
+  },
+  {
+    "question": "B.1 - En quin grup es registra que el pacient ha passat quatre dies a l’UCI?",
+    "options": [],
+    "answer": "E — Específica del ámbito de hospitalización de agudos",
+    "explanation": "Los días de estancia en UCI tienen un campo específico."
+  },
+  {
+    "question": "B.1 - En quin grup es registra la puntuació APACHE II?",
+    "options": [],
+    "answer": "E — Específica del ámbito de hospitalización de agudos",
+    "explanation": "El campo F_Apache recoge el dato de la primera estancia en UCI."
+  },
+  {
+    "question": "B.1 - En quin grup es registra l’índex de Barthel a l’alta?",
+    "options": [],
+    "answer": "E — Específica del ámbito de hospitalización de agudos",
+    "explanation": "El Barthel corresponde al campo A_funcional."
+  },
+  {
+    "question": "B.1 - En quin grup es registra el marcador que indica si el diagnòstic era present a l’ingrés?",
+    "options": [],
+    "answer": "CA — Clínico-asistencial",
+    "explanation": "El marcador POA acompaña al diagnóstico del episodio."
+  },
+  {
+    "question": "B.1 - En quin grup es registra una pròtesi de genoll que el pacient ja portava, si aquest estat és rellevant per a l’episodi?",
+    "options": [],
+    "answer": "CA — Clínico-asistencial",
+    "explanation": "Puede registrarse como estado clínico mediante un código Z."
+  },
+  {
+    "question": "B.1 - En quin grup es registra el número d’assistència, Num_assis, segons el manual?",
+    "options": [],
+    "answer": "Identificación del registro",
+    "explanation": "El número de asistencia identifica el registro del episodio."
+  },
+  {
+    "question": "B.2 - Què significa CMBD i què recull el d’hospitals d’aguts?",
+    "options": [],
+    "answer": "Conjunto Mínimo Básico de Datos. Recoge información normalizada de los episodios asistenciales.",
+    "explanation": "Los centros notifican a CatSalut variables personales, de proceso y clínico-asistenciales, entre otras."
+  },
+  {
+    "question": "B.2 - Quants diagnòstics secundaris es poden notificar per alta d’aguts segons el manual treballat a l’EAC?",
+    "options": [],
+    "answer": "14",
+    "explanation": "El diagnóstico principal ocupa un campo aparte. El total máximo es de 15 diagnósticos."
+  },
+  {
+    "question": "B.2 - Amb quina classificació es registren els diagnòstics i amb quina els procediments al CMBD d’aguts?",
+    "options": [],
+    "answer": "CIM-10-MC para diagnósticos y CIM-10-SCP para procedimientos",
+    "explanation": "La modificación clínica y el sistema de procedimientos tienen estructuras distintas."
+  },
+  {
+    "question": "B.2 - A quins diagnòstics del CMBD d’aguts s’associa el marcador de presència a l’ingrés?",
+    "options": [],
+    "answer": "Al diagnóstico principal y a los secundarios",
+    "explanation": "El campo del principal es POAP y los secundarios tienen sus campos POA."
+  },
+  {
+    "question": "B.2 - Què indica la variable D_PP?",
+    "options": [],
+    "answer": "Fecha de inicio del procedimiento principal",
+    "explanation": "El manual la distingue de la fecha de ingreso y de la de alta."
+  },
+  {
+    "question": "B.2 - Què indica la variable Disp_PP?",
+    "options": [],
+    "answer": "Tipo de dispositivo asistencial donde se realiza el procedimiento principal",
+    "explanation": "El campo se refiere al recurso asistencial donde se practica."
+  },
+  {
+    "question": "B.2 - Quina escala es registra a A_funcional i en quin moment?",
+    "options": [],
+    "answer": "Índice de Barthel al alta",
+    "explanation": "Evalúa la autonomía en actividades básicas de la vida diaria."
+  },
+  {
+    "question": "B.2 - Quina escala es registra a A_cognitiu i en quin moment?",
+    "options": [],
+    "answer": "Índice de Pfeiffer al alta",
+    "explanation": "Evalúa el estado cognitivo."
+  },
+  {
+    "question": "B.2 - Quina escala es registra a A_social i en quin moment?",
+    "options": [],
+    "answer": "Escala de Gijón al alta",
+    "explanation": "Evalúa las condiciones o la problemática social."
+  },
+  {
+    "question": "B.2 - Quants problemes de salut es podien notificar per pacient en el manual de CAP utilitzat a l’EAC de comparació?",
+    "options": [],
+    "answer": "6",
+    "explanation": "La cifra corresponde al manual de atención primaria empleado en esa EAC."
+  },
+  {
+    "question": "B.2 - Amb quin catàleg es codificaven els diagnòstics d’infermeria al CAP en la comparació de l’EAC?",
+    "options": [],
+    "answer": "NANDA II",
+    "explanation": "La EAC distingue la taxonomía de diagnósticos del catálogo de intervenciones."
+  },
+  {
+    "question": "B.2 - Amb quina classificació es codificaven les intervencions d’infermeria al CAP en la comparació de l’EAC?",
+    "options": [],
+    "answer": "NIC",
+    "explanation": "NIC es la Clasificación de Intervenciones de Enfermería."
+  },
+  {
+    "question": "B.3 - Quin àmbit assistencial utilitza la CIAP-2 per classificar problemes de salut i processos d’atenció?",
+    "options": [],
+    "answer": "Atención primaria",
+    "explanation": "La CIAP-2 se diseñó para el contexto de la atención primaria."
+  },
+  {
+    "question": "B.3 - Quants capítols té la CIAP-2 i què identifica la lletra inicial del codi?",
+    "options": [],
+    "answer": "17 capítulos. La letra identifica el capítulo.",
+    "explanation": "Los dos dígitos completan el código dentro del capítulo."
+  },
+  {
+    "question": "B.3 - A quin capítol correspon la lletra A de la CIAP-2?",
+    "options": [],
+    "answer": "Problemas generales e inespecíficos",
+    "explanation": "La fiebre es un ejemplo de este grupo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica els problemes de l’aparell digestiu a la CIAP-2?",
+    "options": [],
+    "answer": "D",
+    "explanation": "El vómito figura entre sus ejemplos."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica els problemes de l’aparell circulatori a la CIAP-2?",
+    "options": [],
+    "answer": "K",
+    "explanation": "El infarto agudo de miocardio pertenece a este capítulo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica els problemes de l’aparell locomotor a la CIAP-2?",
+    "options": [],
+    "answer": "L",
+    "explanation": "El dolor muscular es un ejemplo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica els problemes de l’aparell respiratori a la CIAP-2?",
+    "options": [],
+    "answer": "R",
+    "explanation": "La gripe pertenece a este capítulo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica els problemes psicològics a la CIAP-2?",
+    "options": [],
+    "answer": "P",
+    "explanation": "El estrés agudo figura en este capítulo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica els problemes de pell i fàneres a la CIAP-2?",
+    "options": [],
+    "answer": "S",
+    "explanation": "El herpes simple figura en este capítulo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica els problemes endocrins, metabòlics i nutricionals a la CIAP-2?",
+    "options": [],
+    "answer": "T",
+    "explanation": "La obesidad es un ejemplo de este grupo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica els problemes de l’aparell urinari a la CIAP-2?",
+    "options": [],
+    "answer": "U",
+    "explanation": "La hematuria pertenece al capítulo urinario."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica la planificació familiar, l’embaràs, el part i el puerperi a la CIAP-2?",
+    "options": [],
+    "answer": "W",
+    "explanation": "La hemorragia posparto es un ejemplo de este capítulo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica els problemes socials a la CIAP-2?",
+    "options": [],
+    "answer": "Z",
+    "explanation": "La pobreza y las dificultades económicas pertenecen a este capítulo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica el capítol de sang i sistema immunitari a la CIAP-2?",
+    "options": [],
+    "answer": "B",
+    "explanation": "La leucemia figura en este capítulo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica els problemes de l’ull i annexos a la CIAP-2?",
+    "options": [],
+    "answer": "F",
+    "explanation": "El ojo rojo es un ejemplo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica els problemes de l’aparell auditiu a la CIAP-2?",
+    "options": [],
+    "answer": "H",
+    "explanation": "La sordera figura en este capítulo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica els problemes del sistema nerviós a la CIAP-2?",
+    "options": [],
+    "answer": "N",
+    "explanation": "La esclerosis múltiple figura en este capítulo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica l’aparell genital femení i les mames a la CIAP-2?",
+    "options": [],
+    "answer": "X",
+    "explanation": "El dolor menstrual pertenece a este capítulo."
+  },
+  {
+    "question": "B.3 - Quina lletra identifica l’aparell genital masculí a la CIAP-2?",
+    "options": [],
+    "answer": "Y",
+    "explanation": "La neoplasia maligna de próstata es un ejemplo."
+  },
+  {
+    "question": "B.4 - Què signifiquen les sigles INCLASNS?",
+    "options": [],
+    "answer": "Indicadores Clave del Sistema Nacional de Salud",
+    "explanation": "Permiten consultar y comparar indicadores sanitarios."
+  },
+  {
+    "question": "B.4 - Quina font utilitzaries per estudiar els problemes de salut atesos a l’atenció primària del SNS?",
+    "options": [],
+    "answer": "BDCAP — Base de Datos Clínicos de Atención Primaria",
+    "explanation": "Las EAC la emplean para analizar problemas de salud registrados en atención primaria."
+  },
+  {
+    "question": "B.4 - Quina dada temporal cal indicar quan comentes una taula d’INCLASNS?",
+    "options": [],
+    "answer": "El año al que se refieren los datos",
+    "explanation": "El año de referencia permite interpretar y comparar el indicador."
+  },
+  {
+    "question": "B.4 - Quines tres columnes demana l’EAC per comparar un indicador per comunitat autònoma i sexe?",
+    "options": [],
+    "answer": "Hombres, mujeres y total",
+    "explanation": "La columna total reúne ambos sexos."
+  },
+  {
+    "question": "B.4 - Si una taula està ordenada de menor a major pel valor total, on trobaràs la comunitat amb el valor més baix?",
+    "options": [],
+    "answer": "En la primera fila",
+    "explanation": "La ordenación se hace por la columna total."
+  },
+  {
+    "question": "B.4 - En un mapa de l’indicador per al total de la població, quins dos extrems et demana destacar l’EAC?",
+    "options": [],
+    "answer": "La comunidad con el valor mínimo y la comunidad con el valor máximo",
+    "explanation": "Se toman ambos valores de la columna total del mismo indicador y año."
+  },
+  {
+    "question": "B.5 - Què transforma una dada aïllada en informació interpretable?",
+    "options": [],
+    "answer": "El contexto",
+    "explanation": "Una cifra de presión arterial se interpreta según las circunstancias en que se tomó."
+  },
+  {
+    "question": "B.5 - Com es classifiquen els llits, el personal i els quiròfans dins el model d’entrades i resultats?",
+    "options": [],
+    "answer": "Entradas o inputs",
+    "explanation": "Son recursos con los que se presta la asistencia."
+  },
+  {
+    "question": "B.5 - Quin tipus d’informació són els articles científics i PubMed per a un hospital, segons l’origen?",
+    "options": [],
+    "answer": "Información externa",
+    "explanation": "Son fuentes de conocimiento generadas fuera del centro."
+  },
+  {
+    "question": "B.5 - Quin organisme és un exemple de nivell internacional en informació sanitària?",
+    "options": [],
+    "answer": "Organización Mundial de la Salud (OMS)",
+    "explanation": "El temario sitúa la OMS en el ámbito internacional."
+  },
+  {
+    "question": "B.5 - Quin sistema d’informació recull dades de l’atenció primària del Sistema Nacional de Salut?",
+    "options": [],
+    "answer": "SIAP",
+    "explanation": "Las siglas corresponden al Sistema de Información de Atención Primaria."
+  },
+  {
+    "question": "B.5 - Quines sigles designen la història clínica informatitzada d’atenció primària a Catalunya en el temari?",
+    "options": [],
+    "answer": "ECAP",
+    "explanation": "Es la aplicación que cita la EAC en el ámbito de atención primaria."
+  },
+  {
+    "question": "B.5 - Què designen les sigles SISCAT?",
+    "options": [],
+    "answer": "Sistema Sanitario Integral de Utilización Pública de Cataluña",
+    "explanation": "Es la denominación recogida en la EAC."
+  },
+  {
+    "question": "B.5 - Quina plataforma cita l’EAC per a la interoperabilitat entre proveïdors de salut a Catalunya?",
+    "options": [],
+    "answer": "IS3",
+    "explanation": "La plataforma permite el intercambio de información entre entidades proveedoras."
+  },
+  {
+    "question": "B.5 - Què és la interoperabilitat entre sistemes d’informació sanitària?",
+    "options": [],
+    "answer": "Capacidad de intercambiar y utilizar datos entre sistemas",
+    "explanation": "Los estándares facilitan que los datos conserven su significado."
+  },
+  {
+    "question": "B.5 - Quina diferència hi ha entre SNOMED CT i la CIM-10-MC pel que fa a la seva funció?",
+    "options": [],
+    "answer": "SNOMED CT es una terminología clínica y la CIM-10-MC es una clasificación de diagnósticos",
+    "explanation": "La terminología representa conceptos clínicos y la clasificación los agrupa con fines de codificación."
+  },
+  {
+    "question": "B.5 - Quin registre estatal recull activitat d’atenció sanitària especialitzada?",
+    "options": [],
+    "answer": "RAE-CMBD",
+    "explanation": "Las siglas corresponden al Registro de Actividad de Atención Sanitaria Especializada."
+  },
+  {
+    "question": "B.5 - Quina funció té un sistema de suport a la decisió clínica?",
+    "options": [],
+    "answer": "Ofrecer información que ayude a tomar decisiones clínicas",
+    "explanation": "Procesa datos para presentarlos de forma útil en el contexto asistencial."
+  },
+  {
+    "question": "B.5 - Quina diferència hi ha entre un centre sanitari i un servei sanitari?",
+    "options": [],
+    "answer": "El centro es el establecimiento y el servicio es la unidad asistencial que presta una actividad concreta",
+    "explanation": "Un centro puede reunir varios servicios."
+  }
+
+
+
+  
+];
+
+
+/* ============================
+   VARIABLES PRINCIPALES
+============================ */
+let answeredQuestions = JSON.parse(localStorage.getItem("answeredQuestions")) || [];
+let currentQuestion = 0;
+let score = 0;
+let quizData = [];
+
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const totalQuestionsText = document.getElementById("totalQuestionsText");
+const pendingQuestionsText = document.getElementById("pendingQuestionsText");
+const completedQuestionsText = document.getElementById("completedQuestionsText");
+
+
+/* ============================
+   ACTUALIZAR PANEL SUPERIOR
+============================ */
+function updateProgressPanel() {
+  const total = allQuestions.length;
+  const completed = answeredQuestions.length;
+  const pending = total - completed;
+
+  totalQuestionsText.textContent = `Preguntas totales: ${total}`;
+  pendingQuestionsText.textContent = `Preguntas pendientes: ${pending}`;
+  completedQuestionsText.textContent = `Preguntas realizadas: ${completed}`;
+}
+
+
+/* ============================
+   PREPARAR TEST
+============================ */
+function prepareQuiz() {
+  if (allQuestions.length === 0) {
+    container.innerHTML = `
+      <div class="question">
+        <p>No hay preguntas todavía.</p>
+        <p class="small-text">Añade preguntas dentro de la variable allQuestions.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Si ya has hecho todas, se reinicia automáticamente
+  if (answeredQuestions.length >= allQuestions.length) {
+    answeredQuestions = [];
+    localStorage.removeItem("answeredQuestions");
+
+    alert("Has completado todas las preguntas. Se reinicia el ciclo.");
+  }
+
+  updateProgressPanel();
+
+  let availableQuestions = allQuestions
+    .map((question, index) => index)
+    .filter(index => !answeredQuestions.includes(index));
+
+  let numberOfQuestionsToday = parseInt(
+    prompt(`¿Cuántas preguntas quieres hacer hoy? Te quedan ${availableQuestions.length} pendientes.`)
+  );
+
+  if (
+    isNaN(numberOfQuestionsToday) ||
+    numberOfQuestionsToday <= 0 ||
+    numberOfQuestionsToday > availableQuestions.length
+  ) {
+    numberOfQuestionsToday = availableQuestions.length;
+  }
+
+  shuffle(availableQuestions);
+
+  let selectedIndexes = availableQuestions.slice(0, numberOfQuestionsToday);
+
+  quizData = selectedIndexes.map(index => {
+    return {
+      ...allQuestions[index],
+      originalIndex: index
+    };
+  });
+
+  showQuestion();
+}
+
+
+/* ============================
+   MOSTRAR PREGUNTA
+============================ */
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if (currentQuestion >= quizData.length) {
+    updateProgressPanel();
+
+    const pending = allQuestions.length - answeredQuestions.length;
+
+    container.innerHTML = `
+      <div class="question">
+        <p>Quiz terminado</p>
+        <p>Tu puntuación final es ${score} de ${quizData.length}</p>
+        <p class="small-text">
+          Preguntas pendientes para otro día: ${pending}
+        </p>
+        ${
+          pending === 0
+          ? `<p class="small-text">Has completado todas las preguntas. La próxima vez se reiniciará el ciclo.</p>`
+          : `<p class="small-text">La próxima vez saldrán preguntas que todavía no has hecho.</p>`
+        }
+      </div>
+    `;
+
+    resultDiv.textContent = `Puntuación final: ${score}/${quizData.length}`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+
+  const div = document.createElement("div");
+  div.className = "question";
+
+  const p = document.createElement("p");
+  p.textContent = `${currentQuestion + 1}. ${q.question}`;
+  div.appendChild(p);
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+
+  // Preguntas cortas: mostramos la solución al pulsar el botón.
+  if (filteredOptions.length === 0) {
+    const showAnswerBtn = document.createElement("button");
+    showAnswerBtn.textContent = "Mostrar respuesta";
+
+    showAnswerBtn.onclick = () => {
+      showAnswerBtn.disabled = true;
+      showAnswerBtn.textContent = q.answer;
+      showAnswerBtn.classList.add("correct");
+
+      const originalIndex = q.originalIndex;
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(showAnswerBtn);
+    div.appendChild(optionsDiv);
+    container.appendChild(div);
+    return;
+  }
+
+  // Si quieres que siempre salga V primero y F segundo, comenta la línea siguiente:
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      // Guardamos esta pregunta como realizada justo al contestarla
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+
+      if (btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+
+        allBtns.forEach(b => {
+          if (b.dataset.correct === "true") {
+            b.classList.add("correct");
+          }
+        });
+      }
+
+      resultDiv.textContent = `Puntuación: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+
+/* ============================
+   BOTÓN SIGUIENTE
+============================ */
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+
+/* ============================
+   BOTÓN REINICIAR PROGRESO
+============================ */
+resetBtn.onclick = () => {
+  const confirmReset = confirm("¿Seguro que quieres reiniciar el progreso? Volverán a salir todas las preguntas.");
+
+  if (confirmReset) {
+    localStorage.removeItem("answeredQuestions");
+    location.reload();
+  }
+};
+
+
+/* ============================
+   INICIAR QUIZ
+============================ */
+prepareQuiz();
+</script>
+
+</body>
+</html>
