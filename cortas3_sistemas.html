@@ -204,7 +204,422 @@ function shuffle(array) {
 ============================ */
 const allQuestions = [
   
-     "question": "B.6 - Quin sistema orgànic correspon a una nefrolitotomia percutània?",
+    {
+    "question": "B.1 - Quin tipus de procediment consisteix a tallar i eliminar una part d’una estructura anatòmica sense substituir-la?",
+    "options": [],
+    "answer": "Escisión",
+    "explanation": "Se retira una porción de la estructura anatómica."
+  },
+  {
+    "question": "B.1 - Quin tipus de procediment consisteix a tallar i eliminar tota una estructura anatòmica sense substituir-la?",
+    "options": [],
+    "answer": "Resección",
+    "explanation": "Se retira por completo la estructura anatómica identificada."
+  },
+  {
+    "question": "B.1 - Quin tipus de procediment consisteix a treure una substància sòlida d’una estructura anatòmica?",
+    "options": [],
+    "answer": "Extirpación",
+    "explanation": "Es el tipo de procedimiento que se aplica, por ejemplo, al retirar un cálculo."
+  },
+  {
+    "question": "B.1 - Quin tipus de procediment permet treure o deixar sortir líquids o gasos d’una estructura anatòmica?",
+    "options": [],
+    "answer": "Drenaje",
+    "explanation": "Incluye la evacuación de líquido pleural y de ascitis."
+  },
+  {
+    "question": "B.1 - Quin tipus de procediment consisteix a trencar en fragments una substància sòlida dins d’una estructura anatòmica?",
+    "options": [],
+    "answer": "Fragmentación",
+    "explanation": "La litotricia de un cálculo es un ejemplo."
+  },
+  {
+    "question": "B.1 - Quin tipus de procediment consisteix a explorar visualment o manualment una estructura anatòmica?",
+    "options": [],
+    "answer": "Inspección",
+    "explanation": "El objetivo es examinar la estructura."
+  },
+  {
+    "question": "B.1 - Quin tipus de procediment consisteix a treure tota o part d’una estructura anatòmica aplicant-hi força?",
+    "options": [],
+    "answer": "Extracción",
+    "explanation": "La definición incluye técnicas que aplican tracción, succión o raspado."
+  },
+  {
+    "question": "B.1 - Quin tipus de procediment consisteix a introduir un dispositiu no biològic que fa una funció fisiològica sense substituir físicament una estructura?",
+    "options": [],
+    "answer": "Inserción",
+    "explanation": "El dispositivo cumple una función y la estructura anatómica se conserva."
+  },
+  {
+    "question": "B.1 - Quin tipus de procediment consisteix a tancar parcialment la llum d’una estructura tubular?",
+    "options": [],
+    "answer": "Restricción",
+    "explanation": "El cierre es parcial."
+  },
+  {
+    "question": "B.1 - Quin tipus de procediment consisteix a obrir una nova via de pas per al contingut d’una estructura tubular?",
+    "options": [],
+    "answer": "Derivación",
+    "explanation": "El contenido pasa por una vía distinta de la habitual."
+  },
+  {
+    "question": "B.2 - Quin annex recull les definicions dels tipus de procediment de la secció mèdica i quirúrgica?",
+    "options": [],
+    "answer": "Anexo A",
+    "explanation": "Recoge definiciones y ejemplos de los tipos de procedimiento."
+  },
+  {
+    "question": "B.2 - Quin annex consultaries si el nom d’una estructura anatòmica no apareix com a valor a la taula?",
+    "options": [],
+    "answer": "Anexo C",
+    "explanation": "Los términos clave de localizaciones anatómicas indican qué valor utilizar."
+  },
+  {
+    "question": "B.2 - L’angle esplènic del còlon no surt com a valor propi a la taula. Quina localització indica l’annex C?",
+    "options": [],
+    "answer": "Colon transverso",
+    "explanation": "La equivalencia se usa para codificar el procedimiento sobre el ángulo esplénico."
+  },
+  {
+    "question": "B.2 - Segons l’annex C, quina localització anatòmica correspon al tendó d’Aquil·les?",
+    "options": [],
+    "answer": "Tendón de la pierna",
+    "explanation": "Tendones es el sistema orgánico. Tendón de la pierna es la localización."
+  },
+  {
+    "question": "B.2 - Dins de Pell i Mama, quina localització anatòmica correspon a una berruga cutània situada al genoll?",
+    "options": [],
+    "answer": "Piel de la pierna",
+    "explanation": "El cuestionario del IOC asigna la piel de la rodilla a la pierna."
+  },
+  {
+    "question": "B.2 - En les taules gastrointestinals que ofereixen les opcions de tracte superior i inferior, a quin tracte pertany el duodè?",
+    "options": [],
+    "answer": "Tracto intestinal superior",
+    "explanation": "El tracto inferior comienza en el yeyuno según esta clasificación."
+  },
+  {
+    "question": "B.2 - A partir de quina estructura comença el tracte intestinal inferior quan la taula ofereix aquesta localització?",
+    "options": [],
+    "answer": "Yeyuno",
+    "explanation": "En este contexto, el tracto intestinal inferior va del yeyuno al ano."
+  },
+  {
+    "question": "B.2 - Quin annex consultaries per identificar un dispositiu a partir del seu nom comercial?",
+    "options": [],
+    "answer": "Anexo F",
+    "explanation": "Contiene términos clave de dispositivos y sus equivalencias."
+  },
+  {
+    "question": "B.2 - Quin annex consultaries per cercar una substància administrada a partir del nom comercial, com en l’exemple de Veklury del qüestionari?",
+    "options": [],
+    "answer": "Anexo K",
+    "explanation": "El anexo K recoge términos clave y definiciones de sustancias."
+  },
+  {
+    "question": "B.2 - Quina localització anatòmica correspon a l’antre pilòric en el cas de l’EAC que demana consultar l’annex C?",
+    "options": [],
+    "answer": "Estómago, píloro",
+    "explanation": "El anexo C remite el antro pilórico a Estómago, píloro. Es la localización 7 en la tabla 0DB."
+  },
+  {
+    "question": "B.2 - Quina localització triaries en una resecció de tot el còlon descendent?",
+    "options": [],
+    "answer": "Colon descendente",
+    "explanation": "La resección utiliza la estructura concreta. Tracto intestinal inferior figura en determinadas tablas, como la de Inspección."
+  },
+  {
+    "question": "B.2 - En l’exemple de Veklury del qüestionari del temari, a quina secció remet la consulta de l’annex K?",
+    "options": [],
+    "answer": "Nueva Tecnología",
+    "explanation": "Es la respuesta de ese ejemplo del IOC. El anexo K permite localizar la sustancia por su nombre comercial."
+  },
+  {
+    "question": "B.3 - En quina secció es codifica una amniocentesi diagnòstica?",
+    "options": [],
+    "answer": "1 — Obstetricia",
+    "explanation": "La intervención actúa sobre los productos de la concepción."
+  },
+  {
+    "question": "B.3 - En quina secció es codifica una episiotomia?",
+    "options": [],
+    "answer": "0 — Médico-Quirúrgica",
+    "explanation": "La intervención actúa sobre el periné materno."
+  },
+  {
+    "question": "B.3 - En quina secció es codifica una ecografia de ronyons i bufeta?",
+    "options": [],
+    "answer": "B — Imagen",
+    "explanation": "La ecografía es una técnica de imagen."
+  },
+  {
+    "question": "B.3 - En quina secció es codifica una PET cerebral?",
+    "options": [],
+    "answer": "C — Medicina Nuclear",
+    "explanation": "La PET es una técnica de medicina nuclear."
+  },
+  {
+    "question": "B.3 - En quina secció es codifica una radioteràpia externa del cervell amb fotons?",
+    "options": [],
+    "answer": "D — Radioterapia",
+    "explanation": "Los fotones se usan aquí como tratamiento."
+  },
+  {
+    "question": "B.3 - En quina secció es codifica la immobilització de l’avantbraç amb un guix?",
+    "options": [],
+    "answer": "2 — Colocación",
+    "explanation": "El yeso se coloca para inmovilizar el antebrazo."
+  },
+  {
+    "question": "B.3 - En quina secció es codifica una transfusió de concentrat d’hematies?",
+    "options": [],
+    "answer": "3 — Administración",
+    "explanation": "La transfusión se incluye en Administración."
+  },
+  {
+    "question": "B.3 - En quina secció es codifica un registre Holter de 24 hores?",
+    "options": [],
+    "answer": "4 — Medición y Monitorización",
+    "explanation": "El Holter registra la actividad cardíaca durante un periodo."
+  },
+  {
+    "question": "B.3 - En quina secció es codifica l’assistència robòtica durant una prostatectomia?",
+    "options": [],
+    "answer": "8 — Otros Procedimientos",
+    "explanation": "La asistencia robótica tiene un código adicional. La prostatectomía pertenece a la sección 0."
+  },
+  {
+    "question": "B.4 - Quin abordatge correspon a una excisió de tumor pancreàtic per laparotomia?",
+    "options": [],
+    "answer": "Abierto (0)",
+    "explanation": "La laparotomía expone el lugar de la intervención."
+  },
+  {
+    "question": "B.4 - Quin abordatge correspon a una colecistectomia laparoscòpica?",
+    "options": [],
+    "answer": "Endoscópico percutáneo (4)",
+    "explanation": "El laparoscopio entra por pequeñas incisiones."
+  },
+  {
+    "question": "B.4 - Quin abordatge correspon a una biòpsia feta amb una agulla que travessa la pell, guiada per ecografia?",
+    "options": [],
+    "answer": "Percutáneo (3)",
+    "explanation": "La ecografía guía la aguja desde el exterior."
+  },
+  {
+    "question": "B.4 - Quin abordatge correspon a una gastroscòpia amb biòpsia de la paret gàstrica?",
+    "options": [],
+    "answer": "Por orificio natural o artificial, endoscópico (8)",
+    "explanation": "El gastroscopio accede al estómago por la boca."
+  },
+  {
+    "question": "B.4 - Quin abordatge correspon a una histerectomia vaginal assistida per laparoscòpia?",
+    "options": [],
+    "answer": "Por orificio natural o artificial con asistencia endoscópica percutánea (F)",
+    "explanation": "La vía vaginal se combina con la asistencia laparoscópica."
+  },
+  {
+    "question": "B.4 - Quin abordatge correspon a una amigdalectomia palatina convencional?",
+    "options": [],
+    "answer": "Externo (X)",
+    "explanation": "La clasificación trata las amígdalas palatinas como estructuras directamente accesibles."
+  },
+  {
+    "question": "B.4 - Quin abordatge correspon a una reducció tancada d’una fractura de cúbit?",
+    "options": [],
+    "answer": "Externo (X)",
+    "explanation": "La fractura se reduce mediante maniobras desde el exterior."
+  },
+  {
+    "question": "B.4 - Quin abordatge correspon a la inserció d’una sonda urinària per la uretra?",
+    "options": [],
+    "answer": "Por orificio natural o artificial (7)",
+    "explanation": "La sonda entra por la uretra."
+  },
+  {
+    "question": "B.4 - Quin abordatge correspon a una exploració de genoll mitjançant artroscòpia?",
+    "options": [],
+    "answer": "Endoscópico percutáneo (4)",
+    "explanation": "El artroscopio atraviesa la piel por una pequeña incisión."
+  },
+  {
+    "question": "B.4 - Quin abordatge té una sigmoidectomia completada per laparoscòpia si només s’amplia la incisió per treure la peça?",
+    "options": [],
+    "answer": "Endoscópico percutáneo (4)",
+    "explanation": "Ampliar la incisión solo para extraer la pieza conserva el abordaje con el que se realizó la resección."
+  },
+  {
+    "question": "B.4 - Quins dos actes es codifiquen si una apendicectomia iniciada per laparoscòpia es converteix en cirurgia oberta?",
+    "options": [],
+    "answer": "Resección abierta del apéndice e inspección endoscópica percutánea",
+    "explanation": "La conversión requiere registrar el procedimiento definitivo y la inspección del abordaje inicial."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a una toracocentesi per evacuar líquid pleural?",
+    "options": [],
+    "answer": "Drenaje",
+    "explanation": "Se retira líquido de la cavidad pleural."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a treure un càlcul del colèdoc?",
+    "options": [],
+    "answer": "Extirpación",
+    "explanation": "Se retira una sustancia sólida del interior del conducto."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a una colecistectomia total?",
+    "options": [],
+    "answer": "Resección",
+    "explanation": "Se retira toda la vesícula biliar."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a una gastrectomia parcial?",
+    "options": [],
+    "answer": "Escisión",
+    "explanation": "Se corta y retira una parte del estómago."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a una biòpsia hepàtica en què es talla un fragment de teixit?",
+    "options": [],
+    "answer": "Escisión",
+    "explanation": "La toma del fragmento para análisis lleva el calificador Diagnóstico."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a una PAAF diagnòstica d’una massa sòlida?",
+    "options": [],
+    "answer": "Extracción",
+    "explanation": "La muestra celular se obtiene por aspiración."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a una biòpsia de medul·la òssia amb agulla gruixuda?",
+    "options": [],
+    "answer": "Extracción",
+    "explanation": "El temario del IOC clasifica así la obtención de médula ósea con aguja gruesa."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a una crioteràpia d’una berruga?",
+    "options": [],
+    "answer": "Destrucción",
+    "explanation": "El frío destruye el tejido de la verruga en el lugar donde se encuentra."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a una gastroscòpia purament exploradora?",
+    "options": [],
+    "answer": "Inspección",
+    "explanation": "El objetivo del procedimiento es examinar el interior."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a una reducció de fractura?",
+    "options": [],
+    "answer": "Reposición",
+    "explanation": "Se devuelve el hueso a una posición adecuada."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a l’ajust d’un elèctrode de marcapassos que continua implantat?",
+    "options": [],
+    "answer": "Revisión",
+    "explanation": "Se corrige la posición o el funcionamiento de un dispositivo existente."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a una angioplàstia coronària amb baló i stent?",
+    "options": [],
+    "answer": "Dilatación",
+    "explanation": "El objetivo es ensanchar la luz coronaria. El stent se registra como dispositivo."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon al tractament d’un aneurisma d’aorta abdominal amb una endopròtesi que exclou el sac aneurismàtic?",
+    "options": [],
+    "answer": "Restricción",
+    "explanation": "La endoprótesis excluye el saco aneurismático del flujo."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a la col·locació d’una pròtesi total de genoll?",
+    "options": [],
+    "answer": "Sustitución",
+    "explanation": "La prótesis reemplaza las superficies articulares."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a una cirurgia de cataracta amb implantació d’una lent que reemplaça el cristal·lí?",
+    "options": [],
+    "answer": "Sustitución",
+    "explanation": "La lente artificial ocupa el lugar y cumple la función del cristalino."
+  },
+  {
+    "question": "B.5 - Quin tipus de procediment correspon a reparar una hèrnia umbilical amb una malla de reforç?",
+    "options": [],
+    "answer": "Suplemento",
+    "explanation": "La malla refuerza la pared abdominal."
+  },
+  {
+    "question": "B.6 - Quin sistema orgànic correspon a una prostatectomia?",
+    "options": [],
+    "answer": "Sistema reproductor masculino",
+    "explanation": "La próstata se agrupa en este sistema."
+  },
+  {
+    "question": "B.6 - Quin sistema orgànic correspon a una trombectomia de la caròtida comuna?",
+    "options": [],
+    "answer": "Arterias superiores",
+    "explanation": "La carótida común se incluye en este grupo arterial."
+  },
+  {
+    "question": "B.6 - Quin sistema orgànic correspon a una angioplàstia coronària?",
+    "options": [],
+    "answer": "Corazón y grandes vasos",
+    "explanation": "La tabla agrupa las arterias coronarias en este sistema."
+  },
+  {
+    "question": "B.6 - Quin sistema orgànic correspon a una inserció de catèter amb la punta a la vena cava superior?",
+    "options": [],
+    "answer": "Corazón y grandes vasos",
+    "explanation": "La localización del extremo del catéter determina el grupo en este caso."
+  },
+  {
+    "question": "B.6 - Quin sistema orgànic correspon a una toracocentesi sobre la cavitat pleural?",
+    "options": [],
+    "answer": "Regiones anatómicas generales",
+    "explanation": "La estructura sobre la que se actúa es la cavidad pleural."
+  },
+  {
+    "question": "B.6 - Quin sistema orgànic correspon a una colecistectomia?",
+    "options": [],
+    "answer": "Sistema hepatobiliar y páncreas",
+    "explanation": "La vesícula biliar se incluye en este sistema."
+  },
+  {
+    "question": "B.6 - Quin sistema orgànic correspon a una amputació d’un dit del peu?",
+    "options": [],
+    "answer": "Regiones anatómicas, extremidades inferiores",
+    "explanation": "Las amputaciones de dedos del pie se agrupan por región anatómica."
+  },
+  {
+    "question": "B.6 - Quin sistema orgànic correspon a una reducció de fractura del radi?",
+    "options": [],
+    "answer": "Huesos superiores",
+    "explanation": "El radio es un hueso del antebrazo."
+  },
+  {
+    "question": "B.6 - Quin sistema orgànic correspon a una biòpsia de medul·la òssia a la cresta ilíaca?",
+    "options": [],
+    "answer": "Sistemas linfático y hemático",
+    "explanation": "La estructura de la que se obtiene la muestra es la médula ósea."
+  },
+  {
+    "question": "B.6 - Quin sistema orgànic correspon a la inserció d’un generador de marcapassos sota la pell del tòrax?",
+    "options": [],
+    "answer": "Tejido subcutáneo y fascia",
+    "explanation": "El generador se aloja en el tejido subcutáneo del tórax."
+  },
+  {
+    "question": "B.6 - Quin sistema orgànic correspon a una limfadenectomia axil·lar?",
+    "options": [],
+    "answer": "Sistemas linfático y hemático",
+    "explanation": "La intervención actúa sobre los ganglios linfáticos."
+  },
+  {
+    "question": "B.6 - Quin sistema orgànic correspon a una nefrolitotomia percutània?",
     "options": [],
     "answer": "Sistema urinario",
     "explanation": "El procedimiento actúa en el riñón."
