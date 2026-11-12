@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz IPO2</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0 5px 0;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .top-panel {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .top-panel p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    padding-top: 10px;
+  }
+
+  .question {
+    background: #fff;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .question p {
+    font-size: 34px;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 30px 0;
+  }
+
+  .options {
+    margin-top: 20px;
+  }
+
+  .options button {
+    display: block;
+    margin: 10px 0;
+    padding: 15px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #eee;
+    transition: background 0.3s;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+
+  .options button:hover {
+    background: #ddd;
+  }
+
+  .options button:disabled {
+    cursor: not-allowed;
+  }
+
+  .correct {
+    background-color: #c8e6c9 !important;
+    border-color: #388e3c !important;
+    color: #2e7d32 !important;
+  }
+
+  .wrong {
+    background-color: #ffcdd2 !important;
+    border-color: #d32f2f !important;
+    color: #c62828 !important;
+  }
+
+  .result {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 10px 0;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  button.main-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.main-btn:hover {
+    background: #1976D2;
+  }
+
+  button.reset-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background: #e53935;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+  button.reset-btn:hover {
+    background: #c62828;
+  }
+
+  .small-text {
+    font-size: 15px !important;
+    font-weight: normal !important;
+    color: #555;
+  }
+
+  @media (max-width: 600px) {
+    .question p {
+      font-size: 28px;
+    }
+
+    .options button {
+      font-size: 20px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Quiz Gestion Administrativa</h1>
+<div class="subtitle">Preguntas aleatorias sin repetir hasta completar todo el temario</div>
+
+<div class="top-panel">
+  <p id="totalQuestionsText">Preguntas totales: 0</p>
+  <p id="pendingQuestionsText">Preguntas pendientes: 0</p>
+  <p id="completedQuestionsText">Preguntas realizadas: 0</p>
+</div>
+
+<div class="quiz-container" id="quiz-container"></div>
+
+<div class="result" id="result">Puntuación: 0</div>
+
+<div class="buttons">
+  <button id="nextBtn" class="main-btn" style="display:none;">Siguiente</button>
+  <button id="resetBtn" class="reset-btn">Reiniciar progreso</button>
+</div>
+
+<script>
+/* ============================
+   FUNCIÓN PARA MEZCLAR ARRAYS
+============================ */
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+
+/* ============================
+   AÑADE AQUÍ TUS PREGUNTAS
+   No tienes que indicar cuántas hay.
+   El código las cuenta automáticamente.
+============================ */
+const allQuestions = [
+  
+ {
+    "question": "B.1 - Què és el terme principal quan indexes un diagnòstic a la CIM-10-MC?",
+    "options": [],
+    "answer": "La entrada que identifica el concepto diagnóstico en el índice alfabético",
+    "explanation": "A partir de ella se revisan los modificadores que describen el caso."
+  },
+  {
+    "question": "B.1 - Com es reconeix un modificador no essencial a l’índex alfabètic?",
+    "options": [],
+    "answer": "Aparece entre paréntesis",
+    "explanation": "Su presencia o ausencia no cambia la asignación del código en esa entrada."
+  },
+  {
+    "question": "B.1 - Quina funció tenen els modificadors essencials d’una entrada de l’índex?",
+    "options": [],
+    "answer": "Orientan hacia un código más específico",
+    "explanation": "Se consultan debajo del término principal y se seleccionan según la documentación."
+  },
+  {
+    "question": "B.1 - Quin terme principal buscaries en «pneumònia aguda per Mycoplasma pneumoniae»?",
+    "options": [],
+    "answer": "Neumonía",
+    "explanation": "El microorganismo precisa el diagnóstico."
+  },
+  {
+    "question": "B.1 - En «pneumònia aguda purulenta per Mycoplasma pneumoniae», quin és el modificador essencial segons la solució de l’EAC?",
+    "options": [],
+    "answer": "Mycoplasma pneumoniae",
+    "explanation": "Aguda y purulenta figuran como modificadores no esenciales en el ejercicio."
+  },
+  {
+    "question": "B.1 - En «enteritis aguda per Salmonella», quin és el modificador essencial?",
+    "options": [],
+    "answer": "Salmonella",
+    "explanation": "El microorganismo distingue la enteritis por Salmonella."
+  },
+  {
+    "question": "B.1 - En «bronquitis infecciosa aguda per Haemophilus influenzae», quins modificadors són essencials segons l’EAC?",
+    "options": [],
+    "answer": "Aguda y Haemophilus influenzae",
+    "explanation": "Infecciosa aparece como modificador no esencial en la solución."
+  },
+  {
+    "question": "B.1 - En «cremada tèrmica de primer grau a la mà dreta», quines dades són modificadors essencials segons l’EAC?",
+    "options": [],
+    "answer": "Primer grado y mano derecha",
+    "explanation": "La localización, la lateralidad y el grado concretan la lesión."
+  },
+  {
+    "question": "B.1 - En «laringitis infecciosa obstructiva», quin adjectiu és el modificador essencial segons l’EAC?",
+    "options": [],
+    "answer": "Obstructiva",
+    "explanation": "La solución clasifica infecciosa como modificador no esencial en esta entrada."
+  },
+  {
+    "question": "B.1 - En «història personal de pneumònia recurrent», quin terme principal recull la solució de l’EAC?",
+    "options": [],
+    "answer": "Historia",
+    "explanation": "El enunciado describe un antecedente personal."
+  },
+  {
+    "question": "B.1 - Quin document és la font principal per identificar els diagnòstics d’un ingrés hospitalari?",
+    "options": [],
+    "answer": "Informe de alta",
+    "explanation": "La documentación clínica del episodio puede aportar los detalles necesarios."
+  },
+  {
+    "question": "B.1 - Després de trobar un codi orientatiu a l’índex alfabètic, on el comproves?",
+    "options": [],
+    "answer": "En la lista tabular",
+    "explanation": "La lista tabular permite comprobar el literal, los caracteres exigidos y las notas."
+  },
+  {
+    "question": "B.2 - Ordena de més general a més específic els nivells capítol, categoria, secció i subcategoria.",
+    "options": [],
+    "answer": "Capítulo, sección, categoría y subcategoría",
+    "explanation": "El capítulo agrupa secciones, que reúnen categorías."
+  },
+  {
+    "question": "B.2 - Quants caràcters té una categoria de la CIM-10-MC?",
+    "options": [],
+    "answer": "Tres",
+    "explanation": "Por ejemplo, N30 identifica la categoría Cistitis."
+  },
+  {
+    "question": "B.2 - Entre quants caràcters pot tenir un codi final de diagnòstic de la CIM-10-MC?",
+    "options": [],
+    "answer": "Entre tres y siete",
+    "explanation": "El punto que separa la categoría del resto no cuenta como carácter."
+  },
+  {
+    "question": "B.2 - A partir de N30.00, quina és la categoria i quin diagnòstic general designa?",
+    "options": [],
+    "answer": "N30 — Cistitis",
+    "explanation": "Los tres primeros caracteres identifican la categoría."
+  },
+  {
+    "question": "B.2 - Si N46.124 descriu oligospèrmia causada per radiació, quins caràcters formen la seva categoria?",
+    "options": [],
+    "answer": "N46",
+    "explanation": "El código pertenece a la categoría Infertilidad masculina."
+  },
+  {
+    "question": "B.2 - Si P05.17 correspon a un nounat petit per l’edat gestacional, quina és la categoria?",
+    "options": [],
+    "answer": "P05",
+    "explanation": "Los tres primeros caracteres son la categoría."
+  },
+  {
+    "question": "B.2 - A quin capítol pertany N30.00, cistitis aguda sense hematúria?",
+    "options": [],
+    "answer": "Capítulo 14 — Enfermedades del aparato genitourinario",
+    "explanation": "La cistitis se incluye en las enfermedades urinarias."
+  },
+  {
+    "question": "B.2 - A quin capítol pertanyen les afeccions originades en el període perinatal, com P05.17?",
+    "options": [],
+    "answer": "Capítulo 16 — Ciertas afecciones originadas en el período perinatal",
+    "explanation": "La categoría P05 pertenece a ese capítulo."
+  },
+  {
+    "question": "B.2 - Quina funció té el caràcter X de farciment quan cal arribar a una posició obligatòria?",
+    "options": [],
+    "answer": "Mantener la posición exigida para el carácter correspondiente",
+    "explanation": "Por ejemplo, X puede ocupar un hueco antes del séptimo carácter."
+  },
+  {
+    "question": "B.2 - Com identificaries en un codi una categoria que necessita més caràcters abans de poder-se registrar?",
+    "options": [],
+    "answer": "La lista tabular exige completar la subcategoría o los caracteres adicionales",
+    "explanation": "Los tres caracteres solo son un código final cuando la categoría es completa."
+  },
+  {
+    "question": "B.3 - Quines dues dades necessites per triar una columna i una fila a la taula de neoplàsies?",
+    "options": [],
+    "answer": "Comportamiento de la neoplasia y localización anatómica",
+    "explanation": "La localización orienta la fila y el comportamiento, la columna."
+  },
+  {
+    "question": "B.3 - Un càncer de mama dreta presenta metàstasi als ganglis de l’aixella dreta. Quina és la localització primària i quina és la secundària?",
+    "options": [],
+    "answer": "Mama derecha, primaria. Ganglios axilares derechos, secundaria.",
+    "explanation": "Se registran la neoplasia de origen y la metástasis ganglionar."
+  },
+  {
+    "question": "B.3 - Un càncer de pulmó genera una metàstasi al còlon transvers. A quina localització correspon la neoplàsia secundària?",
+    "options": [],
+    "answer": "Colon transverso",
+    "explanation": "La metástasis se clasifica por el lugar al que se ha propagado."
+  },
+  {
+    "question": "B.3 - En un càncer d’ovari dret amb metàstasi hepàtica, en quin òrgan s’origina el tumor i quin òrgan té la metàstasi?",
+    "options": [],
+    "answer": "Primario en ovario derecho y metástasis en hígado",
+    "explanation": "Cada localización se registra según su papel en la enfermedad."
+  },
+  {
+    "question": "B.3 - En quin grup de comportament buscaries una neoplàsia documentada com a benigna de la glàndula paròtide?",
+    "options": [],
+    "answer": "Neoplasia benigna",
+    "explanation": "La documentación fija el comportamiento y la parótida identifica el sitio."
+  },
+  {
+    "question": "B.3 - Si només es documenta «neoplàsia gàstrica», quina informació falta per seleccionar una columna de comportament específica?",
+    "options": [],
+    "answer": "El comportamiento de la neoplasia",
+    "explanation": "La palabra neoplasia por sí sola deja el comportamiento sin especificar."
+  },
+  {
+    "question": "B.3 - Quan es pot classificar una neoplàsia com de comportament incert?",
+    "options": [],
+    "answer": "Cuando se documenta que su comportamiento biológico es incierto",
+    "explanation": "La ausencia de información sobre el comportamiento corresponde a comportamiento no especificado."
+  },
+  {
+    "question": "B.3 - En la frase «carcinoma in situ del cèrvix», quin comportament consta al diagnòstic?",
+    "options": [],
+    "answer": "In situ",
+    "explanation": "El enunciado identifica expresamente el comportamiento."
+  },
+  {
+    "question": "B.3 - En un ingrés per tractar un vessament pleural maligne associat a un càncer de pulmó, quin diagnòstic es codifica primer segons l’exercici de l’EAC?",
+    "options": [],
+    "answer": "La neoplasia maligna de pulmón",
+    "explanation": "La nota Codifique primero de J91.0 determina la secuencia en este caso."
+  },
+  {
+    "question": "B.4 - Quina mena de codi correspon a una tuberculosi resolta durant la infància, sense seqüeles?",
+    "options": [],
+    "answer": "Código Z de antecedente personal",
+    "explanation": "Se trata de una enfermedad pasada y resuelta."
+  },
+  {
+    "question": "B.4 - Quin terme principal utilitzaries per cercar l’antecedent personal d’una malaltia resolta?",
+    "options": [],
+    "answer": "Historia",
+    "explanation": "En el índice se sigue la entrada de historia personal."
+  },
+  {
+    "question": "B.4 - Quina mena de codi correspon a la pèrdua anatòmica després d’una ooforectomia antiga?",
+    "options": [],
+    "answer": "Código Z de ausencia adquirida",
+    "explanation": "El estado anatómico persiste después de la intervención."
+  },
+  {
+    "question": "B.4 - Quin terme principal utilitzaries per indexar l’estat després d’una gastrectomia parcial antiga?",
+    "options": [],
+    "answer": "Ausencia",
+    "explanation": "La EAC utiliza la entrada de ausencia adquirida."
+  },
+  {
+    "question": "B.4 - Què indica un codi Z79 en un pacient que pren anticoagulants de manera habitual?",
+    "options": [],
+    "answer": "Uso prolongado y actual de medicamentos",
+    "explanation": "El código describe el tratamiento mantenido."
+  },
+  {
+    "question": "B.4 - Quina mena de codi correspon a una al·lèrgia coneguda a les abelles sense reacció en l’episodi?",
+    "options": [],
+    "answer": "Código Z de estado de alergia",
+    "explanation": "El episodio documenta la condición de alérgico."
+  },
+  {
+    "question": "B.4 - Quina informació recull Z3A.34 en una gestant?",
+    "options": [],
+    "answer": "34 semanas de gestación",
+    "explanation": "Z3A identifica las semanas de gestación."
+  },
+  {
+    "question": "B.4 - Quina situació descriu Z60.2 en el cas pràctic de l’EAC?",
+    "options": [],
+    "answer": "Problemas relacionados con vivir solo",
+    "explanation": "En el caso motiva la intervención de trabajo social."
+  },
+  {
+    "question": "B.4 - Quin codi model identifica la història personal de tuberculosi resolta que apareix a l’EAC?",
+    "options": [],
+    "answer": "Z86.11",
+    "explanation": "Es uno de los ejemplos de códigos de antecedentes personales de la unidad."
+  },
+  {
+    "question": "B.4 - Quin tipus de codi correspon a un càncer de pròstata tractat i resolt, sense tractament dirigit al tumor ni malaltia actual documentada?",
+    "options": [],
+    "answer": "Código Z de antecedente personal de neoplasia maligna",
+    "explanation": "Se registra la historia personal del tumor previo."
+  },
+  {
+    "question": "B.5 - Quin codi va primer quan la nota de la llista tabular diu «Codifiqueu primer»?",
+    "options": [],
+    "answer": "El de la afección indicada por la nota",
+    "explanation": "La instrucción establece la secuencia entre los diagnósticos."
+  },
+  {
+    "question": "B.5 - Què et demana fer la nota «Utilitzeu un codi addicional»?",
+    "options": [],
+    "answer": "Añadir el código que describe la información complementaria",
+    "explanation": "Cuando procede, ese código se coloca después del código que contiene la nota."
+  },
+  {
+    "question": "B.5 - Què permet una nota «Exclou 2» si el pacient presenta les dues afeccions?",
+    "options": [],
+    "answer": "Registrar ambos códigos cuando ambas afecciones están presentes",
+    "explanation": "La afección excluida queda fuera del alcance del código que contiene la nota."
+  },
+  {
+    "question": "B.5 - Quina és la regla general d’«Exclou 1» i quina excepció recull el temari?",
+    "options": [],
+    "answer": "Se evita codificar juntas las afecciones excluidas. Pueden codificarse juntas si son independientes.",
+    "explanation": "La excepción requiere que las afecciones carezcan de relación."
+  },
+  {
+    "question": "B.5 - Què és un codi de combinació?",
+    "options": [],
+    "answer": "Un código que recoge más de un elemento diagnóstico relacionado",
+    "explanation": "Puede representar una enfermedad con su manifestación o complicación."
+  },
+  {
+    "question": "B.5 - En una DM2 amb malaltia renal crònica en estadi 2, quines dues dades cal codificar?",
+    "options": [],
+    "answer": "Diabetes tipo 2 con enfermedad renal crónica y estadio 2 de la enfermedad renal",
+    "explanation": "El código combinado describe la relación. Otro código aporta el estadio."
+  },
+  {
+    "question": "B.5 - En una DM1 amb malaltia renal crònica terminal, què va primer segons l’EAC?",
+    "options": [],
+    "answer": "Diabetes tipo 1 con enfermedad renal crónica",
+    "explanation": "Después se añade el código del estadio terminal."
+  },
+  {
+    "question": "B.5 - En una seqüela de cremada amb retracció cicatricial, quina afecció es codifica primer?",
+    "options": [],
+    "answer": "La retracción cicatricial residual",
+    "explanation": "El código de la lesión original con carácter S identifica su causa y se coloca después en este caso."
+  },
+  {
+    "question": "B.5 - Què indica el setè caràcter S en un codi de lesió?",
+    "options": [],
+    "answer": "Secuela",
+    "explanation": "Se emplea para identificar la lesión causante de un efecto residual."
+  },
+  {
+    "question": "B.5 - Què indica el setè caràcter A en una fractura que rep tractament actiu?",
+    "options": [],
+    "answer": "Contacto inicial",
+    "explanation": "La fase de tratamiento activo determina el carácter."
+  },
+  {
+    "question": "B.5 - Què indica el setè caràcter D en una fractura amb controls rutinaris durant la curació?",
+    "options": [],
+    "answer": "Contacto sucesivo",
+    "explanation": "La asistencia se presta durante el seguimiento o la recuperación."
+  },
+  {
+    "question": "B.5 - Quina intencionalitat s’assigna a una intoxicació si no se’n documenta cap?",
+    "options": [],
+    "answer": "Accidental",
+    "explanation": "La intención indeterminada exige que se documente como tal."
+  },
+  {
+    "question": "B.5 - Un nen pren comprimits de Sintrom pensant que són caramels. Quin tipus d’esdeveniment i intencionalitat cal assignar?",
+    "options": [],
+    "answer": "Intoxicación accidental",
+    "explanation": "La ingesta por error determina la clasificación."
+  },
+  {
+    "question": "B.5 - Un pacient pren correctament un fàrmac i presenta una reacció adversa. Què es codifica primer?",
+    "options": [],
+    "answer": "La manifestación del efecto adverso",
+    "explanation": "Después se identifica el medicamento mediante el código de efecto adverso."
+  },
+  {
+    "question": "B.5 - Què diferencia un diagnòstic de lesió d’un codi de causa externa?",
+    "options": [],
+    "answer": "La lesión describe el daño y la causa externa describe cómo ocurrió o sus circunstancias",
+    "explanation": "Una fractura y una caída en una escalera mecánica aportan datos distintos."
+  },
+  {
+    "question": "B.6 - Com es defineix el diagnòstic principal en un episodi d’hospitalització?",
+    "options": [],
+    "answer": "La afección que, tras el estudio, se establece como responsable del ingreso",
+    "explanation": "Se determina a partir del episodio completo."
+  },
+  {
+    "question": "B.6 - Un pacient ingressa per pielonefritis aguda i al quart dia pateix un infart. Quin és el diagnòstic principal?",
+    "options": [],
+    "answer": "Pielonefritis aguda",
+    "explanation": "Es la afección responsable del ingreso."
+  },
+  {
+    "question": "B.6 - En el mateix ingrés per pielonefritis, com es classifica l’infart que apareix al quart dia?",
+    "options": [],
+    "answer": "Diagnóstico secundario con POA N",
+    "explanation": "El infarto aparece durante el ingreso y tiene relevancia asistencial."
+  },
+  {
+    "question": "B.6 - Què vol dir POA en el context de la codificació de diagnòstics?",
+    "options": [],
+    "answer": "Presente al ingreso",
+    "explanation": "El marcador indica si la afección existía en el momento del ingreso."
+  },
+  {
+    "question": "B.6 - Una pneumònia es confirma el segon dia, però la documentació indica que ja hi era a l’ingrés. Quin POA correspon?",
+    "options": [],
+    "answer": "S — Sí",
+    "explanation": "La fecha de confirmación y el momento en que ya existía la afección pueden ser distintos."
+  },
+  {
+    "question": "B.6 - Un pacient ingressa per fractura de peroné i desenvolupa pneumònia al quart dia. Quin és el DP?",
+    "options": [],
+    "answer": "La fractura de peroné",
+    "explanation": "La fractura es la afección que motivó el ingreso."
+  },
+  {
+    "question": "B.6 - En aquest ingrés per fractura, la pneumònia apareix al quart dia. Quin paper i quin POA té?",
+    "options": [],
+    "answer": "Diagnóstico secundario, POA N",
+    "explanation": "La neumonía se desarrolla tras el ingreso."
+  },
+  {
+    "question": "B.6 - En un ingrés per fractura, com classifiques una hipertensió crònica que requereix control i tractament durant l’estada?",
+    "options": [],
+    "answer": "Diagnóstico secundario",
+    "explanation": "La hipertensión cumple criterios de registro porque afecta a la asistencia."
+  },
+  {
+    "question": "B.6 - Quines dades del cas d’una caiguda a una escala mecànica en un aeroport corresponen a la causa externa?",
+    "options": [],
+    "answer": "La caída en la escalera mecánica y el aeropuerto como lugar",
+    "explanation": "El mecanismo y el lugar describen las circunstancias del accidente."
+  },
+  {
+    "question": "B.6 - Si el diagnòstic final explica un símptoma habitual i inherent a la malaltia, com es registra aquest símptoma?",
+    "options": [],
+    "answer": "Queda recogido en el diagnóstico de la enfermedad",
+    "explanation": "Los síntomas inherentes se integran en el diagnóstico definitivo."
+  },
+  {
+    "question": "B.6 - A l’alta d’una hospitalització consta un diagnòstic probable que no s’ha descartat. Com es codifica segons la norma d’hospitalització?",
+    "options": [],
+    "answer": "Como si estuviera confirmado",
+    "explanation": "La regla se aplica a los diagnósticos inciertos documentados al alta en hospitalización."
+  },
+  {
+    "question": "B.6 - En una fractura comminuta desplaçada de la diàfisi del peroné esquerre, quina és la localització i la lateralitat?",
+    "options": [],
+    "answer": "Diáfisis del peroné izquierdo",
+    "explanation": "La descripción distingue segmento óseo y lado."
+  }
+
+
+
+  
+];
+
+
+/* ============================
+   VARIABLES PRINCIPALES
+============================ */
+let answeredQuestions = JSON.parse(localStorage.getItem("answeredQuestions")) || [];
+let currentQuestion = 0;
+let score = 0;
+let quizData = [];
+
+const container = document.getElementById("quiz-container");
+const resultDiv = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const totalQuestionsText = document.getElementById("totalQuestionsText");
+const pendingQuestionsText = document.getElementById("pendingQuestionsText");
+const completedQuestionsText = document.getElementById("completedQuestionsText");
+
+
+/* ============================
+   ACTUALIZAR PANEL SUPERIOR
+============================ */
+function updateProgressPanel() {
+  const total = allQuestions.length;
+  const completed = answeredQuestions.length;
+  const pending = total - completed;
+
+  totalQuestionsText.textContent = `Preguntas totales: ${total}`;
+  pendingQuestionsText.textContent = `Preguntas pendientes: ${pending}`;
+  completedQuestionsText.textContent = `Preguntas realizadas: ${completed}`;
+}
+
+
+/* ============================
+   PREPARAR TEST
+============================ */
+function prepareQuiz() {
+  if (allQuestions.length === 0) {
+    container.innerHTML = `
+      <div class="question">
+        <p>No hay preguntas todavía.</p>
+        <p class="small-text">Añade preguntas dentro de la variable allQuestions.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Si ya has hecho todas, se reinicia automáticamente
+  if (answeredQuestions.length >= allQuestions.length) {
+    answeredQuestions = [];
+    localStorage.removeItem("answeredQuestions");
+
+    alert("Has completado todas las preguntas. Se reinicia el ciclo.");
+  }
+
+  updateProgressPanel();
+
+  let availableQuestions = allQuestions
+    .map((question, index) => index)
+    .filter(index => !answeredQuestions.includes(index));
+
+  let numberOfQuestionsToday = parseInt(
+    prompt(`¿Cuántas preguntas quieres hacer hoy? Te quedan ${availableQuestions.length} pendientes.`)
+  );
+
+  if (
+    isNaN(numberOfQuestionsToday) ||
+    numberOfQuestionsToday <= 0 ||
+    numberOfQuestionsToday > availableQuestions.length
+  ) {
+    numberOfQuestionsToday = availableQuestions.length;
+  }
+
+  shuffle(availableQuestions);
+
+  let selectedIndexes = availableQuestions.slice(0, numberOfQuestionsToday);
+
+  quizData = selectedIndexes.map(index => {
+    return {
+      ...allQuestions[index],
+      originalIndex: index
+    };
+  });
+
+  showQuestion();
+}
+
+
+/* ============================
+   MOSTRAR PREGUNTA
+============================ */
+function showQuestion() {
+  container.innerHTML = "";
+  nextBtn.style.display = "none";
+
+  if (currentQuestion >= quizData.length) {
+    updateProgressPanel();
+
+    const pending = allQuestions.length - answeredQuestions.length;
+
+    container.innerHTML = `
+      <div class="question">
+        <p>Quiz terminado</p>
+        <p>Tu puntuación final es ${score} de ${quizData.length}</p>
+        <p class="small-text">
+          Preguntas pendientes para otro día: ${pending}
+        </p>
+        ${
+          pending === 0
+          ? `<p class="small-text">Has completado todas las preguntas. La próxima vez se reiniciará el ciclo.</p>`
+          : `<p class="small-text">La próxima vez saldrán preguntas que todavía no has hecho.</p>`
+        }
+      </div>
+    `;
+
+    resultDiv.textContent = `Puntuación final: ${score}/${quizData.length}`;
+    return;
+  }
+
+  const q = quizData[currentQuestion];
+
+  const div = document.createElement("div");
+  div.className = "question";
+
+  const p = document.createElement("p");
+  p.textContent = `${currentQuestion + 1}. ${q.question}`;
+  div.appendChild(p);
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className = "options";
+
+  const filteredOptions = q.options.filter(opt => opt.trim() !== "");
+
+  // Preguntas cortas: mostramos la solución al pulsar el botón.
+  if (filteredOptions.length === 0) {
+    const showAnswerBtn = document.createElement("button");
+    showAnswerBtn.textContent = "Mostrar respuesta";
+
+    showAnswerBtn.onclick = () => {
+      showAnswerBtn.disabled = true;
+      showAnswerBtn.textContent = q.answer;
+      showAnswerBtn.classList.add("correct");
+
+      const originalIndex = q.originalIndex;
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(showAnswerBtn);
+    div.appendChild(optionsDiv);
+    container.appendChild(div);
+    return;
+  }
+
+  // Si quieres que siempre salga V primero y F segundo, comenta la línea siguiente:
+  shuffle(filteredOptions);
+
+  filteredOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.dataset.correct = option === q.answer ? "true" : "false";
+
+    btn.onclick = () => {
+      const allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      // Guardamos esta pregunta como realizada justo al contestarla
+      const originalIndex = q.originalIndex;
+
+      if (!answeredQuestions.includes(originalIndex)) {
+        answeredQuestions.push(originalIndex);
+        localStorage.setItem("answeredQuestions", JSON.stringify(answeredQuestions));
+      }
+
+      updateProgressPanel();
+
+      if (btn.dataset.correct === "true") {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+
+        allBtns.forEach(b => {
+          if (b.dataset.correct === "true") {
+            b.classList.add("correct");
+          }
+        });
+      }
+
+      resultDiv.textContent = `Puntuación: ${score}/${quizData.length}`;
+      nextBtn.style.display = "block";
+    };
+
+    optionsDiv.appendChild(btn);
+  });
+
+  div.appendChild(optionsDiv);
+  container.appendChild(div);
+}
+
+
+/* ============================
+   BOTÓN SIGUIENTE
+============================ */
+nextBtn.onclick = () => {
+  currentQuestion++;
+  showQuestion();
+};
+
+
+/* ============================
+   BOTÓN REINICIAR PROGRESO
+============================ */
+resetBtn.onclick = () => {
+  const confirmReset = confirm("¿Seguro que quieres reiniciar el progreso? Volverán a salir todas las preguntas.");
+
+  if (confirmReset) {
+    localStorage.removeItem("answeredQuestions");
+    location.reload();
+  }
+};
+
+
+/* ============================
+   INICIAR QUIZ
+============================ */
+prepareQuiz();
+</script>
+
+</body>
+</html>
